@@ -1,11 +1,9 @@
 package com.corntrip.turnbased.world;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Shape;
-import org.newdawn.slick.opengl.Texture;
 
 import com.corntrip.turnbased.rendering.IRenderable;
 import com.corntrip.turnbased.util.Vector2;
@@ -14,19 +12,23 @@ public class Tile implements IRenderable
 {
 	private Vector2<Float, Float> position;
 	private Vector2<Float, Float> dimensions;
-	
-	private Texture texture;
-	private Shape shape;
-	
-	public Tile(Texture tex, Vector2<Float, Float> position, Vector2<Float, Float> dimensions)
+
+	public Tile(float x, float y, float w, float h)
 	{
-		texture = tex;
-		shape = new Rectangle(position.getX(), position.getY(), dimensions.getX(), dimensions.getY());
-		
+		position = new Vector2<>(x, y);
+		dimensions = new Vector2<>(w, h);
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
+		renderAt(gc, gfx, position.getX(), position.getY());
+	}
+
+	@Override
+	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
+	{
+		gfx.setColor(Color.red);
+		gfx.fillRect(x, y, dimensions.getX(), dimensions.getY());
 	}
 }

@@ -5,13 +5,15 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Rectangle;
 
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
+import com.corntrip.turnbased.world.Tile;
 
 public class GameNameHere extends BasicGame
-{	
+{
+	private Tile t = new Tile(50, 50, 50, 50);
+	
 	public GameNameHere()
 	{
 		super("a (good?) game.");
@@ -34,7 +36,8 @@ public class GameNameHere extends BasicGame
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		gfx.fill(new Rectangle(50, 50, 500, 50));
+		gfx.clear();
+		t.render(gc, gfx);
 	}
 	
 	@Override
