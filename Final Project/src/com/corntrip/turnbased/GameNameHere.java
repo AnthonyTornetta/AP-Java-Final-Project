@@ -5,6 +5,7 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 
 public class GameNameHere extends BasicGame
 {
@@ -28,11 +29,11 @@ public class GameNameHere extends BasicGame
 	}
 
 	@Override
-	public void render(GameContainer arg0, Graphics arg1) throws SlickException
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		
+		gfx.fill(new Rectangle(50, 50, 500, 50));
 	}
-
+	
 	@Override
 	public void init(GameContainer arg0) throws SlickException
 	{
