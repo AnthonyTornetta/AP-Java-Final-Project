@@ -18,15 +18,15 @@ public class Tile implements IRenderable
 		position = new Vector2<>(x, y);
 		dimensions = new Vector2<>(w, h);
 	}
-
+	
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderAt(gc, gfx, position.getX(), position.getY());
+		renderWithOffset(gc, gfx, position.getX(), position.getY());
 	}
-
+	
 	@Override
-	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
+	public void renderWithOffset(GameContainer gc, Graphics gfx, float x, float y)
 	{
 		gfx.setColor(new Color(0, 48, 100));
 		gfx.fillRect(x, y, dimensions.getX(), dimensions.getY());

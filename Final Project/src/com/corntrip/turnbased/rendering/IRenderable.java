@@ -22,5 +22,5 @@ public interface IRenderable
 	 * @param y
 	 * @throws SlickException Potentially thrown when drawing
 	 */
-	public void renderAt(GameContainer gc, Graphics gfx, float x, float y);
+	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY);
 }

@@ -17,29 +17,29 @@ public class World implements IRenderable
 		WIDTH = width;
 		HEIGHT = height;
 		
-		width /= Reference.TILE_DIMENSIONS;
-		height /= Reference.TILE_DIMENSIONS;
+		int tilesH = HEIGHT / Reference.TILE_DIMENSIONS;
+		int tilesW = WIDTH  / Reference.TILE_DIMENSIONS;
 		
-		tiles = new Tile[width][height];
+		tiles = new Tile[tilesH][tilesW];
 		
-		for(int ty = 0; ty < tiles.length; ty++)
+		for(int ty = 0; ty < tilesH; ty++)
 		{
-			for(int tx = 0; tx < tiles[ty].length; tx++)
+			for(int tx = 0; tx < tilesW; tx++)
 			{
 				tiles[ty][tx] = new Tile(tx * Reference.TILE_DIMENSIONS, ty * Reference.TILE_DIMENSIONS, 
 											Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 			}
 		}
 	}
-
+	
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderAt(gc, gfx, 0, 0);
+		renderWithOffset(gc, gfx, 0, 0);
 	}
-
+	
 	@Override
-	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
+	public void renderWithOffset(GameContainer gc, Graphics gfx, float x, float y)
 	{
 		for(int ty = 0; ty < tiles.length; ty++)
 		{
