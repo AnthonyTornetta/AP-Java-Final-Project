@@ -11,4 +11,9 @@ public class Reference
 	 * The maximum FPS the window should reach
 	 */
 	public static final int MAX_FPS = 60;
+	
+	/**
+	 * Each tile in the world is 32x32
+	 */
+	public static final int TILE_DIMENSIONS = 32;
 }

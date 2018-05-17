@@ -28,7 +28,9 @@ public class Tile implements IRenderable
 	@Override
 	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
 	{
-		gfx.setColor(Color.red);
+		gfx.setColor(new Color(0, 48, 100));
 		gfx.fillRect(x, y, dimensions.getX(), dimensions.getY());
+		gfx.setColor(Color.black);
+		gfx.drawRect(x, y, dimensions.getX(), dimensions.getY());
 	}
 }

@@ -8,19 +8,21 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
-import com.corntrip.turnbased.world.Tile;
+import com.corntrip.turnbased.world.World;
 
 public class GameNameHere extends BasicGame
 {
-	private Tile t = new Tile(50, 50, 50, 50);
+	private World world;
 	
 	public GameNameHere()
 	{
 		super("a (good?) game.");
+		
+		world = new World(960 / Reference.TILE_DIMENSIONS, 640 / Reference.TILE_DIMENSIONS);
 	}
 
 	public static void main(String[] args)
-	{
+	{		
 		try
         {
             AppGameContainer app = new AppGameContainer(new GameNameHere());
@@ -37,7 +39,7 @@ public class GameNameHere extends BasicGame
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
 		gfx.clear();
-		t.render(gc, gfx);
+		world.render(gc, gfx);
 	}
 	
 	@Override
