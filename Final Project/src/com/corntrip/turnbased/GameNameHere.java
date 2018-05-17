@@ -18,11 +18,11 @@ public class GameNameHere extends BasicGame
 	{
 		super("a (good?) game.");
 		
-		world = new World(960 / Reference.TILE_DIMENSIONS, 640 / Reference.TILE_DIMENSIONS);
+		world = new World(960, 640);
 	}
 
 	public static void main(String[] args)
-	{		
+	{
 		try
         {
             AppGameContainer app = new AppGameContainer(new GameNameHere());

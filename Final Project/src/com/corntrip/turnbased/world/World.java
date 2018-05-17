@@ -17,7 +17,10 @@ public class World implements IRenderable
 		WIDTH = width;
 		HEIGHT = height;
 		
-		tiles = new Tile[HEIGHT][WIDTH];
+		width /= Reference.TILE_DIMENSIONS;
+		height /= Reference.TILE_DIMENSIONS;
+		
+		tiles = new Tile[width][height];
 		
 		for(int ty = 0; ty < tiles.length; ty++)
 		{
