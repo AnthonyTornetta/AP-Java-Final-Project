@@ -4,14 +4,14 @@ import com.corntrip.turnbased.util.Vector2;
 
 public interface ICollidable
 {
-	public double getWidth();
-	public double getHeight();
+	public float getWidth();
+	public float getHeight();
 	
-	public double getX();
-	public double getY();
+	public float getX();
+	public float getY();
 	
-	public Vector2<Double, Double> getPosition();
-	public Vector2<Double, Double> getDimensions();
+	public Vector2<Float, Float> getPosition();
+	public Vector2<Float, Float> getDimensions();
 	
 	public boolean collidingWith(ICollidable other);
 }
