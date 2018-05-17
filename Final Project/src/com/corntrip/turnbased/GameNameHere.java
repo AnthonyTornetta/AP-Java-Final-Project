@@ -42,6 +42,6 @@ public class GameNameHere extends BasicGame
 	@Override
 	public void update(GameContainer arg0, int arg1) throws SlickException
 	{
-		System.out.println("asdf");
+		
 	}
 }
