@@ -14,23 +14,22 @@ import com.corntrip.turnbased.world.World;
 
 public class GameNameHere extends BasicGame
 {
-	private Resources res;
+	@SuppressWarnings("unused")
+	private Resources res; // TODO: use me
 	
 	private World world;
 	private Player p;
-	private Wall wall;
 	
 	public GameNameHere()
 	{
 		super("a (good?) game.");
 		
-		world = new World(960, 640);
-		
+		world = new World(960 * 2, 640 * 2);
 		p = new Player(50, 50, 50, 50, world);
-		wall = new Wall(200, 200, 50, 50);
+		world.setPlayer(p);
 		
 		world.addObject(p);
-		world.addObject(wall);
+		world.addObject(new Wall(200, 200, 50, 50));
 	}
 
 	public static void main(String[] args)
@@ -38,7 +37,7 @@ public class GameNameHere extends BasicGame
 		try
         {
             AppGameContainer app = new AppGameContainer(new GameNameHere());
-            app.setDisplayMode(960, 640, false);
+            app.setDisplayMode(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, false);
             app.start();
         }
         catch (SlickException e)
@@ -52,9 +51,6 @@ public class GameNameHere extends BasicGame
 	{
 		gfx.clear();
 		world.render(gc, gfx);
-		
-		p.render(gc, gfx);
-		wall.render(gc, gfx);
 	}
 	
 	@Override
@@ -66,13 +62,13 @@ public class GameNameHere extends BasicGame
 		gc.setShowFPS(Reference.DEBUG);
 		gc.setVSync(true);
 		
-		// Loads all the resources into memory
+		// Loads all the resources into memory [TODO]
 		res = new Resources();
 	}
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		p.update(gc, delta);
+		world.update(gc, delta);
 	}
 }

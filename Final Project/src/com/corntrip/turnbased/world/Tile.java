@@ -29,8 +29,8 @@ public class Tile implements IRenderable
 	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		gfx.setColor(new Color(0, 48, 100));
-		gfx.fillRect(offsetX + position.getX(), offsetY + position.getY(), dimensions.getX(), dimensions.getY());
+		gfx.fillRect(position.getX() - offsetX, position.getY() - offsetY, dimensions.getX(), dimensions.getY());
 		gfx.setColor(Color.black);
-		gfx.drawRect(offsetX + position.getX(), offsetY + position.getY(), dimensions.getX(), dimensions.getY());
+		gfx.drawRect(position.getX() - offsetX, position.getY() - offsetY, dimensions.getX(), dimensions.getY());
 	}
 }

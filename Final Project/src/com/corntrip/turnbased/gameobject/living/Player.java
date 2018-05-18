@@ -12,16 +12,14 @@ import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
-public class Player extends GameObject
+public class Player extends Entity
 {
 	private float velX = 0;
 	private float velY = 0;
-	private World world;
 	
 	public Player(float startX, float startY, float w, float h, World world)
 	{
-		super(startX, startY, w, h);
-		this.world = world;
+		super(startX, startY, w, h, world);
 	}
 	
 	@Override
@@ -58,7 +56,7 @@ public class Player extends GameObject
 		
 		boolean didMove = false;
 		
-		List<GameObject> objs = world.getGameObjects();
+		List<GameObject> objs = getWorld().getGameObjects();
 		for(int i = 0; i < objs.size(); i++)
 		{
 			if(objs.get(i) != this) // Yes i did mean '==' and not .equals because I want to check the mem address
@@ -92,6 +90,6 @@ public class Player extends GameObject
 	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		gfx.setColor(Color.green);
-		gfx.fillRect(offsetX + getX(), offsetY + getY(), getWidth(), getHeight());
+		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
 	}
 }

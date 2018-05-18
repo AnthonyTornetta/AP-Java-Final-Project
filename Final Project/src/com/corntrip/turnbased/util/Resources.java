@@ -36,6 +36,7 @@ public class Resources
 		//sounds.put("a random sound", loadSound("/res/sounds.png"));
 	}
 	
+	@SuppressWarnings("unused")
 	private SpriteSheet loadSprite(String path, int tileWidth, int tileHeight)
 	{
 		return new SpriteSheet(loadImage(path), tileWidth, tileHeight);
@@ -55,6 +56,7 @@ public class Resources
 		return i;
 	}
 	
+	@SuppressWarnings("unused")
 	private Sound loadSound(String path)
 	{
 		Sound s = null;
