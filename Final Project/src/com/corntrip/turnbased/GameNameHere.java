@@ -7,6 +7,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Player;
+import com.corntrip.turnbased.gameobject.Wall;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
@@ -15,6 +16,7 @@ public class GameNameHere extends BasicGame
 {
 	private World world;
 	private Player p;
+	private Wall wall;
 	
 	public GameNameHere()
 	{
@@ -22,7 +24,11 @@ public class GameNameHere extends BasicGame
 		
 		world = new World(960, 640);
 		
-		p = new Player(50, 50, 50, 50);
+		p = new Player(50, 50, 50, 50, world);
+		wall = new Wall(200, 200, 50, 50);
+		
+		world.addObject(p);
+		world.addObject(wall);
 	}
 
 	public static void main(String[] args)
@@ -46,6 +52,7 @@ public class GameNameHere extends BasicGame
 		world.render(gc, gfx);
 		
 		p.render(gc, gfx);
+		wall.render(gc, gfx);
 	}
 	
 	@Override

@@ -28,6 +28,6 @@ public class Wall extends GameObject
 	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		gfx.setColor(Color.gray);
-		gfx.fillRect(offsetX + getX(), offsetY + getY(), getX(), getY());
+		gfx.fillRect(offsetX + getX(), offsetY + getY(), getWidth(), getHeight());
 	}
 }

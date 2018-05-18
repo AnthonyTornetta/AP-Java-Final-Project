@@ -1,14 +1,20 @@
 package com.corntrip.turnbased.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.rendering.IRenderable;
 import com.corntrip.turnbased.util.Reference;
 
 public class World implements IRenderable
 {
+	private List<GameObject> gameObjects = new ArrayList<>();
+	
 	private final int WIDTH, HEIGHT;
 	private Tile[][] tiles;
 	
@@ -30,6 +36,21 @@ public class World implements IRenderable
 											Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 			}
 		}
+	}
+	
+	public void addObject(GameObject obj)
+	{
+		gameObjects.add(obj);
+	}
+	
+	public void removeObject(GameObject obj)
+	{
+		gameObjects.remove(obj);
+	}
+	
+	public List<GameObject> getGameObjects()
+	{
+		return gameObjects;
 	}
 	
 	@Override

@@ -1,5 +1,7 @@
 package com.corntrip.turnbased.gameobject;
 
+import java.util.List;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -7,15 +9,18 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.util.Helper;
+import com.corntrip.turnbased.world.World;
 
 public class Player extends GameObject
 {
 	private float velX = 0;
 	private float velY = 0;
+	private World world;
 	
-	public Player(float startX, float startY, float w, float h)
+	public Player(float startX, float startY, float w, float h, World world)
 	{
 		super(startX, startY, w, h);
+		this.world = world;
 	}
 	
 	@Override
@@ -50,8 +55,31 @@ public class Player extends GameObject
 		velX = Helper.clamp(velX, -5.0f, 5.0f);
 		velY = Helper.clamp(velY, -5.0f, 5.0f);
 		
-		setX(getX() + velX);
-		setY(getY() + velY);
+		boolean didMove = false;
+		
+		List<GameObject> objs = world.getGameObjects();
+		for(int i = 0; i < objs.size(); i++)
+		{
+			if(objs.get(i) != this) // Yes i did mean '==' and not .equals because I want to check the mem address
+			{
+				if(collidingWith(objs.get(i), getX() + velX, getY() + velY, getWidth(), getHeight()))
+				{
+					System.out.println("COLLIDED");
+					while(!collidingWith(objs.get(i), getX() + velX, getY() + velY, getWidth(), getHeight()))
+					{
+						setX(getX() + Math.signum(velX));
+						setY(getY() + Math.signum(velY));
+					}
+					didMove = true;
+				}
+			}
+		}
+		
+		if(!didMove)
+		{
+			setX(getX() + velX);
+			setY(getY() + velY);
+		}
 	}
 	
 	@Override
