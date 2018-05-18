@@ -22,15 +22,15 @@ public class Tile implements IRenderable
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderWithOffset(gc, gfx, position.getX(), position.getY());
+		renderWithOffset(gc, gfx, 0, 0);
 	}
 	
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float x, float y)
+	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		gfx.setColor(new Color(0, 48, 100));
-		gfx.fillRect(x, y, dimensions.getX(), dimensions.getY());
+		gfx.fillRect(offsetX + position.getX(), offsetY + position.getY(), dimensions.getX(), dimensions.getY());
 		gfx.setColor(Color.black);
-		gfx.drawRect(x, y, dimensions.getX(), dimensions.getY());
+		gfx.drawRect(offsetX + position.getX(), offsetY + position.getY(), dimensions.getX(), dimensions.getY());
 	}
 }
