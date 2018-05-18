@@ -26,6 +26,7 @@ public class Player extends GameObject
 		velX -= Math.signum(velX) * subVal;
 		velY -= Math.signum(velY) * subVal;
 		
+		// If the velocities are somewhere near 0, just set them to 0 so it doesn't slide forever
 		if(velX <= subVal && velX >= -subVal)
 			velX = 0;
 		if(velY <= subVal && velY >= -subVal)
