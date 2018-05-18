@@ -1,9 +1,11 @@
-package com.corntrip.turnbased.gameobject;
+package com.corntrip.turnbased.gameobject.nonliving;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.GameObject;
 
 public class Wall extends GameObject
 {

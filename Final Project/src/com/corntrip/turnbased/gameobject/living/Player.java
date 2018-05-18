@@ -1,4 +1,4 @@
-package com.corntrip.turnbased.gameobject;
+package com.corntrip.turnbased.gameobject.living;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
@@ -64,8 +65,7 @@ public class Player extends GameObject
 			{
 				if(collidingWith(objs.get(i), getX() + velX, getY() + velY, getWidth(), getHeight()))
 				{
-					System.out.println("COLLIDED");
-					while(!collidingWith(objs.get(i), getX() + velX, getY() + velY, getWidth(), getHeight()))
+					while(!collidingWith(objs.get(i), getX() + velX, getY(), getWidth(), getHeight()))
 					{
 						setX(getX() + Math.signum(velX));
 						setY(getY() + Math.signum(velY));

@@ -6,14 +6,16 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
-import com.corntrip.turnbased.gameobject.Player;
-import com.corntrip.turnbased.gameobject.Wall;
+import com.corntrip.turnbased.gameobject.living.Player;
+import com.corntrip.turnbased.gameobject.nonliving.Wall;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
 public class GameNameHere extends BasicGame
 {
+	private Resources res;
+	
 	private World world;
 	private Player p;
 	private Wall wall;
@@ -65,7 +67,7 @@ public class GameNameHere extends BasicGame
 		gc.setVSync(true);
 		
 		// Loads all the resources into memory
-		new Resources();
+		res = new Resources();
 	}
 	
 	@Override
