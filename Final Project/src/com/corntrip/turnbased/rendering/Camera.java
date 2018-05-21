@@ -9,16 +9,29 @@ public class Camera
 	private float screenWidth, screenHeight;
 	private float areaWidth, areaHeight;
 	
-	public Camera(float x, float y, float sw, float sh, float areaWidth, float areaHeight)
+	/**
+	 * Creates a Camera Object used to center around a given GameObject using the screen's width & height
+	 * @param x The starting x offset of the camera
+	 * @param y The starting y offset of the camera
+	 * @param sw The screen's width
+	 * @param sh The screen's height
+	 * @param aw The total area the camera can travel in's width
+	 * @param ah The total area the camera can travel in's height
+	 */
+	public Camera(float x, float y, float sw, float sh, float aw, float ah)
 	{
 		xOffset = x;
 		yOffset = y;
 		screenWidth = sw;
 		screenHeight = sh;
-		this.areaHeight = areaHeight;
-		this.areaWidth = areaWidth;
+		areaHeight = aw;
+		areaWidth = ah;
 	}
 	
+	/**
+	 * Puts the object to center around in the center of the camera's viewpoint, but by slowly gliding/slipping there
+	 * @param go The GameObject to center around
+	 */
 	public void slippyCenter(GameObject go)
 	{
 		float slippyFactor = 0.1f;
@@ -30,6 +43,10 @@ public class Camera
 		yOffset = Helper.clamp(yOffset, 0, areaHeight - screenHeight);
 	}
 	
+	/**
+	 * Puts the object to center around in the center of the camera's viewpoint
+	 * @param go The GameObject to center around
+	 */
 	public void center(GameObject go)
 	{
 		xOffset = go.getX() - screenWidth / 2 + go.getWidth() / 2;
@@ -38,6 +55,8 @@ public class Camera
 		xOffset = Helper.clamp(xOffset, 0, areaWidth - screenWidth);
 		yOffset = Helper.clamp(yOffset, 0, areaHeight - screenHeight);
 	}
+	
+	// Getters & Setters
 	
 	public float getXOffset() { return xOffset; }
 	public void setXOffset(float xOffset) { this.xOffset = xOffset; }
