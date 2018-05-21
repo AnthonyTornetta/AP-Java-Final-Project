@@ -216,18 +216,6 @@ public class World implements IRenderable
 			entities.remove(obj);
 	}
 	
-	@Override
-	public boolean equals(Object other)
-	{
-		if(other instanceof World)
-		{
-			World w = (World)other;
-			
-		}
-		
-		return false;
-	}
-	
 	public List<GameObject> getGameObjects() { return gameObjects; }
 	public List<Entity> getEntities() { return entities; }
 	

@@ -8,6 +8,8 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.gameobject.nonliving.Wall;
+import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;
+import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
@@ -60,6 +62,7 @@ public class GameNameHere extends BasicGame
 		
 		world.setPlayer(new Player(50, 50, 50, 50, world));
 		world.addObject(new Wall(200, 200, 50, 50));
+		world.addObject(new ResourceDeposit(500, 500, 50, 50, world, 1000, new GoldResource(0, 0, 16, 16)));
 	}
 	
 	@Override

@@ -1,10 +1,14 @@
 package com.corntrip.turnbased.gameobject;
 
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
 import com.corntrip.turnbased.physics.ICollidable;
 import com.corntrip.turnbased.rendering.IRenderable;
 import com.corntrip.turnbased.util.Vector2;
 
-public abstract class GameObject implements ICollidable, IRenderable
+public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 {
 	/**
 	 * Used to differentiate between objects
@@ -43,6 +47,12 @@ public abstract class GameObject implements ICollidable, IRenderable
 		
 		width = w;
 		height = h;
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		renderWithOffset(gc, gfx, 0, 0);
 	}
 	
 	@Override
