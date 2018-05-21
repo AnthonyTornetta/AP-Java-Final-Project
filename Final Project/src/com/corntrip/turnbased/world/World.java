@@ -50,10 +50,28 @@ public class World implements IRenderable
 		cam = new Camera(0, 0, Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, WIDTH, HEIGHT);
 	}
 	
-	public void setPlayer(Entity ent)
+	@Override
+	public void renderWithOffset(GameContainer gc, Graphics gfx, float passedXOff, float passedYOff)
 	{
-		player = ent;
-		cam.center(player);
+		float camXOff = cam.getXOffset();
+		float camYOff = cam.getYOffset();
+		
+		for(int y = (int) (camYOff / Reference.TILE_DIMENSIONS); y < (camYOff + cam.getScreenHeight()) / Reference.TILE_DIMENSIONS; y++)
+		{
+			for(int x = (int) (camXOff / Reference.TILE_DIMENSIONS); x < (camXOff + cam.getScreenWidth()) / Reference.TILE_DIMENSIONS; x++)
+			{
+				tiles[y][x].renderWithOffset(gc, gfx, camXOff, camYOff);
+			}
+		}
+		
+		for(GameObject o : gameObjects)
+			o.renderWithOffset(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		renderWithOffset(gc, gfx, 0, 0);
 	}
 	
 	public void update(GameContainer gc, int delta) throws SlickException
@@ -65,6 +83,18 @@ public class World implements IRenderable
 		
 		if(player != null)
 			cam.slippyCenter(player);
+	}
+	
+	/**
+	 * Tells the world who to center the camera on and other things that are player-specific. This also adds the player to the object list.
+	 * @param ent The Entity to treat as the player
+	 */
+	public void setPlayer(Entity ent)
+	{
+		player = ent;
+		cam.center(player);
+		
+		addObject(player);
 	}
 	
 	public void addObject(GameObject obj)
@@ -80,37 +110,8 @@ public class World implements IRenderable
 		gameObjects.remove(obj);
 	}
 	
-	public List<GameObject> getGameObjects()
-	{
-		return gameObjects;
-	}
+	public List<GameObject> getGameObjects() { return gameObjects; }
+	public List<Entity> getEntities() { return entities; }
 	
-	public List<Entity> getEntities()
-	{
-		return entities;
-	}
-	
-	@Override
-	public void render(GameContainer gc, Graphics gfx) throws SlickException
-	{
-		float xoff = cam.getXOffset();
-		float yoff = cam.getYOffset();
-		
-		for(int y = (int) (yoff / Reference.TILE_DIMENSIONS); y < (yoff + cam.getScreenHeight()) / Reference.TILE_DIMENSIONS; y++)
-		{
-			for(int x = (int) (xoff / Reference.TILE_DIMENSIONS); x < (xoff + cam.getScreenWidth()) / Reference.TILE_DIMENSIONS; x++)
-			{
-				tiles[y][x].renderWithOffset(gc, gfx, xoff, yoff);
-			}
-		}
-		
-		for(GameObject o : gameObjects)
-			o.renderWithOffset(gc, gfx, xoff, yoff);
-	}
-	
-	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float x, float y)
-	{
-		throw new UnsupportedOperationException("Cannot render the world with an offset.");
-	}
+	public Entity getPlayer() { return player; }
 }

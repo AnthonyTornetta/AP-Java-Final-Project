@@ -6,8 +6,8 @@ import com.corntrip.turnbased.util.Helper;
 public class Camera
 {
 	private float xOffset, yOffset;
-	private float screenWidth, screenHeight;
-	private float areaWidth, areaHeight;
+	private float visibleWidth, visibleHeight;
+	private float mapWidth, mapHeight;
 	
 	/**
 	 * Creates a Camera Object used to center around a given GameObject using the screen's width & height
@@ -22,10 +22,10 @@ public class Camera
 	{
 		xOffset = x;
 		yOffset = y;
-		screenWidth = sw;
-		screenHeight = sh;
-		areaHeight = aw;
-		areaWidth = ah;
+		visibleWidth = sw;
+		visibleHeight = sh;
+		mapHeight = aw;
+		mapWidth = ah;
 	}
 	
 	/**
@@ -36,11 +36,11 @@ public class Camera
 	{
 		float slippyFactor = 0.1f;
 		
-		xOffset += slippyFactor * (go.getX() - screenWidth / 2 + go.getWidth() / 2 - xOffset);
-		yOffset += slippyFactor * (go.getY() - screenHeight / 2 + go.getHeight() / 2 - yOffset);
+		xOffset += slippyFactor * (go.getX() - visibleWidth / 2 + go.getWidth() / 2 - xOffset);
+		yOffset += slippyFactor * (go.getY() - visibleHeight / 2 + go.getHeight() / 2 - yOffset);
 		
-		xOffset = Helper.clamp(xOffset, 0, areaWidth - screenWidth);
-		yOffset = Helper.clamp(yOffset, 0, areaHeight - screenHeight);
+		xOffset = Helper.clamp(xOffset, 0, mapWidth - visibleWidth);
+		yOffset = Helper.clamp(yOffset, 0, mapHeight - visibleHeight);
 	}
 	
 	/**
@@ -49,11 +49,11 @@ public class Camera
 	 */
 	public void center(GameObject go)
 	{
-		xOffset = go.getX() - screenWidth / 2 + go.getWidth() / 2;
-		yOffset = go.getY() - screenHeight / 2 + go.getHeight() / 2;
+		xOffset = go.getX() - visibleWidth / 2 + go.getWidth() / 2;
+		yOffset = go.getY() - visibleHeight / 2 + go.getHeight() / 2;
 		
-		xOffset = Helper.clamp(xOffset, 0, areaWidth - screenWidth);
-		yOffset = Helper.clamp(yOffset, 0, areaHeight - screenHeight);
+		xOffset = Helper.clamp(xOffset, 0, mapWidth - visibleWidth);
+		yOffset = Helper.clamp(yOffset, 0, mapHeight - visibleHeight);
 	}
 	
 	// Getters & Setters
@@ -64,9 +64,9 @@ public class Camera
 	public float getYOffset() { return yOffset; }
 	public void setYOffset(float yOffset) { this.yOffset = yOffset; }
 
-	public float getScreenWidth() { return screenWidth; }
-	public void setScreenWidth(float screenWidth) { this.screenWidth = screenWidth; }
+	public float getScreenWidth() { return visibleWidth; }
+	public void setScreenWidth(float screenWidth) { this.visibleWidth = screenWidth; }
 	
-	public float getScreenHeight() { return screenHeight; }
-	public void setScreenHeight(float screenHeight) { this.screenHeight = screenHeight; }
+	public float getScreenHeight() { return visibleHeight; }
+	public void setScreenHeight(float screenHeight) { this.visibleHeight = screenHeight; }
 }
