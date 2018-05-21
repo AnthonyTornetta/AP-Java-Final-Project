@@ -7,7 +7,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.living.Player;
-import com.corntrip.turnbased.gameobject.nonliving.Spawner;
 import com.corntrip.turnbased.gameobject.nonliving.Wall;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
