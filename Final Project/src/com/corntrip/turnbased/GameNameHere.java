@@ -26,7 +26,7 @@ public class GameNameHere extends BasicGame
 		world = new World(960 * 2, 640 * 2);
 		world.setPlayer(new Player(50, 50, 50, 50, world));
 		world.addObject(new Wall(200, 200, 50, 50));
-		world.addObject(new TestEnemy(500, 500, 50, 50, world, world.getPlayer()));
+		//world.addObject(new TestEnemy(500, 500, 50, 50, world, world.getPlayer()));
 	}
 	
 	public static void main(String[] args)

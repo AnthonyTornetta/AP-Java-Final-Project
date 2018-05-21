@@ -13,19 +13,19 @@ public class Camera
 	 * Creates a Camera Object used to center around a given GameObject using the screen's width & height
 	 * @param x The starting x offset of the camera
 	 * @param y The starting y offset of the camera
-	 * @param sw The screen's width
-	 * @param sh The screen's height
-	 * @param aw The total area the camera can travel in's width
-	 * @param ah The total area the camera can travel in's height
+	 * @param vw The screen's width
+	 * @param vh The screen's height
+	 * @param mw The total area the camera can travel in's width
+	 * @param mh The total area the camera can travel in's height
 	 */
-	public Camera(float x, float y, float sw, float sh, float aw, float ah)
+	public Camera(float x, float y, float vw, float vh, float mw, float mh)
 	{
 		xOffset = x;
 		yOffset = y;
-		visibleWidth = sw;
-		visibleHeight = sh;
-		mapHeight = aw;
-		mapWidth = ah;
+		visibleWidth = vw;
+		visibleHeight = vh;
+		mapHeight = mw;
+		mapWidth = mh;
 	}
 	
 	/**
