@@ -94,7 +94,15 @@ public class World implements IRenderable
 		}
 		
 		for(GameObject o : gameObjects)
-			o.renderWithOffset(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
+		{
+			if(o.getX() + o.getWidth() > cam.getXOffset() && o.getX() < cam.getXOffset() + cam.getScreenWidth())
+			{
+				if(o.getY() + o.getHeight() > cam.getYOffset() && o.getY() < cam.getYOffset() + cam.getScreenHeight())
+				{
+					o.renderWithOffset(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
+				}
+			}
+		}
 	}
 	
 	@Override

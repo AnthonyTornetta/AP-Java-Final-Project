@@ -24,8 +24,8 @@ public class Camera
 		yOffset = y;
 		visibleWidth = vw;
 		visibleHeight = vh;
-		mapHeight = mw;
-		mapWidth = mh;
+		mapHeight = mh;
+		mapWidth = mw;
 	}
 	
 	/**
