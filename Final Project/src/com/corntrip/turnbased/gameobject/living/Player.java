@@ -71,14 +71,11 @@ public class Player extends LivingEntity
 		{
 			if(!objs.get(i).equals(this))
 			{
-				if(collidingWith(objs.get(i), getX() + velX, getY() + velY, getWidth(), getHeight()))
+				GameObject go = objs.get(i);
+				
+				if(go.collidingWith(getX() + velX, getY() + velY, getWidth(), getHeight()))
 				{
-					while(!collidingWith(objs.get(i), getX() + velX, getY(), getWidth(), getHeight()))
-					{
-						setX(getX() + Math.signum(velX));
-						setY(getY() + Math.signum(velY));
-					}
-					didMove = true;
+					//didMove = true;
 				}
 			}
 		}

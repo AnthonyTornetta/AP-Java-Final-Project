@@ -20,7 +20,7 @@ public interface ICollidable
 	 * @param height The height of the area to check
 	 * @return true if it is colliding, false if not
 	 */
-	public boolean collidingWith(ICollidable other, float x, float y, float width, float height);
+	public boolean collidingWith(float x, float y, float width, float height);
 	
 	// Getters & Setters //
 	public float getWidth();

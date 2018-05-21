@@ -33,4 +33,10 @@ public class Wall extends GameObject
 		gfx.setColor(Color.gray);
 		gfx.fillRect(getX() - xOffset, getY() - yOffset, getWidth(), getHeight());
 	}
+
+	@Override
+	public boolean equals(Object other)
+	{
+		return false;
+	}
 }

@@ -9,6 +9,8 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.gameobject.living.Enemy;
+import com.corntrip.turnbased.gameobject.living.TestEnemy;
 import com.corntrip.turnbased.rendering.Camera;
 import com.corntrip.turnbased.rendering.IRenderable;
 import com.corntrip.turnbased.util.Reference;
@@ -34,6 +36,16 @@ public class World implements IRenderable
 	 * The Camera used when rendering the world; if no player is defined it simply remains in its default position
 	 */
 	private Camera cam;
+	
+	/**
+	 * Time in ms since the last spawn
+	 */
+	private int timeSinceLastSpawn = 0;
+	
+	/**
+	 * Keeps track of which wave of enemies it is on
+	 */
+	private int wave = 1;
 	
 	/**
 	 * The dimensions of the world
@@ -125,6 +137,48 @@ public class World implements IRenderable
 		
 		if(player != null)
 			cam.slippyCenter(player);
+		
+		timeSinceLastSpawn += delta;
+		if(timeSinceLastSpawn > 1000)
+		{
+			spawnEnemies();
+			timeSinceLastSpawn = 0;
+			wave++;
+		}
+	}
+	
+	public void spawnEnemies()
+	{
+		int enemyW = 32;
+		int enemyH = 32;
+		
+		int numOfEnemies = (int)Math.pow(6, wave * 0.1);
+
+		for(int i = 0; i < numOfEnemies; i++)
+		{
+			float x, y;
+			
+			// Loop for searching for a good position
+			searchLoop:
+			do
+			{
+				x = (float) (Math.random() * WIDTH);
+				y = (float) (Math.random() * HEIGHT);
+				
+				// Make sure it's not colliding with any objects in the scene
+				for(GameObject go : gameObjects)
+				{
+					if(go.collidingWith(x, y, enemyW, enemyH))
+					{
+						continue searchLoop;
+					}
+				}
+			} while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
+				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); // Makes sure it won't spawn in the player's viewpoint
+			
+			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer());
+			addObject(e);
+		}
 	}
 	
 	/**
@@ -160,6 +214,18 @@ public class World implements IRenderable
 		gameObjects.remove(obj);
 		if(obj instanceof Entity)
 			entities.remove(obj);
+	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof World)
+		{
+			World w = (World)other;
+			
+		}
+		
+		return false;
 	}
 	
 	public List<GameObject> getGameObjects() { return gameObjects; }

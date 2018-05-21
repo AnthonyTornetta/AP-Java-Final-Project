@@ -7,6 +7,17 @@ import com.corntrip.turnbased.util.Vector2;
 public abstract class GameObject implements ICollidable, IRenderable
 {
 	/**
+	 * Used to differentiate between objects
+	 */
+	private long objectId;
+	
+	/**
+	 * Incremented every time a new GameObject is created.
+	 * This allows for each object to have a unique id to differentiate it from objects of the same type.
+	 */
+	private static long masterId = 0;
+	
+	/**
 	 * Position of the object
 	 */
 	private float x, y;
@@ -24,6 +35,9 @@ public abstract class GameObject implements ICollidable, IRenderable
 	 */
 	public GameObject(float startX, float startY, float w, float h)
 	{
+		objectId = masterId;
+		masterId++;
+		
 		x = startX;
 		y = startY;
 		
@@ -34,18 +48,28 @@ public abstract class GameObject implements ICollidable, IRenderable
 	@Override
 	public boolean collidingWith(ICollidable other)
 	{
-		return collidingWith(other, getX(), getY(), getWidth(), getHeight());
+		return collidingWith(other.getX(), other.getY(), other.getWidth(), other.getHeight());
 	}
 	
 	@Override
-	public boolean collidingWith(ICollidable other, float x, float y, float width, float height)
+	public boolean collidingWith(float x, float y, float width, float height)
 	{
-		if(x + width >= other.getX() && x <= other.getX() + other.getWidth())
+		if(x + width >= getX() && x <= getX() + getWidth())
 		{
-			if(y + height >= other.getY() && y <= other.getY() + other.getHeight())
+			if(y + height >= getY() && y <= getY() + getHeight())
 			{
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof GameObject)
+		{
+			return ((GameObject)other).getObjectId() == getObjectId();
 		}
 		return false;
 	}
@@ -65,7 +89,9 @@ public abstract class GameObject implements ICollidable, IRenderable
 	public void setY(float y) { this.y = y; }
 	public void setWidth(float w) { this.width = w; }
 	public void setHeight(float h) { this.height = h; }
-
+	
+	public long getObjectId() { return objectId; }
+	
 	@Override
 	public Vector2<Float, Float> getPosition()
 	{
