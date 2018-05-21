@@ -7,8 +7,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.GameObject;
-import com.corntrip.turnbased.gameobject.living.Entity;
 import com.corntrip.turnbased.rendering.Camera;
 import com.corntrip.turnbased.rendering.IRenderable;
 import com.corntrip.turnbased.util.Reference;
@@ -113,9 +113,14 @@ public class World implements IRenderable
 	
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		for(Entity e : entities)
+		for(int i = 0;  i < entities.size(); i++)
 		{
+			Entity e = entities.get(i);
 			e.update(gc, delta);
+			if(i >= entities.size() || !entities.get(i).equals(e))
+			{
+				i--; // The entity was removed from the world; TODO: Do this a bettwe way
+			}
 		}
 		
 		if(player != null)

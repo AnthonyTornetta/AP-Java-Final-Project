@@ -1,9 +1,8 @@
-package com.corntrip.turnbased.gameobject.living;
+package com.corntrip.turnbased.gameobject;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 
-import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.world.World;
 
 public abstract class Entity extends GameObject

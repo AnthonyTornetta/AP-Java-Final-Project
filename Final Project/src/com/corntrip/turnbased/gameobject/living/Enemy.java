@@ -1,8 +1,9 @@
 package com.corntrip.turnbased.gameobject.living;
 
+import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.world.World;
 
-public abstract class Enemy extends Entity
+public abstract class Enemy extends LivingEntity
 {
 	/**
 	 * The target to go after

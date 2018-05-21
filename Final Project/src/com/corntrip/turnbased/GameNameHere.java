@@ -7,6 +7,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.living.Player;
+import com.corntrip.turnbased.gameobject.living.TestEnemy;
+import com.corntrip.turnbased.gameobject.nonliving.Spawner;
 import com.corntrip.turnbased.gameobject.nonliving.Wall;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
@@ -25,6 +27,7 @@ public class GameNameHere extends BasicGame
 		world = new World(960 * 2, 640 * 2);
 		world.setPlayer(new Player(50, 50, 50, 50, world));
 		world.addObject(new Wall(200, 200, 50, 50));
+		world.addObject(new Spawner(300, 300, 30, 30, world, 10000, new Player(0, 0, 50, 50, world)));
 		//world.addObject(new TestEnemy(500, 500, 50, 50, world, world.getPlayer()));
 	}
 	

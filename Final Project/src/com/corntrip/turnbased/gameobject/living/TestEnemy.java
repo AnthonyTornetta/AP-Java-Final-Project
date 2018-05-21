@@ -5,6 +5,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
@@ -44,5 +45,11 @@ public class TestEnemy extends Enemy
 			setX(getX() + moveX);
 			setY(getY() + moveY);
 		}
+	}
+
+	@Override
+	public LivingEntity clone()
+	{
+		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget());
 	}
 }

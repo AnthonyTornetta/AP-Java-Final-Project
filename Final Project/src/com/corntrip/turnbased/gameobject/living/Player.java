@@ -8,11 +8,12 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
-public class Player extends Entity
+public class Player extends LivingEntity
 {
 	/**
 	 * Used for calculating movement
@@ -69,7 +70,7 @@ public class Player extends Entity
 		List<GameObject> objs = getWorld().getGameObjects();
 		for(int i = 0; i < objs.size(); i++)
 		{
-			if(objs.get(i) != this) // Yes i did mean '==' and not .equals because I want to check the mem address
+			if(!objs.get(i).equals(this))
 			{
 				if(collidingWith(objs.get(i), getX() + velX, getY() + velY, getWidth(), getHeight()))
 				{
@@ -104,5 +105,11 @@ public class Player extends Entity
 		//gfx.rotate(rx, ry, ang);
 		
 		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+	}
+
+	@Override
+	public LivingEntity clone()
+	{
+		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld());
 	}
 }
