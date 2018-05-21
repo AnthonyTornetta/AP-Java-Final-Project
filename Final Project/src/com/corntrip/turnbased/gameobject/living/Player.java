@@ -60,11 +60,12 @@ public class Player extends LivingEntity
 			velX += 1.1;
 		
 		// End movement calcs
-		
+				
 		velX = Helper.clamp(velX, -5.0f, 5.0f);
 		velY = Helper.clamp(velY, -5.0f, 5.0f);
 		
-		boolean didMove = false;
+		float newX = velX + getX();
+		float newY = velY + getY();
 		
 		List<GameObject> objs = getWorld().getGameObjects();
 		for(int i = 0; i < objs.size(); i++)
@@ -73,18 +74,23 @@ public class Player extends LivingEntity
 			{
 				GameObject go = objs.get(i);
 				
-				if(go.collidingWith(getX() + velX, getY() + velY, getWidth(), getHeight()))
-				{
-					//didMove = true;
+				while(go.collidingWith(newX, newY, getWidth(), getHeight()))
+				{					
+					if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
+						newX -= Math.signum(velX);
+					if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
+						newY -= Math.signum(velY);
 				}
 			}
 		}
 		
-		if(!didMove)
-		{
-			setX(getX() + velX);
-			setY(getY() + velY);
-		}
+		if(newX != getX() + velX) // If the newX is not equal to the original calculation, the object collided into something causing it to change
+			velX = 0; // Since you just rammed into something, I don't think your going in that direction any more
+		if(newY != getY() + velY)
+			velY = 0;
+		
+		setX(newX);
+		setY(newY);
 	}
 	
 	@Override
