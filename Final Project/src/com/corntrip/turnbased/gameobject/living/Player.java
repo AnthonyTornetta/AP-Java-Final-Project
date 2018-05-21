@@ -8,7 +8,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
-import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;

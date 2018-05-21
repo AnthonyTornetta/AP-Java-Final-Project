@@ -23,12 +23,6 @@ public class GameNameHere extends BasicGame
 	public GameNameHere()
 	{
 		super("a (good?) game.");
-		
-		world = new World(960 * 2, 640 * 2);
-		world.setPlayer(new Player(50, 50, 50, 50, world));
-		world.addObject(new Wall(200, 200, 50, 50));
-		world.addObject(new Spawner(300, 300, 30, 30, world, 10000, new Player(0, 0, 50, 50, world)));
-		//world.addObject(new TestEnemy(500, 500, 50, 50, world, world.getPlayer()));
 	}
 	
 	public static void main(String[] args)
@@ -63,6 +57,13 @@ public class GameNameHere extends BasicGame
 		
 		// Loads all the resources into memory [TODO]
 		res = new Resources();
+				
+		world = new World(960 * 2, 640 * 2);
+		
+		world.setPlayer(new Player(50, 50, 50, 50, world));
+		world.addObject(new Wall(200, 200, 50, 50));
+		world.addObject(new Spawner(300, 300, 30, 30, world, 10000, new Player(0, 0, 50, 50, world)));
+		//world.addObject(new TestEnemy(500, 500, 50, 50, world, world.getPlayer()));
 	}
 	
 	@Override

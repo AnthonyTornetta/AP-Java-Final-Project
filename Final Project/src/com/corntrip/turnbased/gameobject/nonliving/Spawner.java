@@ -36,7 +36,8 @@ public class Spawner extends Entity
 	 * @param spawnRate Milliseconds between each spawn
 	 * @param spawnable The LivingEntity to spawn **Must have a working clone() function**
 	 */
-	public Spawner(float startX, float startY, float w, float h, World world, int spawnRate, LivingEntity spawnable)
+	public Spawner(float startX, float startY, float w, float h,
+					World world, int spawnRate, LivingEntity spawnable)
 	{
 		super(startX, startY, w, h, world);
 		this.spawnRate = spawnRate;
