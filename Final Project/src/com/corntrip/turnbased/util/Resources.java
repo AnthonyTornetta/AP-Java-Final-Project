@@ -12,7 +12,6 @@ import org.newdawn.slick.SpriteSheet;
 
 /**
  * Handles all the resources of the game
- * @author Cornchip
  */
 public class Resources
 {

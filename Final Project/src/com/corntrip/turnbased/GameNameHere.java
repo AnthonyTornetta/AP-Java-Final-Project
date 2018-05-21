@@ -15,7 +15,6 @@ import com.corntrip.turnbased.world.World;
 
 public class GameNameHere extends BasicGame
 {
-	@SuppressWarnings("unused")
 	private Resources res; // TODO: use me
 	
 	private World world;

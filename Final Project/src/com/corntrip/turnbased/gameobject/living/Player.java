@@ -14,9 +14,19 @@ import com.corntrip.turnbased.world.World;
 
 public class Player extends Entity
 {
-	private float velX = 0;
-	private float velY = 0;
+	/**
+	 * Used for calculating movement
+	 */
+	private float velX = 0, velY = 0;
 	
+	/**
+	 * Controllable Entity by the user
+	 * @param startX The x to start the player at
+	 * @param startY The y to start the player at
+	 * @param w The width of the player
+	 * @param h The height of the player
+	 * @param world The world the player is in
+	 */
 	public Player(float startX, float startY, float w, float h, World world)
 	{
 		super(startX, startY, w, h, world);
@@ -24,8 +34,8 @@ public class Player extends Entity
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
-	{		
-		float subVal = 0.5f;
+	{
+		float subVal = 0.5f; // TODO: Get thru surface friction
 		
 		velX -= Math.signum(velX) * subVal;
 		velY -= Math.signum(velY) * subVal;
@@ -90,6 +100,9 @@ public class Player extends Entity
 	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		gfx.setColor(Color.green);
+		
+		//gfx.rotate(rx, ry, ang);
+		
 		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
 	}
 }

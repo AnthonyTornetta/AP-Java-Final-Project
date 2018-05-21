@@ -6,19 +6,19 @@ public interface ICollidable
 {
 	/**
 	 * Sees if this collidable object is colliding with another collidable object
-	 * @param other The other object to check if it's colliding with
+	 * @param other The object to check if the collision is happening with
 	 * @return true if it is colliding, false if not
 	 */
 	public boolean collidingWith(ICollidable other);
 	
 	/**
-	 * Checks if the specified 
-	 * @param other
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @return
+	 * Checks if the specified position and dimensions would collide with another collidable object
+	 * @param other The object to check if the collision is happening with
+	 * @param x The x coordinate to check
+	 * @param y The y coordinate to check
+	 * @param width The width of the area to check
+	 * @param height The height of the area to check
+	 * @return true if it is colliding, false if not
 	 */
 	public boolean collidingWith(ICollidable other, float x, float y, float width, float height);
 	

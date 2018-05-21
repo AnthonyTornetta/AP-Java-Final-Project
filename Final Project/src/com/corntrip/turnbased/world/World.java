@@ -15,41 +15,70 @@ import com.corntrip.turnbased.util.Reference;
 
 public class World implements IRenderable
 {
+	/**
+	 * Keeps track of the Entity to be treated as the player
+	 */
 	private Entity player = null;
+	
+	/**
+	 * Every GameObject in the scene (including Entities) is stored in here
+	 */
 	private List<GameObject> gameObjects = new ArrayList<>();
+	
+	/**
+	 * Every Entity in the scene is stored here (each entity will also have a copy in the gameObjects List)<br>
+	 */
 	private List<Entity> entities = new ArrayList<>();
+	
+	/**
+	 * The Camera used when rendering the world; if no player is defined it simply remains in its default position
+	 */
 	private Camera cam;
 	
+	/**
+	 * The dimensions of the world
+	 */
 	private final int WIDTH, HEIGHT;
+	
+	/**
+	 * Every tile in the world
+	 */
 	private Tile[][] tiles;
 	
+	/**
+	 * A world holds every object in a scene and handles rendering and updating them all
+	 * @param width The total width of the world
+	 * @param height The total height of the world
+	 */
 	public World(int width, int height)
 	{
 		WIDTH = width;
 		HEIGHT = height;
 		
-		int tilesH = HEIGHT / Reference.TILE_DIMENSIONS;
-		int tilesW = WIDTH  / Reference.TILE_DIMENSIONS;
+		int tilesAmtY = HEIGHT / Reference.TILE_DIMENSIONS;
+		int tilesAmtX = WIDTH  / Reference.TILE_DIMENSIONS;
 		
-		tiles = new Tile[tilesH][tilesW];
+		tiles = new Tile[tilesAmtY][tilesAmtX];
 		
-		int ts = 0;
-		
-		for(int ty = 0; ty < tilesH; ty++)
+		// Fills the tiles array with new tiles (TODO: Replace with an image-loaded scene)
+		for(int ty = 0; ty < tilesAmtY; ty++)
 		{
-			for(int tx = 0; tx < tilesW; tx++)
+			for(int tx = 0; tx < tilesAmtX; tx++)
 			{
 				tiles[ty][tx] = new Tile(tx * Reference.TILE_DIMENSIONS, ty * Reference.TILE_DIMENSIONS, 
 											Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
-				ts++;
 			}
 		}
 		
-		System.out.println(ts);
+		if(Reference.DEBUG)
+			System.out.println("Total Tiles: " + tiles.length * tiles[0].length);
 		
 		cam = new Camera(0, 0, Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, WIDTH, HEIGHT);
 	}
 	
+	/**
+	 * Renders each object in the world with a specified offset added to the camera's offset
+	 */
 	@Override
 	public void renderWithOffset(GameContainer gc, Graphics gfx, float passedXOff, float passedYOff)
 	{
@@ -97,6 +126,10 @@ public class World implements IRenderable
 		addObject(player);
 	}
 	
+	/**
+	 * Adds an object to be handled by the world
+	 * @param obj The object to add to the world
+	 */
 	public void addObject(GameObject obj)
 	{
 		if(obj instanceof Entity)
@@ -105,9 +138,15 @@ public class World implements IRenderable
 		gameObjects.add(obj);
 	}
 	
+	/**
+	 * Removes an object from the world (goodbye)
+	 * @param obj The object to remove
+	 */
 	public void removeObject(GameObject obj)
 	{
 		gameObjects.remove(obj);
+		if(obj instanceof Entity)
+			entities.remove(obj);
 	}
 	
 	public List<GameObject> getGameObjects() { return gameObjects; }

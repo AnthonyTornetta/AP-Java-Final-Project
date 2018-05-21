@@ -6,8 +6,14 @@ import com.corntrip.turnbased.util.Vector2;
 
 public abstract class GameObject implements ICollidable, IRenderable
 {
-	private float width, height;
+	/**
+	 * Position of the object
+	 */
 	private float x, y;
+	/**
+	 * Dimensions of the object
+	 */
+	private float width, height;
 	
 	/**
 	 * The most general form of something in the game scene.<br>
@@ -43,6 +49,8 @@ public abstract class GameObject implements ICollidable, IRenderable
 		}
 		return false;
 	}
+	
+	// Getters & Setters
 	
 	@Override
 	public float getWidth() { return width; }
