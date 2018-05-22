@@ -11,8 +11,9 @@ import org.newdawn.slick.SlickException;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
 import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceGenerator;
-import com.corntrip.turnbased.inventory.Inventory;
+import com.corntrip.turnbased.gui.Inventory;
 import com.corntrip.turnbased.util.Helper;
+import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.world.World;
 
 public class Player extends LivingEntity
@@ -35,6 +36,8 @@ public class Player extends LivingEntity
 	public Player(float startX, float startY, float w, float h, World world)
 	{
 		super(startX, startY, w, h, world);
+		
+		inventory = new Inventory(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, 3);
 	}
 	
 	@Override
@@ -90,7 +93,7 @@ public class Player extends LivingEntity
 				else
 				{
 					while(go.collidingWith(newX, newY, getWidth(), getHeight()))
-					{					
+					{
 						if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
 							newX -= Math.signum(velX);
 						if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
@@ -116,13 +119,16 @@ public class Player extends LivingEntity
 	}
 
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
+	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		gfx.setColor(Color.green);
 		
 		//gfx.rotate(rx, ry, ang);
 		
 		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+		
+		
+		inventory.render(gc, gfx);
 	}
 
 	@Override

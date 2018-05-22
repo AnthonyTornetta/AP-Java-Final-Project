@@ -22,5 +22,5 @@ public interface IRenderable
 	 * @param offsetY The offset on the y axis to use when drawing the object
 	 * @throws SlickException Potentially thrown when drawing
 	 */
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY);
+	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException;
 }

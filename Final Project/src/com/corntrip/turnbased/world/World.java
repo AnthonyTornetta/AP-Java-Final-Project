@@ -92,7 +92,7 @@ public class World implements IRenderable
 	 * Renders each object in the world with a specified offset added to the camera's offset
 	 */
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float passedXOff, float passedYOff)
+	public void renderWithOffset(GameContainer gc, Graphics gfx, float passedXOff, float passedYOff) throws SlickException
 	{
 		float camXOff = cam.getXOffset();
 		float camYOff = cam.getYOffset();
