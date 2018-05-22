@@ -51,7 +51,7 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderWithOffset(gc, gfx, 0, 0);
+		render(gc, gfx, 0, 0);
 	}
 	
 	@Override

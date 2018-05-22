@@ -18,7 +18,7 @@ public class GoldResource extends Resource
 	}
 	
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		gfx.setColor(Color.yellow);
 		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());

@@ -30,11 +30,11 @@ public class Inventory extends GUIElement
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderWithOffset(gc, gfx, 0, 0);
+		render(gc, gfx, 0, 0);
 	}
 
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		int ofx = SLOT_SIZE * items.length / 2;
 		int drawY = getScreenHeight() - SLOT_SIZE;

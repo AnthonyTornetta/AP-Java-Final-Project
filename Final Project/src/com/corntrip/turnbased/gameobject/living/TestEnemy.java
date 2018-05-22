@@ -19,11 +19,11 @@ public class TestEnemy extends Enemy
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderWithOffset(gc, gfx, 0, 0);
+		render(gc, gfx, 0, 0);
 	}
 	
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		gfx.setColor(Color.red);
 		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());

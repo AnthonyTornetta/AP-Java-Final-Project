@@ -19,11 +19,11 @@ public abstract class GUIElement implements IRenderable
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderWithOffset(gc, gfx, 0, 0);
+		render(gc, gfx, 0, 0);
 	}
 	
 	@Override
-	public abstract void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException;
+	public abstract void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException;
 	
 	public abstract void handleKey(int j);
 

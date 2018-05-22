@@ -10,8 +10,6 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
-import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceGenerator;
-import com.corntrip.turnbased.gui.Inventory;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.world.World;
@@ -23,7 +21,12 @@ public class Player extends LivingEntity
 	 */
 	private float velX = 0, velY = 0;
 	
-	private Inventory inventory;
+	/**
+	 * The degrees the player is rotated with a range of -180 to 180 exclusive
+	 */
+	private float rotation = 0f;
+	
+	private Resource carrying = null;
 	
 	/**
 	 * Controllable Entity by the user
@@ -36,8 +39,6 @@ public class Player extends LivingEntity
 	public Player(float startX, float startY, float w, float h, World world)
 	{
 		super(startX, startY, w, h, world);
-		
-		inventory = new Inventory(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, 3);
 	}
 	
 	@Override
@@ -65,10 +66,11 @@ public class Player extends LivingEntity
 		if(in.isKeyDown(Input.KEY_A) || in.isKeyDown(Input.KEY_LEFT))
 			velX += -1.1;
 		if(in.isKeyDown(Input.KEY_D) || in.isKeyDown(Input.KEY_RIGHT))
-			velX += 1.1;
-		
+			velX += 1.1;		
 		// End movement calcs
-				
+		
+		// Rotation Calcs
+		
 		velX = Helper.clamp(velX, -5.0f, 5.0f);
 		velY = Helper.clamp(velY, -5.0f, 5.0f);
 		
@@ -81,24 +83,12 @@ public class Player extends LivingEntity
 			if(!objs.get(i).equals(this))
 			{
 				GameObject go = objs.get(i);
-				
-				if(go instanceof Resource)
+				while(go.collidingWith(newX, newY, getWidth(), getHeight()))
 				{
-					// do stuff
-				}
-				else if(go instanceof ResourceGenerator)
-				{
-					// do more stuff
-				}
-				else
-				{
-					while(go.collidingWith(newX, newY, getWidth(), getHeight()))
-					{
-						if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
-							newX -= Math.signum(velX);
-						if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
-							newY -= Math.signum(velY);
-					}
+					if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
+						newX -= Math.signum(velX);
+					if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
+						newY -= Math.signum(velY);
 				}
 			}
 		}
@@ -113,27 +103,34 @@ public class Player extends LivingEntity
 	}
 	
 	@Override
-	public void render(GameContainer gc, Graphics gfx) throws SlickException
-	{
-		renderWithOffset(gc, gfx, 0, 0);
-	}
-
-	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
-	{
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{		
 		gfx.setColor(Color.green);
 		
-		//gfx.rotate(rx, ry, ang);
+		// For rotation
+		Input input = gc.getInput();
+		int mouseX = input.getMouseX();
+		int mouseY = input.getMouseY();
+		float anchorX = getX() + getWidth() / 2 - offsetX;
+		float anchorY = getY() + getHeight() / 2 - offsetY;
 		
+		rotation = Helper.getAngle(anchorX, anchorY, mouseX, mouseY);
+		
+		if(Reference.DEBUG)
+			gfx.drawLine(anchorX, anchorY, input.getMouseX(), input.getMouseY());
+		
+		gfx.rotate(anchorX, anchorY, rotation);
 		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
-		
-		
-		inventory.render(gc, gfx);
 	}
 
 	@Override
 	public LivingEntity clone()
 	{
 		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld());
+	}
+	
+	private void grabResource(Resource r)
+	{
+		carrying = r;
 	}
 }

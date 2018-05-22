@@ -17,4 +17,17 @@ public class Helper
 			return max;
 		return val;
 	}
+	
+	/**
+	 * Finds the angle in degrees from point A to point B
+	 * @param fromX Point A's x coordinate
+	 * @param fromY Point A's y coordinate
+	 * @param toX Point B's x coordinate
+	 * @param toY Point B's y coordinate
+	 * @return The angle in degrees from point A to point B
+	 */
+	public static float getAngle(float fromX, float fromY, float toX, float toY)
+	{
+		return (float)Math.toDegrees(Math.atan2(toY - fromY, toX - fromX));
+	}
 }

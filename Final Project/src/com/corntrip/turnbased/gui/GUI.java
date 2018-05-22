@@ -16,15 +16,15 @@ public class GUI implements IRenderable
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderWithOffset(gc, gfx, 0, 0);
+		render(gc, gfx, 0, 0);
 	}
 
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		for(GUIElement e : elements)
 		{
-			e.renderWithOffset(gc, gfx, offsetX, offsetY);
+			e.render(gc, gfx, offsetX, offsetY);
 		}
 	}
 	

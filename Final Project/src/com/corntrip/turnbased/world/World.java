@@ -92,7 +92,7 @@ public class World implements IRenderable
 	 * Renders each object in the world with a specified offset added to the camera's offset
 	 */
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float passedXOff, float passedYOff) throws SlickException
+	public void render(GameContainer gc, Graphics gfx, float passedXOff, float passedYOff) throws SlickException
 	{
 		float camXOff = cam.getXOffset();
 		float camYOff = cam.getYOffset();
@@ -101,7 +101,7 @@ public class World implements IRenderable
 		{
 			for(int x = (int) (camXOff / Reference.TILE_DIMENSIONS); x < (camXOff + cam.getScreenWidth()) / Reference.TILE_DIMENSIONS; x++)
 			{
-				tiles[y][x].renderWithOffset(gc, gfx, camXOff, camYOff);
+				tiles[y][x].render(gc, gfx, camXOff, camYOff);
 			}
 		}
 		
@@ -111,7 +111,9 @@ public class World implements IRenderable
 			{
 				if(o.getY() + o.getHeight() > cam.getYOffset() && o.getY() < cam.getYOffset() + cam.getScreenHeight())
 				{
-					o.renderWithOffset(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
+					gfx.pushTransform(); // Makes sure this drawing doesn't mess w/ any others
+					o.render(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
+					gfx.popTransform();
 				}
 			}
 		}
@@ -120,7 +122,7 @@ public class World implements IRenderable
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
-		renderWithOffset(gc, gfx, 0, 0);
+		render(gc, gfx, 0, 0);
 	}
 	
 	public void update(GameContainer gc, int delta) throws SlickException

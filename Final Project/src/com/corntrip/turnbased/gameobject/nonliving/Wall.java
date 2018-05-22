@@ -21,15 +21,9 @@ public class Wall extends GameObject
 	}
 
 	@Override
-	public void renderWithOffset(GameContainer gc, Graphics gfx, float xOffset, float yOffset)
+	public void render(GameContainer gc, Graphics gfx, float xOffset, float yOffset)
 	{
 		gfx.setColor(Color.gray);
 		gfx.fillRect(getX() - xOffset, getY() - yOffset, getWidth(), getHeight());
-	}
-
-	@Override
-	public boolean equals(Object other)
-	{
-		return false;
 	}
 }
