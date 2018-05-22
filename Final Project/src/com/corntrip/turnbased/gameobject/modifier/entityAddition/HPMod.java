@@ -1,8 +1,9 @@
-package com.corntrip.turnbased.gameobject.modifier;
+package com.corntrip.turnbased.gameobject.modifier.entityAddition;
 
 import java.util.ArrayList;
 
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.modifier.Modified;
 
 /*
  * During unit spawn there should be a ArrayList of these bad boys and it should have a random chance to spawn a boss

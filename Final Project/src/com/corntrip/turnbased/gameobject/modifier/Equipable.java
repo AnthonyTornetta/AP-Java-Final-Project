@@ -1,11 +1,13 @@
 package com.corntrip.turnbased.gameobject.modifier;
 
+import org.newdawn.slick.SpriteSheet;
+
 import com.corntrip.turnbased.gameobject.Entity;
 
 public abstract class Equipable
 {
-	public abstract void modifyStats(Entity a);
+	public int tier;
 	
-	public abstract void setSprite(int x, int y, int height, int width);
+	public abstract SpriteSheet getSprite();
 }
 //tacking on swords and stuff
