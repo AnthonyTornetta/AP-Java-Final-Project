@@ -16,13 +16,7 @@ public class GoldResource extends Resource
 	{
 		return 1;
 	}
-
-	@Override
-	public int getXP()
-	{
-		return 10;
-	}
-
+	
 	@Override
 	public void renderWithOffset(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
@@ -31,7 +25,7 @@ public class GoldResource extends Resource
 	}
 	
 	@Override
-	public Resource clone()
+	public Resource createNew()
 	{
 		return new GoldResource(getX(), getY(), getWidth(), getHeight());
 	}

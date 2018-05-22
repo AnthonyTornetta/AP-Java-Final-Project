@@ -9,6 +9,9 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
+import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceGenerator;
+import com.corntrip.turnbased.inventory.Inventory;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
@@ -18,6 +21,8 @@ public class Player extends LivingEntity
 	 * Used for calculating movement
 	 */
 	private float velX = 0, velY = 0;
+	
+	private Inventory inventory;
 	
 	/**
 	 * Controllable Entity by the user
@@ -35,7 +40,7 @@ public class Player extends LivingEntity
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		float subVal = 0.5f; // TODO: Get thru surface friction
+		float subVal = 0.5f; // TODO: Get thru surface friction?
 		
 		velX -= Math.signum(velX) * subVal;
 		velY -= Math.signum(velY) * subVal;
@@ -74,12 +79,23 @@ public class Player extends LivingEntity
 			{
 				GameObject go = objs.get(i);
 				
-				while(go.collidingWith(newX, newY, getWidth(), getHeight()))
-				{					
-					if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
-						newX -= Math.signum(velX);
-					if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
-						newY -= Math.signum(velY);
+				if(go instanceof Resource)
+				{
+					// do stuff
+				}
+				else if(go instanceof ResourceGenerator)
+				{
+					// do more stuff
+				}
+				else
+				{
+					while(go.collidingWith(newX, newY, getWidth(), getHeight()))
+					{					
+						if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
+							newX -= Math.signum(velX);
+						if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
+							newY -= Math.signum(velY);
+					}
 				}
 			}
 		}

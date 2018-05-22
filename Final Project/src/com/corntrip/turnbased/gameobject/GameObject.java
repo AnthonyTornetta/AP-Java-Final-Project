@@ -6,7 +6,6 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.physics.ICollidable;
 import com.corntrip.turnbased.rendering.IRenderable;
-import com.corntrip.turnbased.util.Vector2;
 
 public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 {
@@ -101,16 +100,4 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	public void setHeight(float h) { this.height = h; }
 	
 	public long getObjectId() { return objectId; }
-	
-	@Override
-	public Vector2<Float, Float> getPosition()
-	{
-		return new Vector2<>(x, y);
-	}
-
-	@Override
-	public Vector2<Float, Float> getDimensions()
-	{
-		return new Vector2<>(width, height);
-	}
 }

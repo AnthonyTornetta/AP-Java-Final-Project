@@ -10,6 +10,5 @@ public abstract class Resource extends GameObject
 	}
 	
 	public abstract int getPtsValue();
-	public abstract int getXP();
-	public abstract Resource clone();
+	public abstract Resource createNew();
 }
