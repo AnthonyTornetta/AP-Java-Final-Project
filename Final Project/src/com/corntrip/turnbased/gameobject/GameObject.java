@@ -29,6 +29,8 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	 */
 	private float width, height;
 	
+	private float rotation = 0;
+	
 	/**
 	 * The most general form of something in the game scene.<br>
 	 * @param startX The x the object will start at
@@ -98,6 +100,9 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	public void setY(float y) { this.y = y; }
 	public void setWidth(float w) { this.width = w; }
 	public void setHeight(float h) { this.height = h; }
+	
+	public float getRotation() { return rotation; }
+	public void setRotation(float r) { rotation = r; }
 	
 	public long getObjectId() { return objectId; }
 }
