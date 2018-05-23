@@ -16,6 +16,13 @@ import com.corntrip.turnbased.world.World;
 
 public class GameNameHere extends BasicGame
 {
+	/*
+	 * rotX = x + .5 (width / root(3))
+	 * rotY = y + .5 (width / root(3))
+	 * 
+	 * 30 60 90 triangles
+	 */
+	
 	private Resources res; // TODO: use me
 	
 	private World world;

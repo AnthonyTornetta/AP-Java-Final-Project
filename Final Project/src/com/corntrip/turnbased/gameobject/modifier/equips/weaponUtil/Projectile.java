@@ -1,16 +1,16 @@
 package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
 
+import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
+import com.corntrip.turnbased.world.World;
 
-public abstract class Projectile 
+public abstract class Projectile extends Entity
 {
-	protected float startX, startY;
 	protected Weapon wep;
 	
-	public Projectile()
+	public Projectile(float startX, float startY, float w, float h, World world)
 	{
-		startX = wep.owner.getX();
-		startY = wep.owner.getY();
+		super(startX, startY, w, h, world);
 	}
 	
 	public abstract float flightSpeed();
