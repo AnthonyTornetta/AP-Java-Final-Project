@@ -222,4 +222,7 @@ public class World implements IRenderable
 	public List<Entity> getEntities() { return entities; }
 	
 	public Entity getPlayer() { return player; }
+
+	public float getWidth() { return WIDTH; }
+	public float getHeight() { return HEIGHT; }
 }

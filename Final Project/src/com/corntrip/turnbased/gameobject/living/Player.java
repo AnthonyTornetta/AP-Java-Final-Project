@@ -95,6 +95,9 @@ public class Player extends LivingEntity
 		
 		setX(newX);
 		setY(newY);
+		
+		setX(Helper.clamp(getX(), 0, getWorld().getWidth()));
+		setY(Helper.clamp(getY(), 0, getWorld().getHeight()));
 	}
 	
 	@Override
@@ -106,8 +109,7 @@ public class Player extends LivingEntity
 		Input input = gc.getInput();
 		int mouseX = input.getMouseX();
 		int mouseY = input.getMouseY();
-		float anchorX = getX() + getWidth() / 2 - offsetX;
-		float anchorY = getY() + getHeight() / 2 - offsetY;
+		
 		
 		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY));
 		
@@ -116,6 +118,9 @@ public class Player extends LivingEntity
 		
 		gfx.rotate(anchorX, anchorY, getRotation());
 		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+		
+		System.out.println("Act: " + getX() + ", " + getY());
+		System.out.println("Rot: " + getRotatedX() + ", " + getRotatedY());
 	}
 	
 	@Override

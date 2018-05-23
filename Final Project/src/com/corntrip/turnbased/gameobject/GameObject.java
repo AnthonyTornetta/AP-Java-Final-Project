@@ -6,6 +6,7 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.physics.ICollidable;
 import com.corntrip.turnbased.rendering.IRenderable;
+import com.corntrip.turnbased.util.Helper;
 
 public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 {
@@ -24,6 +25,9 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	 * Position of the object
 	 */
 	private float x, y;
+	
+	private float xRot, yRot;
+	
 	/**
 	 * Dimensions of the object
 	 */
@@ -101,8 +105,33 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	public void setWidth(float w) { this.width = w; }
 	public void setHeight(float h) { this.height = h; }
 	
-	public float getRotation() { return rotation; }
-	public void setRotation(float r) { rotation = r; }
+	public float getRotation()
+	{
+		return rotation;
+	}
+	
+	@Deprecated
+	public void setRotation(float r)
+	{
+		rotation = r;
+		
+		/*
+		 * x = xcos(r) - ysin(r)
+		 * y = ycos(r) + xsin(r)
+		 */
+		
+		xRot = (float)(getX() * Math.cos(rotation) - getY() * Math.sin(rotation));
+		yRot = (float)(getY() * Math.cos(rotation) + getX() * Math.sin(rotation));
+	}
+	
+	public void rotateTowards(float myX, float myY, float theirX, float theirY)
+	{		
+		rotation = Helper.getAngle(myX, myY, x, x);
+		
+	}
+	
+	public float getRotatedX() { return xRot; }
+	public float getRotatedY() { return yRot; }
 	
 	public long getObjectId() { return objectId; }
 }
