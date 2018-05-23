@@ -1,5 +1,7 @@
 package com.corntrip.turnbased.gameobject.modifier.equips;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.SpriteSheet;
 
 import com.corntrip.turnbased.gameobject.Entity;
@@ -8,7 +10,7 @@ import com.corntrip.turnbased.gameobject.living.LivingEntity;
 public class Sword extends Weapon
 {
 	SpriteSheet swordSprite = null;
-	Entity owner;
+	
 	
 	public Sword(Entity owner, SpriteSheet a)
 	{
@@ -24,14 +26,14 @@ public class Sword extends Weapon
 	@Override
 	public void attack() 
 	{
-		for(Entity a: owner.getWorld().getEntities())
+		//test for damage and stuff until there is a better way
+		ArrayList<Entity> enemiesHit = generateHitbox(owner.getX(), owner.getY(), owner.getWidth(), -owner.getHeight());
+		
+		for(Entity hitEnemy : enemiesHit)
 		{
-			if(a instanceof LivingEntity)
+			if(hitEnemy != null)
 			{
-				if(((LivingEntity)a).collidingWith(owner.getX(), owner.getY(), owner.getWidth(), -owner.getHeight()))
-				{
-					((LivingEntity) a).takeDamage((int)damage);;
-				}
+				((LivingEntity) hitEnemy).takeDamage((int)(damage+0.5));;
 			}
 		}
 	}
