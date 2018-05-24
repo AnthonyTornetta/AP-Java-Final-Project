@@ -4,18 +4,20 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.world.World;
 
 public class Arrows extends Projectile
 {
 
-	public Arrows(float startX, float startY, float w, float h, World world) {
-		super(startX, startY, w, h, world);
+	public Arrows(float startX, float startY, float w, float h, World world, Weapon wep) {
+		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation());
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public float flightSpeed() {
+	public float flightSpeed() 
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
