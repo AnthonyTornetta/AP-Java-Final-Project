@@ -22,7 +22,7 @@ public abstract class Projectile extends Entity
 	
 	//change this to the weapon items, like the bow's arrows
 	//they should extend the weapon and 'be' it's hitbox
-	public void shoot(Projectile p, float endX, float endY)
+	public void shoot(float endX, float endY)
 	{
 		if(p.startX == endX)
 			endPath(p);

@@ -4,7 +4,8 @@ public class Arrows extends Projectile
 {
 
 	@Override
-	public float flightSpeed() {
+	public float flightSpeed() 
+	{
 		// TODO Auto-generated method stub
 		return 0;
 	}
