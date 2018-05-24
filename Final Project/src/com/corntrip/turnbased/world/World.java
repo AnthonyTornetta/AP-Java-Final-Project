@@ -16,7 +16,7 @@ import com.corntrip.turnbased.rendering.IRenderable;
 import com.corntrip.turnbased.util.Reference;
 
 public class World implements IRenderable
-{
+{	
 	/**
 	 * Keeps track of the Entity to be treated as the player
 	 */
@@ -28,7 +28,7 @@ public class World implements IRenderable
 	private List<GameObject> gameObjects = new ArrayList<>();
 	
 	/**
-	 * Every Entity in the scene is stored here (each entity will also have a copy in the gameObjects List)<br>
+	 * Every Entity in the scene is stored here (each entity will also have a copy in the gameObjects List)
 	 */
 	private List<Entity> entities = new ArrayList<>();
 	
@@ -56,6 +56,11 @@ public class World implements IRenderable
 	 * Every tile in the world
 	 */
 	private Tile[][] tiles;
+	
+	/**
+	 * Keeps track of objects to be removed after being messed with
+	 */
+	private List<GameObject> objectsToBeRemoved = new ArrayList<>();
 	
 	/**
 	 * A world holds every object in a scene and handles rendering and updating them all
@@ -147,6 +152,12 @@ public class World implements IRenderable
 			timeSinceLastSpawn = 0;
 			wave++;
 		}
+		
+		while(objectsToBeRemoved.size() > 0)
+		{
+			GameObject go = objectsToBeRemoved.remove(0);
+			removeObjectUnsafely(go);
+		}
 	}
 	
 	public void spawnEnemies()
@@ -208,11 +219,19 @@ public class World implements IRenderable
 	}
 	
 	/**
-	 * TODO FIX ME PLEASE
-	 * Removes an object from the world (goodbye)
+	 * Removes an object from the world after the world is done updating
 	 * @param obj The object to remove
 	 */
 	public void removeObject(GameObject obj)
+	{
+		objectsToBeRemoved.add(obj);
+	}
+	
+	/**
+	 * Removes an object from the world regardless of if things are updating or not
+	 * @param obj The object to remove
+	 */
+	private void removeObjectUnsafely(GameObject obj)
 	{
 		gameObjects.remove(obj);
 		if(obj instanceof Entity)
