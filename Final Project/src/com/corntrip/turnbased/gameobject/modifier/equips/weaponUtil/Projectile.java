@@ -24,9 +24,9 @@ public abstract class Projectile extends Entity
 	//they should extend the weapon and 'be' it's hitbox
 	public void shoot(float endX, float endY)
 	{
-		if(p.startX == endX)
-			endPath(p);
-		
-		wep.generateHitbox();
+//		if(p.startX == endX)
+//			endPath(p);
+//		
+//		wep.generateHitbox();
 	}
 }
