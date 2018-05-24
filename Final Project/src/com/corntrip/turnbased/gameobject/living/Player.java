@@ -110,17 +110,19 @@ public class Player extends LivingEntity
 		int mouseX = input.getMouseX();
 		int mouseY = input.getMouseY();
 		
+		float anchorX = getX() + getWidth() / 2 - offsetX;
+		float anchorY = getY() + getHeight() / 2 - offsetY;
 		
-		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY));
+		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY), anchorX, anchorY);
 		
 		if(Reference.DEBUG)
 			gfx.drawLine(anchorX, anchorY, input.getMouseX(), input.getMouseY());
 		
 		gfx.rotate(anchorX, anchorY, getRotation());
-		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
 		
-		System.out.println("Act: " + getX() + ", " + getY());
-		System.out.println("Rot: " + getRotatedX() + ", " + getRotatedY());
+		float drawX = getX() - offsetX;
+		float drawY = getY() - offsetY;		
+		gfx.fillRect(drawX, drawY, getWidth(), getHeight());
 	}
 	
 	@Override

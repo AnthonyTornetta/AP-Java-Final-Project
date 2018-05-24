@@ -110,18 +110,17 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 		return rotation;
 	}
 	
-	@Deprecated
-	public void setRotation(float r)
+	public void setRotation(float rotation, float anchorX, float anchorY)
 	{
-		rotation = r;
+		this.rotation = rotation;
 		
-		/*
-		 * x = xcos(r) - ysin(r)
-		 * y = ycos(r) + xsin(r)
-		 */
+		// Convert to radians because java likes them
+		double radians = Math.toRadians(rotation);
 		
-		xRot = (float)(getX() * Math.cos(rotation) - getY() * Math.sin(rotation));
-		yRot = (float)(getY() * Math.cos(rotation) + getX() * Math.sin(rotation));
+		// Do fancy maths **not** stolen from stack overflow
+		xRot = (float)(Math.cos(radians) * (getX() - anchorX) - Math.sin(radians) * (getX() - anchorY) + anchorX);
+
+		yRot = (float)(Math.sin(radians) * (getX() - anchorX) + Math.cos(radians) * (getY() - anchorY) + anchorY);
 	}
 	
 	public void rotateTowards(float myX, float myY, float theirX, float theirY)
