@@ -208,6 +208,7 @@ public class World implements IRenderable
 	}
 	
 	/**
+	 * TODO FIX ME PLEASE
 	 * Removes an object from the world (goodbye)
 	 * @param obj The object to remove
 	 */
