@@ -1,5 +1,10 @@
 package com.corntrip.turnbased;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -13,6 +18,7 @@ import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceGenerator;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
+import com.corntrip.turnbased.world.WorldLoader;
 
 public class GameNameHere extends BasicGame
 {
@@ -65,7 +71,14 @@ public class GameNameHere extends BasicGame
 		// Loads all the resources into memory [TODO]
 		res = new Resources();
 				
-		world = new World(960 * 2, 640 * 2);
+		try
+		{
+			world = WorldLoader.generateWorldFromImage(ImageIO.read(new File("res/map.png")));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+			throw new IllegalStateException("Failed to Create World.");
+		}
 		
 		world.setPlayer(new Player(50, 50, 50, 50, world));
 		world.addObject(new Wall(200, 200, 50, 50));

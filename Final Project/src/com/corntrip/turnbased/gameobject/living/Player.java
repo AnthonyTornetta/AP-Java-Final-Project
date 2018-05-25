@@ -72,6 +72,7 @@ public class Player extends LivingEntity
 		float newX = velX + getX();
 		float newY = velY + getY();
 		
+		// TODO: Fix to avoid crashes pls
 		List<GameObject> objs = getWorld().getGameObjects();
 		for(int i = 0; i < objs.size(); i++)
 		{
