@@ -9,22 +9,20 @@ import com.corntrip.turnbased.world.World;
 
 public class Arrows extends Projectile
 {
-
-	public Arrows(float startX, float startY, float w, float h, World world, Weapon wep, float rotation) {
-		super(startX, startY, w, h, world, wep, rotation);
-		// TODO Auto-generated constructor stub
+	public Arrows(float startX, float startY, float w, float h, World world, Weapon wep)
+	{
+		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation());
 	}
 
 	@Override
-	public float flightSpeed() {
-		// TODO Auto-generated method stub
+	public float flightSpeed() 
+	{
 		return 0;
 	}
 
 	@Override
-	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException {
-		// TODO Auto-generated method stub
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
 		
 	}
-
 }

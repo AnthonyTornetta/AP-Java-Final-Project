@@ -8,8 +8,8 @@ import com.corntrip.turnbased.gameobject.modifier.Equipable;
 
 public abstract class Weapon extends Equipable
 {
-	public Entity owner;
-	public float damage;
+	protected Entity owner;
+	protected float damage;
 	
 	
 	public abstract void attack();
@@ -33,4 +33,8 @@ public abstract class Weapon extends Equipable
 		return itemsHit;
 	}
 	
+	public Entity getOwner() { return owner; }
+	
+	public void setOwner(Entity owner) { this.owner = owner; }
+	public void setDamage(float damage) { this.damage = damage; }
 }

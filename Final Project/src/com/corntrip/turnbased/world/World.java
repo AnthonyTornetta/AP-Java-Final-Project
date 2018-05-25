@@ -1,7 +1,13 @@
 package com.corntrip.turnbased.world;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -11,12 +17,15 @@ import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.Enemy;
 import com.corntrip.turnbased.gameobject.living.TestEnemy;
+import com.corntrip.turnbased.gameobject.nonliving.Wall;
+import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;
+import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceGenerator;
 import com.corntrip.turnbased.rendering.Camera;
 import com.corntrip.turnbased.rendering.IRenderable;
 import com.corntrip.turnbased.util.Reference;
 
 public class World implements IRenderable
-{
+{	
 	/**
 	 * Keeps track of the Entity to be treated as the player
 	 */
@@ -28,7 +37,7 @@ public class World implements IRenderable
 	private List<GameObject> gameObjects = new ArrayList<>();
 	
 	/**
-	 * Every Entity in the scene is stored here (each entity will also have a copy in the gameObjects List)<br>
+	 * Every Entity in the scene is stored here (each entity will also have a copy in the gameObjects List)
 	 */
 	private List<Entity> entities = new ArrayList<>();
 	
@@ -58,6 +67,11 @@ public class World implements IRenderable
 	private Tile[][] tiles;
 	
 	/**
+	 * Keeps track of objects to be removed after being messed with
+	 */
+	private List<GameObject> objectsToBeRemoved = new ArrayList<>();
+	
+	/**
 	 * A world holds every object in a scene and handles rendering and updating them all
 	 * @param width The total width of the world
 	 * @param height The total height of the world
@@ -84,6 +98,15 @@ public class World implements IRenderable
 		
 		if(Reference.DEBUG)
 			System.out.println("Total Tiles: " + tiles.length * tiles[0].length);
+		
+		try
+		{
+			loadWorld(ImageIO.read(new File("res/map.png")));
+		}
+		catch(IOException ex)
+		{
+			ex.printStackTrace();
+		}
 		
 		cam = new Camera(0, 0, Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, WIDTH, HEIGHT);
 	}
@@ -131,10 +154,6 @@ public class World implements IRenderable
 		{
 			Entity e = entities.get(i);
 			e.update(gc, delta);
-			if(i >= entities.size() || !entities.get(i).equals(e))
-			{
-				i--; // The entity was removed from the world; TODO: Do this a bettwe way
-			}
 		}
 		
 		if(player != null)
@@ -146,6 +165,12 @@ public class World implements IRenderable
 			//spawnEnemies();
 			timeSinceLastSpawn = 0;
 			wave++;
+		}
+		
+		while(objectsToBeRemoved.size() > 0)
+		{
+			GameObject go = objectsToBeRemoved.remove(0);
+			removeObjectUnsafely(go);
 		}
 	}
 	
@@ -208,18 +233,55 @@ public class World implements IRenderable
 	}
 	
 	/**
-	 * Removes an object from the world (goodbye)
+	 * Removes an object from the world after the world is done updating
 	 * @param obj The object to remove
 	 */
 	public void removeObject(GameObject obj)
+	{
+		objectsToBeRemoved.add(obj);
+	}
+	
+	/**
+	 * Removes an object from the world regardless of if things are updating or not
+	 * @param obj The object to remove
+	 */
+	private void removeObjectUnsafely(GameObject obj)
 	{
 		gameObjects.remove(obj);
 		if(obj instanceof Entity)
 			entities.remove(obj);
 	}
 	
+	private void loadWorld(BufferedImage fromMe)
+	{
+		for(int y = 0; y < fromMe.getHeight(); y++)
+		{
+			for(int x = 0; x < fromMe.getWidth(); x++)
+			{
+				Color c = new Color(fromMe.getRGB(x, y));
+				
+				if(c.equals(Reference.RESOURCE_SPAWN_POINT_KEY))
+				{
+					addObject(new ResourceGenerator(x * Reference.TILE_DIMENSIONS, y * Reference.TILE_DIMENSIONS, 
+							Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS, this, 10000, 
+							new GoldResource(Reference.TILE_DIMENSIONS * x + Reference.TILE_DIMENSIONS / 2, 
+									Reference.TILE_DIMENSIONS * y + Reference.TILE_DIMENSIONS / 2, 
+									Reference.TILE_DIMENSIONS / 2, Reference.TILE_DIMENSIONS / 2)));
+				}
+				
+				if(c.equals(Reference.TREE_SPAWN_KEY) || c.equals(Reference.WALL_SPAWN_KEY))
+				{
+					addObject(new Wall(x * Reference.TILE_DIMENSIONS, y * Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS));
+				}
+			}
+		}
+	}
+	
 	public List<GameObject> getGameObjects() { return gameObjects; }
 	public List<Entity> getEntities() { return entities; }
 	
 	public Entity getPlayer() { return player; }
+
+	public float getWidth() { return WIDTH; }
+	public float getHeight() { return HEIGHT; }
 }

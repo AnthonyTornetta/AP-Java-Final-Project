@@ -1,5 +1,11 @@
 package com.corntrip.turnbased.util;
 
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.corntrip.turnbased.gameobject.GameObject;
+
 public class Reference
 {
 	/**
@@ -21,4 +27,13 @@ public class Reference
 	 * The dimensions of the window
 	 */
 	public static final int WINDOW_WIDTH = 960, WINDOW_HEIGHT = 640;
+	
+	
+	public static final Color RESOURCE_SPAWN_POINT_KEY = new Color(255, 0, 0);
+	
+	public static final Color TREE_SPAWN_KEY = new Color(0, 255, 0);
+	
+	public static final Color WALL_SPAWN_KEY = new Color(0, 0, 255);
+	
+	public static final Color TOWN_HALL_KEY = new Color(255, 0, 255);
 }

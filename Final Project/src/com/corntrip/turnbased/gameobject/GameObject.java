@@ -6,6 +6,7 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.physics.ICollidable;
 import com.corntrip.turnbased.rendering.IRenderable;
+import com.corntrip.turnbased.util.Helper;
 
 public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 {
@@ -24,10 +25,15 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	 * Position of the object
 	 */
 	private float x, y;
+	
+	private float xRot, yRot;
+	
 	/**
 	 * Dimensions of the object
 	 */
 	private float width, height;
+	
+	private float rotation = 0;
 	
 	/**
 	 * The most general form of something in the game scene.<br>
@@ -98,6 +104,33 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	public void setY(float y) { this.y = y; }
 	public void setWidth(float w) { this.width = w; }
 	public void setHeight(float h) { this.height = h; }
+	
+	public float getRotation()
+	{
+		return rotation;
+	}
+	
+	public void setRotation(float rotation, float anchorX, float anchorY)
+	{
+		this.rotation = rotation;
+		
+		// Convert to radians because java likes them
+		double radians = Math.toRadians(rotation);
+		
+		// Do fancy maths **not** stolen from stack overflow
+		xRot = (float)(Math.cos(radians) * (getX() - anchorX) - Math.sin(radians) * (getX() - anchorY) + anchorX);
+
+		yRot = (float)(Math.sin(radians) * (getX() - anchorX) + Math.cos(radians) * (getY() - anchorY) + anchorY);
+	}
+	
+	public void rotateTowards(float myX, float myY, float theirX, float theirY)
+	{		
+		rotation = Helper.getAngle(myX, myY, x, x);
+		
+	}
+	
+	public float getRotatedX() { return xRot; }
+	public float getRotatedY() { return yRot; }
 	
 	public long getObjectId() { return objectId; }
 }
