@@ -1,2 +1,2 @@
 # AP-Java-Final-Project
-Join project with Cornchip &amp; Troy.
+Joint project with Cornchip &amp; Troy.
