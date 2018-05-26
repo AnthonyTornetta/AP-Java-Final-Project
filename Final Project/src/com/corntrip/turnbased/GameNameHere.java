@@ -74,7 +74,7 @@ public class GameNameHere extends BasicGame
 		
 		world.setTownhall(new Townhall(64 * 5, 64 * 5, 128, 128));
 		world.setPlayer(new Player(50, 50, 32, 32, world));
-		world.addObject(new Wall(200, 200, 32, 32));
+		world.addObject(new Wall(200, 200, 32, 32, Resources.getSpriteImage("wall",(int)(Math.random() + 0.5), (int)(Math.random() + 0.5))));
 		world.addObject(new ResourceGenerator(500, 500, 32, 32, world, 1000, new GoldResource(0, 0, 16, 16)));
 		world.addObject(new ResourceDeposit(64 * 5 + 128 / 2 - 16 / 2, 64 * 5 + 128 + 16 * 2, 16, 16));
 	}
@@ -82,6 +82,7 @@ public class GameNameHere extends BasicGame
 	private void initializeResources()
 	{
 		Resources.registerSpriteSheet("tiles", Resources.loadSpriteSheet("tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS));
+		Resources.registerSpriteSheet("wall", Resources.loadSpriteSheet("wall.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS));
 	}
 
 	@Override
