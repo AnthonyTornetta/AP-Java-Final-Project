@@ -21,11 +21,6 @@ public class Player extends LivingEntity
 	 */
 	private float velX = 0, velY = 0;
 	
-	/**
-	 * The degrees the player is rotated with a range of -180 to 180 exclusive
-	 */
-	private float rotation = 0f;
-	
 	private Resource carrying = null;
 	
 	/**
@@ -100,6 +95,9 @@ public class Player extends LivingEntity
 		
 		setX(newX);
 		setY(newY);
+		
+		setX(Helper.clamp(getX(), 0, getWorld().getWidth()));
+		setY(Helper.clamp(getY(), 0, getWorld().getHeight()));
 	}
 	
 	@Override
@@ -111,18 +109,22 @@ public class Player extends LivingEntity
 		Input input = gc.getInput();
 		int mouseX = input.getMouseX();
 		int mouseY = input.getMouseY();
+		
 		float anchorX = getX() + getWidth() / 2 - offsetX;
 		float anchorY = getY() + getHeight() / 2 - offsetY;
 		
-		rotation = Helper.getAngle(anchorX, anchorY, mouseX, mouseY);
+		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY), anchorX, anchorY);
 		
 		if(Reference.DEBUG)
 			gfx.drawLine(anchorX, anchorY, input.getMouseX(), input.getMouseY());
 		
-		gfx.rotate(anchorX, anchorY, rotation);
-		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+		gfx.rotate(anchorX, anchorY, getRotation());
+		
+		float drawX = getX() - offsetX;
+		float drawY = getY() - offsetY;		
+		gfx.fillRect(drawX, drawY, getWidth(), getHeight());
 	}
-
+	
 	@Override
 	public LivingEntity clone()
 	{
