@@ -81,7 +81,23 @@ public class GameNameHere extends BasicGame
 	
 	private void initializeResources()
 	{
-		Resources.registerSpriteSheet("tiles", Resources.loadSpriteSheet("tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS));
+		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		registerImage("player", "player.png");
+	}
+	
+	private void registerImage(String name, String location)
+	{
+		Resources.registerImage(name, Resources.loadImage(location));
+	}
+	
+	private void registerSpriteSheet(String name, String location, int w, int h)
+	{
+		Resources.registerSpriteSheet(name, Resources.loadSpriteSheet(location, w, h));
+	}
+	
+	private void registerSound(String name, String location)
+	{
+		Resources.registerSound(name, Resources.loadSound(location));
 	}
 
 	@Override

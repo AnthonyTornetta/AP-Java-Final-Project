@@ -5,6 +5,7 @@ import java.util.List;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
@@ -13,6 +14,7 @@ import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
 import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Reference;
+import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
 public class Player extends LivingEntity
@@ -36,6 +38,11 @@ public class Player extends LivingEntity
 	 * A flag to tell if the upgrade GUI should be displayed
 	 */
 	private boolean displayUpgradeGUI = false;
+	
+	/**
+	 * The texture of the player
+	 */
+	private Image texture = Resources.getImage("player");
 	
 	/**
 	 * Controllable Entity by the user
@@ -173,7 +180,7 @@ public class Player extends LivingEntity
 		
 		float drawX = getX() - offsetX;
 		float drawY = getY() - offsetY;		
-		gfx.fillRect(drawX, drawY, getWidth(), getHeight());
+		texture.draw(drawX, drawY);
 		
 		if(displayUpgradeGUI)
 		{
