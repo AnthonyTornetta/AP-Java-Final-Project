@@ -3,10 +3,13 @@ package com.corntrip.turnbased.world;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import org.newdawn.slick.Image;
+
 import com.corntrip.turnbased.gameobject.nonliving.Wall;
 import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;
 import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceGenerator;
 import com.corntrip.turnbased.util.Reference;
+import com.corntrip.turnbased.util.Resources;
 
 public class WorldLoader
 {
@@ -31,7 +34,9 @@ public class WorldLoader
 				
 				if(c.equals(Reference.TREE_SPAWN_KEY) || c.equals(Reference.WALL_SPAWN_KEY))
 				{
-					world.addObject(new Wall(x * Reference.TILE_DIMENSIONS, y * Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS));
+					
+					//public Wall(float startX, float startY, float w, float h, Image texture)
+					world.addObject(new Wall(x * Reference.TILE_DIMENSIONS, y * Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS, Resources.getSpriteImage("wall",(int)(Math.random() + 0.5), (int)(Math.random() + 0.5))));
 				}
 			}
 		}
