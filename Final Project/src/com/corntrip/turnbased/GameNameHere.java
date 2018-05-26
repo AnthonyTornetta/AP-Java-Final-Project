@@ -83,6 +83,7 @@ public class GameNameHere extends BasicGame
 	{
 		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		registerImage("player", "player.png");
+		registerImage("grass", "grass.png");
 	}
 	
 	private void registerImage(String name, String location)

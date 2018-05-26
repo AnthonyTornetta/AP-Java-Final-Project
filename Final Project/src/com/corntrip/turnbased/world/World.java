@@ -91,7 +91,7 @@ public class World implements IRenderable
 			{
 				tiles[ty][tx] = new Tile(tx * Reference.TILE_DIMENSIONS, ty * Reference.TILE_DIMENSIONS, 
 											Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS, 
-											Resources.getSpriteImage("tiles", (int)(Math.random() + 0.5), (int)(Math.random() + 0.5)));
+											Resources.getImage("grass"));//Resources.getSpriteImage("tiles", (int)(Math.random() + 0.5), (int)(Math.random() + 0.5)));
 			}
 		}
 		

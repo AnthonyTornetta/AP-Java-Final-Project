@@ -84,9 +84,7 @@ public class Player extends LivingEntity
 		if(in.isKeyDown(Input.KEY_D) || in.isKeyDown(Input.KEY_RIGHT))
 			velX += 1.1;		
 		// End movement calcs
-		
-		System.out.println(pts);
-		
+				
 		if(resourceCarrying == null)
 		{
 			velX = Helper.clamp(velX, -5.0f, 5.0f);
@@ -98,8 +96,10 @@ public class Player extends LivingEntity
 			velY = Helper.clamp(velY, -2.0f, 2.0f);
 		}
 		
-		float newX = velX + getX();
-		float newY = velY + getY();
+		double moveBy = 1;//delta / (1000.0 / Reference.MAX_FPS);
+		
+		float newX = (float)(velX * moveBy + getX());
+		float newY = (float)(velY * moveBy + getY());
 		
 		// TODO: Fix to avoid crashes pls
 		List<GameObject> objs = getWorld().getGameObjects();
@@ -131,10 +131,17 @@ public class Player extends LivingEntity
 					{
 						while(go.collidingWith(newX, newY, getWidth(), getHeight()))
 						{
-							if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
-								newX -= Math.signum(velX);
-							if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
-								newY -= Math.signum(velY);
+							newX = getX();
+							newY = getY();
+							
+							for(float precision = 10.0f; precision >= 100.0f; precision *= 10.0f)
+							{
+								while(!go.collidingWith(newX + velX / precision, newY + velY / precision, getWidth(), getHeight()))
+								{
+									newX += velX / precision;
+									newY += velY / precision;
+								}
+							}
 						}
 					}
 				}
@@ -202,4 +209,12 @@ public class Player extends LivingEntity
 	
 	public int getPoints() { return pts; }
 	public void setPoints(int p) { pts = p; }
+	
+	/*
+	 * //							if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
+//								newX -= Math.signum(velX);
+//							if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
+//								newY -= Math.signum(velY);
+	 * 
+	 */
 }
