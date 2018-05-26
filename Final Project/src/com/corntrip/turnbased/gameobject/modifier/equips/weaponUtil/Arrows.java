@@ -12,17 +12,18 @@ public class Arrows extends Projectile
 	public Arrows(float startX, float startY, float w, float h, World world, Weapon wep)
 	{
 		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation());
+		
 	}
 
 	@Override
 	public float flightSpeed() 
 	{
-		return 0;
+		return 30.4f;
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
-		
+		//to be done
 	}
 }
