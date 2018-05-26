@@ -11,9 +11,11 @@ import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.Enemy;
 import com.corntrip.turnbased.gameobject.living.TestEnemy;
+import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
 import com.corntrip.turnbased.rendering.Camera;
 import com.corntrip.turnbased.rendering.IRenderable;
 import com.corntrip.turnbased.util.Reference;
+import com.corntrip.turnbased.util.Resources;
 
 public class World implements IRenderable
 {	
@@ -21,6 +23,11 @@ public class World implements IRenderable
 	 * Keeps track of the Entity to be treated as the player
 	 */
 	private Entity player = null;
+	
+	/**
+	 * Keeps track of the GameObject to be treated as the town hall
+	 */
+	private Townhall townhall = null;
 	
 	/**
 	 * Every GameObject in the scene (including Entities) is stored in here
@@ -83,7 +90,8 @@ public class World implements IRenderable
 			for(int tx = 0; tx < tilesAmtX; tx++)
 			{
 				tiles[ty][tx] = new Tile(tx * Reference.TILE_DIMENSIONS, ty * Reference.TILE_DIMENSIONS, 
-											Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+											Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS, 
+											Resources.getSpriteImage("tiles", (int)(Math.random() + 0.5), (int)(Math.random() + 0.5)));
 			}
 		}
 		
@@ -112,16 +120,22 @@ public class World implements IRenderable
 		
 		for(GameObject o : gameObjects)
 		{
-			if(o.getX() + o.getWidth() > cam.getXOffset() && o.getX() < cam.getXOffset() + cam.getScreenWidth())
+			if(!o.equals(getPlayer()))
 			{
-				if(o.getY() + o.getHeight() > cam.getYOffset() && o.getY() < cam.getYOffset() + cam.getScreenHeight())
+				if(o.getX() + o.getWidth() > cam.getXOffset() && o.getX() < cam.getXOffset() + cam.getScreenWidth())
 				{
-					gfx.pushTransform(); // Makes sure this drawing doesn't mess w/ any others
-					o.render(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
-					gfx.popTransform();
+					if(o.getY() + o.getHeight() > cam.getYOffset() && o.getY() < cam.getYOffset() + cam.getScreenHeight())
+					{
+						gfx.pushTransform(); // Makes sure this drawing doesn't mess w/ any others
+						o.render(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
+						gfx.popTransform();
+					}
 				}
 			}
 		}
+		
+		if(getPlayer() != null) // Render the player last so it's not behind walls n stuff
+			getPlayer().render(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
 	}
 	
 	@Override
@@ -198,8 +212,17 @@ public class World implements IRenderable
 	{
 		player = ent;
 		cam.center(player);
-		
 		addObject(player);
+	}
+	
+	/**
+	 * Assigns the town hall in the world to be the given object, and adds it to the world's registered objects.
+	 * @param th The Townhall to be added
+	 */
+	public void setTownhall(Townhall th)
+	{
+		addObject(th);
+		townhall = th;
 	}
 	
 	/**
@@ -234,10 +257,20 @@ public class World implements IRenderable
 			entities.remove(obj);
 	}
 	
+	public boolean containsObject(GameObject obj)
+	{
+		for(GameObject o : gameObjects)
+			if(o.equals(obj))
+				return true;
+		return false;
+	}
+	
 	public List<GameObject> getGameObjects() { return gameObjects; }
 	public List<Entity> getEntities() { return entities; }
 	
 	public Entity getPlayer() { return player; }
+	
+	public Townhall getTownhall() { return townhall; }
 
 	public float getWidth() { return WIDTH; }
 	public float getHeight() { return HEIGHT; }

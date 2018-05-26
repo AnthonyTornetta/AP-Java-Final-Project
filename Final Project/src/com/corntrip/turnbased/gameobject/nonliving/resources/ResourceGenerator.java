@@ -13,6 +13,7 @@ public class ResourceGenerator extends Entity
 	private int timeSinceLastSpawn = 0;
 	private int spawnDelayMS;
 	private Resource resource;
+	private Resource resourceLaidDown = null;
 	
 	public ResourceGenerator(float startX, float startY, float w, float h, World world, int spawnDelayMS, Resource resource)
 	{
@@ -37,15 +38,26 @@ public class ResourceGenerator extends Entity
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		timeSinceLastSpawn += delta;
+		if(resourceLaidDown != null)
+		{
+			if(!getWorld().containsObject(resourceLaidDown))
+			{
+				resourceLaidDown = null;
+			}
+		}
+		
+		if(resourceLaidDown == null)
+			timeSinceLastSpawn += delta; // Only spawn if no resource is present
+		else
+			timeSinceLastSpawn = 0;
 		
 		if(timeSinceLastSpawn >= spawnDelayMS)
 		{
-			Resource spawned = resource.createNew();
+			resourceLaidDown = resource.createNew();
 			timeSinceLastSpawn = 0;
-			spawned.setX((int)(getX() + (Math.random() * 200) - 50));
-			spawned.setY((int)(getY() + (Math.random() * 200) - 50));
-			getWorld().addObject(spawned);
+			resourceLaidDown.setX((int)(getX() + (Math.random() * 200) - 50));
+			resourceLaidDown.setY((int)(getY() + (Math.random() * 200) - 50));
+			getWorld().addObject(resourceLaidDown);
 		}
 	}
 }

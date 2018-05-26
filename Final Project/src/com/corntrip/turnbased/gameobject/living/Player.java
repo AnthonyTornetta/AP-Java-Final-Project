@@ -10,6 +10,7 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
+import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.world.World;
@@ -21,7 +22,20 @@ public class Player extends LivingEntity
 	 */
 	private float velX = 0, velY = 0;
 	
-	private Resource carrying = null;
+	/**
+	 * Holds the points aquired from scoring resources
+	 */
+	private int pts = 0;
+	
+	/**
+	 * Holds the resource the player may or may not be carrying
+	 */
+	private Resource resourceCarrying = null;
+	
+	/**
+	 * A flag to tell if the upgrade GUI should be displayed
+	 */
+	private boolean displayUpgradeGUI = false;
 	
 	/**
 	 * Controllable Entity by the user
@@ -64,10 +78,18 @@ public class Player extends LivingEntity
 			velX += 1.1;		
 		// End movement calcs
 		
-		// Rotation Calcs
+		System.out.println(pts);
 		
-		velX = Helper.clamp(velX, -5.0f, 5.0f);
-		velY = Helper.clamp(velY, -5.0f, 5.0f);
+		if(resourceCarrying == null)
+		{
+			velX = Helper.clamp(velX, -5.0f, 5.0f);
+			velY = Helper.clamp(velY, -5.0f, 5.0f);
+		}
+		else
+		{
+			velX = Helper.clamp(velX, -2.0f, 2.0f);
+			velY = Helper.clamp(velY, -2.0f, 2.0f);
+		}
 		
 		float newX = velX + getX();
 		float newY = velY + getY();
@@ -79,12 +101,35 @@ public class Player extends LivingEntity
 			if(!objs.get(i).equals(this))
 			{
 				GameObject go = objs.get(i);
-				while(go.collidingWith(newX, newY, getWidth(), getHeight()))
+				
+				if(go.collidingWith(newX, newY, getWidth(), getHeight()))
 				{
-					if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
-						newX -= Math.signum(velX);
-					if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
-						newY -= Math.signum(velY);
+					if(go instanceof ResourceDeposit)
+					{
+						if(resourceCarrying != null)
+						{
+							scoreResource(resourceCarrying);
+							resourceCarrying = null;
+						}
+					}
+					else if(go instanceof Resource)
+					{
+						if(resourceCarrying == null)
+						{
+							resourceCarrying = (Resource) go;
+							getWorld().removeObject(go);
+						}
+					}
+					else
+					{
+						while(go.collidingWith(newX, newY, getWidth(), getHeight()))
+						{
+							if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
+								newX -= Math.signum(velX);
+							if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
+								newY -= Math.signum(velY);
+						}
+					}
 				}
 			}
 		}
@@ -99,6 +144,11 @@ public class Player extends LivingEntity
 		
 		setX(Helper.clamp(getX(), 0, getWorld().getWidth()));
 		setY(Helper.clamp(getY(), 0, getWorld().getHeight()));
+		
+		if(getWorld().getTownhall().withinRange(this))
+		{
+			displayUpgradeGUI = true;
+		}
 	}
 	
 	@Override
@@ -124,6 +174,17 @@ public class Player extends LivingEntity
 		float drawX = getX() - offsetX;
 		float drawY = getY() - offsetY;		
 		gfx.fillRect(drawX, drawY, getWidth(), getHeight());
+		
+		if(displayUpgradeGUI)
+		{
+			
+		}
+	}
+	
+	private void scoreResource(Resource r)
+	{
+		if(r != null)
+			pts += r.getPtsValue();
 	}
 	
 	@Override
@@ -132,8 +193,6 @@ public class Player extends LivingEntity
 		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld());
 	}
 	
-	private void grabResource(Resource r)
-	{
-		carrying = r;
-	}
+	public int getPoints() { return pts; }
+	public void setPoints(int p) { pts = p; }
 }

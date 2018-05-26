@@ -1,10 +1,6 @@
 package com.corntrip.turnbased.util;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.corntrip.turnbased.gameobject.GameObject;
 
 public class Reference
 {

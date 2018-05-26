@@ -20,9 +20,4 @@ public class ResourceDeposit extends GameObject
 		gfx.setColor(Color.black);
 		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
 	}
-	
-	public int dropResource(Resource r)
-	{
-		return r.getPtsValue();
-	}
 }
