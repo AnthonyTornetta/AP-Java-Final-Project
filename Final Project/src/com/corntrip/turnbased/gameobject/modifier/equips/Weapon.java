@@ -25,8 +25,8 @@ public abstract class Weapon extends Equipable
 		{
 			if(a instanceof LivingEntity)
 			{
-				//test for damage and stuff until there is a better way
-				if(((LivingEntity)a).collidingWith(startX, startY, width, height))
+				//hahah no longer hits owner
+				if((!owner.equals(a) && ((LivingEntity)a).collidingWith(startX, startY, width, height)))
 					itemsHit.add(a);
 			}
 		}
