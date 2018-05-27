@@ -2,18 +2,22 @@ package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import java.util.ArrayList;
 
+import org.newdawn.slick.Image;
+
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.modifier.Equipable;
 
 public abstract class Weapon extends Equipable
 {
-	protected Entity owner;
-	protected float damage;
+	private Entity owner;
+	private float damage;
+	private Image image;
 	
 	
 	public abstract void attack();
-	public abstract float getDamage();
+	
 	public abstract Weapon upgrade();
 	
 	//Start x and y are the owner's hit box
@@ -21,20 +25,23 @@ public abstract class Weapon extends Equipable
 	{
 		ArrayList<Entity> itemsHit = new ArrayList<>();
 		
-		for(Entity a: owner.getWorld().getEntities())
+		for(GameObject a: owner.getWorld().getEntities())
 		{
 			if(a instanceof LivingEntity)
 			{
 				//hahah no longer hits owner
 				if((!owner.equals(a) && ((LivingEntity)a).collidingWith(startX, startY, width, height)))
-					itemsHit.add(a);
+					itemsHit.add((Entity) a);
 			}
 		}
 		return itemsHit;
 	}
 	
-	public Entity getOwner() { return owner; }
 	
+	public float getDamage() { return damage; }
+	public Entity getOwner() { return owner; }
+	public Image getImage() { return image; }
+	public void setImage(Image image) { this.image = image; }
 	public void setOwner(Entity owner) { this.owner = owner; }
 	public void setDamage(float damage) { this.damage = damage; }
 }

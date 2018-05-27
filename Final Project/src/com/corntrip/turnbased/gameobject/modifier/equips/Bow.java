@@ -1,6 +1,6 @@
 package com.corntrip.turnbased.gameobject.modifier.equips;
 
-import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.Image;
 
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrows;
@@ -8,34 +8,23 @@ import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrows;
 public class Bow extends Weapon
 {
 
-	public Bow(Entity owner, SpriteSheet a)
+	public Bow(Entity owner, Image a)
 	{
-		this.owner = owner;
+		setOwner(owner);
 		tier = 1;
-		damage = (float) (tier*4.212);
+		setDamage((float)(tier*4.212));
 	}
 	
 	@Override
 	public void attack() 
+	{//needs an image
+		new Arrows(getOwner().getX(), getOwner().getY(), getOwner().getWidth(), getOwner().getHeight(), getOwner().getWorld(), this, null);
+	}
+
+	@Override
+	public Bow upgrade() 
 	{
-		Arrows a = new Arrows(owner.getX(), owner.getY(), owner.getWidth(), owner.getHeight(), owner.getWorld(), this);
-		
-	}
-
-	@Override
-	public float getDamage() 
-	{return damage;}
-
-	@Override
-	public Bow upgrade() {
 		tier++;
-		return new Bow(owner, null);
+		return new Bow(getOwner(), null);
 	}
-
-	@Override
-	public SpriteSheet getSprite() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
