@@ -11,12 +11,6 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
-import com.corntrip.turnbased.gameobject.living.Player;
-import com.corntrip.turnbased.gameobject.nonliving.Wall;
-import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;
-import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
-import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceGenerator;
-import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
@@ -66,25 +60,20 @@ public class GameNameHere extends BasicGame
 		try
 		{
 			world = WorldLoader.generateWorldFromImage(ImageIO.read(new File("res/maps/map.png")));
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 			throw new IllegalStateException("Failed to Create World.");
 		}
-		
-		world.setTownhall(new Townhall(64 * 5, 64 * 5, 128, 128));
-		world.setPlayer(new Player(50, 50, 32, 32, world));
-		world.addObject(new Wall(200, 200, 32, 32, Resources.getSpriteImage("wall",(int)(Math.random() + 0.5), (int)(Math.random() + 0.5))));
-		world.addObject(new ResourceGenerator(500, 500, 32, 32, world, 1000, new GoldResource(0, 0, 16, 16)));
-		world.addObject(new ResourceDeposit(64 * 5 + 128 / 2 - 16 / 2, 64 * 5 + 128 + 16 * 2, 16, 16));
 	}
 	
 	private void initializeResources()
 	{
 		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
-		registerImage("player", "player.png");
-		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		registerSpriteSheet("wall", "wall.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		
+		registerImage("player", "player.png");
 	}
 	
 	private void registerImage(String name, String location)

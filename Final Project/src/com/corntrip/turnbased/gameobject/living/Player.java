@@ -44,6 +44,8 @@ public class Player extends LivingEntity
 	 */
 	private Image texture = Resources.getImage("player");
 	
+	private static final float MAX_MOVE_SPEED = 5.0f;
+	
 	/**
 	 * Controllable Entity by the user
 	 * @param startX The x to start the player at
@@ -60,10 +62,11 @@ public class Player extends LivingEntity
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		float subVal = 0.5f; // TODO: Get thru surface friction?
+		float subVal = 0.8f;
+		float moveBy = Reference.MAX_FPS * delta / 1000.0f;
 		
-		velX -= Math.signum(velX) * subVal;
-		velY -= Math.signum(velY) * subVal;
+		velX -= Math.signum(velX) * subVal * moveBy;
+		velY -= Math.signum(velY) * subVal * moveBy;
 		
 		// If the velocities are somewhere near 0, just set them to 0 so it doesn't slide forever
 		if(velX <= subVal && velX >= -subVal)
@@ -75,33 +78,30 @@ public class Player extends LivingEntity
 		
 		Input in = gc.getInput();
 		if(in.isKeyDown(Input.KEY_W) || in.isKeyDown(Input.KEY_UP))
-			velY += -1.1;
+			velY += -2.0f * moveBy;
 		if(in.isKeyDown(Input.KEY_S) || in.isKeyDown(Input.KEY_DOWN))
-			velY += 1.1;
+			velY += 2.0f * moveBy;
 		
 		if(in.isKeyDown(Input.KEY_A) || in.isKeyDown(Input.KEY_LEFT))
-			velX += -1.1;
+			velX += -2.0f * moveBy;
 		if(in.isKeyDown(Input.KEY_D) || in.isKeyDown(Input.KEY_RIGHT))
-			velX += 1.1;		
+			velX += 2.0f * moveBy;
 		// End movement calcs
 				
 		if(resourceCarrying == null)
 		{
-			velX = Helper.clamp(velX, -5.0f, 5.0f);
-			velY = Helper.clamp(velY, -5.0f, 5.0f);
+			velX = Helper.clamp(velX, -MAX_MOVE_SPEED, MAX_MOVE_SPEED);
+			velY = Helper.clamp(velY, -MAX_MOVE_SPEED, MAX_MOVE_SPEED);
 		}
 		else
 		{
-			velX = Helper.clamp(velX, -2.0f, 2.0f);
-			velY = Helper.clamp(velY, -2.0f, 2.0f);
+			velX = Helper.clamp(velX, -MAX_MOVE_SPEED / 3, MAX_MOVE_SPEED / 3);
+			velY = Helper.clamp(velY, -MAX_MOVE_SPEED / 3, MAX_MOVE_SPEED / 3);
 		}
 		
-		double moveBy = 1;//delta / (1000.0 / Reference.MAX_FPS);
+		float newX = velX + getX();
+		float newY = velY + getY();
 		
-		float newX = (float)(velX * moveBy + getX());
-		float newY = (float)(velY * moveBy + getY());
-		
-		// TODO: Fix to avoid crashes pls
 		List<GameObject> objs = getWorld().getGameObjects();
 		for(int i = 0; i < objs.size(); i++)
 		{
@@ -129,19 +129,23 @@ public class Player extends LivingEntity
 					}
 					else
 					{
-						while(go.collidingWith(newX, newY, getWidth(), getHeight()))
+						if(go.collidingWith(newX, newY, getWidth(), getHeight()))
 						{
-							newX = getX();
-							newY = getY();
+							float oldX = getX();
+							float oldY = getY();
 							
-							for(float precision = 10.0f; precision >= 100.0f; precision *= 10.0f)
-							{
-								while(!go.collidingWith(newX + velX / precision, newY + velY / precision, getWidth(), getHeight()))
-								{
-									newX += velX / precision;
-									newY += velY / precision;
-								}
-							}
+							final float FACTOR = 0.001f; // the lower this is the more precise but the more iterations - this is a decent value
+							
+							float difX = newX - oldX;
+							float difY = newY - oldY;
+							
+							while(go.collidingWith(getX() + difX, getY(), getWidth(), getHeight()))
+								difX -= Math.signum(velX) * FACTOR;
+							while(go.collidingWith(getX(), getY() + difY, getWidth(), getHeight()))
+								difY -= Math.signum(velY) * FACTOR;								
+							
+							newX = getX() + difX;
+							newY = getY() + difY;
 						}
 					}
 				}
@@ -209,12 +213,4 @@ public class Player extends LivingEntity
 	
 	public int getPoints() { return pts; }
 	public void setPoints(int p) { pts = p; }
-	
-	/*
-	 * //							if(go.collidingWith(newX, getY(), getWidth(), getHeight()))
-//								newX -= Math.signum(velX);
-//							if(go.collidingWith(getX(), newY, getWidth(), getHeight()))
-//								newY -= Math.signum(velY);
-	 * 
-	 */
 }
