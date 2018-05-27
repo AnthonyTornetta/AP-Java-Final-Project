@@ -3,7 +3,7 @@ package com.corntrip.turnbased.gameobject.modifier.equips;
 import org.newdawn.slick.Image;
 
 import com.corntrip.turnbased.gameobject.Entity;
-import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrows;
+import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrow;
 
 public class Bow extends Weapon
 {
@@ -13,12 +13,13 @@ public class Bow extends Weapon
 		setOwner(owner);
 		tier = 1;
 		setDamage((float)(tier*4.212));
+		setImage(a);
 	}
 	
 	@Override
 	public void attack() 
 	{//needs an image
-		new Arrows(getOwner().getX(), getOwner().getY(), getOwner().getWidth(), getOwner().getHeight(), getOwner().getWorld(), this, null);
+		getOwner().getWorld().addObject(new Arrow(getOwner().getX(), getOwner().getY(), getOwner().getWidth(), getOwner().getHeight(), getOwner().getWorld(), this, null));
 	}
 
 	@Override

@@ -74,6 +74,7 @@ public class GameNameHere extends BasicGame
 		registerSpriteSheet("wall", "wall.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		
 		registerImage("player", "player.png");
+		registerImage("bow", "bow.png");
 	}
 	
 	private void registerImage(String name, String location)

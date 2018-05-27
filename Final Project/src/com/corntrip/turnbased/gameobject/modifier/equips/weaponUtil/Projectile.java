@@ -76,6 +76,7 @@ public abstract class Projectile extends Entity
 		{
 			while(velX > 1)
 			{
+				System.out.println("ruinasdasd");
 				velX--;
 			}
 			velY = 1-velX;
@@ -84,6 +85,7 @@ public abstract class Projectile extends Entity
 		{
 			while(velX < -1)
 			{
+				System.out.println("ruinasdasd 2");
 				velX++;
 			}
 			velY = 1+velX;

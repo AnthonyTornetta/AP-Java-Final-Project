@@ -24,6 +24,8 @@ import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
+import javafx.scene.input.MouseButton;
+
 public class Player extends LivingEntity
 {
 	/**
@@ -92,6 +94,8 @@ public class Player extends LivingEntity
 		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getImage("player"));
 		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("player"));
 		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("player"));
+		
+		weapon = new Bow(this, Resources.getImage("bow"));
 	}
 	
 	@Override
@@ -121,6 +125,13 @@ public class Player extends LivingEntity
 			velX += -2.0f * moveBy;
 		if(in.isKeyDown(Input.KEY_D) || in.isKeyDown(Input.KEY_RIGHT))
 			velX += 2.0f * moveBy;
+		
+		
+		if(in.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
+		{
+			weapon.attack();
+			System.out.println("xd");
+		}
 		// End movement calcs
 				
 		if(resourceCarrying == null)
@@ -261,6 +272,8 @@ public class Player extends LivingEntity
 		float drawX = getX() - offsetX;
 		float drawY = getY() - offsetY;
 		texture.draw(drawX, drawY);
+		
+		weapon.getImage().draw(drawX + getWidth(), drawY);
 	}
 	
 	private void scoreResource(Resource r)
