@@ -2,6 +2,7 @@ package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
@@ -9,10 +10,9 @@ import com.corntrip.turnbased.world.World;
 
 public class Arrows extends Projectile
 {
-	public Arrows(float startX, float startY, float w, float h, World world, Weapon wep)
+	public Arrows(float startX, float startY, float w, float h, World world, Weapon wep, Image image)
 	{
-		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation());
-		
+		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation(), image);	
 	}
 
 	@Override

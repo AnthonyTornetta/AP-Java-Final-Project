@@ -3,6 +3,7 @@ package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
 import java.util.List;
 
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Entity;
@@ -14,12 +15,12 @@ public abstract class Projectile extends Entity
 {
 	//host item that uses the projectile
 	private Weapon wep;
-	
 	//velocities, used to calc next x and/or y and rotation
 	private float velX, velY;
 	private float rot;
 	//total distance traveled
 	private float distanceTrav;
+	private Image image;
 	
 	/**
 	 * 
@@ -31,9 +32,10 @@ public abstract class Projectile extends Entity
 	 * @param wep: owner of the projecile (host)
 	 * @param rotation: where the player is pointing in radians
 	 */
-	public Projectile(float startX, float startY, float w, float h, World world, Weapon wep, float rotation)
+	public Projectile(float startX, float startY, float w, float h, World world, Weapon wep, float rotation, Image image)
 	{
 		super(startX, startY, w, h, world);
+		this.image = image;
 		this.wep = wep;
 		rot = rotation;
 		distanceTrav = 0;
@@ -53,7 +55,7 @@ public abstract class Projectile extends Entity
 	 */
 	public float flightMax()
 	{
-		return 3*(flightSpeed());
+		return 120*(flightSpeed());
 	}
 	
 	/**removes the projectile from the world
@@ -109,11 +111,15 @@ public abstract class Projectile extends Entity
 		//hits the first enemy and destroys the projectile
 		if(enemiesHit.size() > 0)
 		{
-			((LivingEntity)enemiesHit.get(0)).takeDamage((int)wep.getDamage());
+			((LivingEntity)enemiesHit.get(0)).takeDamage((int)(wep.getDamage()+0.5));
 			endPath();
 		}
 		
 		//increases the current distance traveled
 		distanceTrav += flightSpeed();
 	}
+
+	public Image getImage() { return image; }
+
+	public void setImage(Image image) { this.image = image;}
 }
