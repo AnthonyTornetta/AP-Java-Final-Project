@@ -1,0 +1,2203 @@
+=== GameNameHere ===
+package com.corntrip.turnbased;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.util.Reference;
+import com.corntrip.turnbased.util.Resources;
+import com.corntrip.turnbased.world.World;
+import com.corntrip.turnbased.world.WorldLoader;
+
+public class GameNameHere extends BasicGame
+{
+	private World world;
+	
+	public GameNameHere()
+	{
+		super("a (good?) game.");
+	}
+	
+	public static void main(String[] args)
+	{
+		try
+        {
+            AppGameContainer app = new AppGameContainer(new GameNameHere());
+            app.setDisplayMode(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, false);
+            app.start();
+        }
+        catch (SlickException e)
+        {
+            e.printStackTrace();
+        }
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		gfx.clear();
+		world.render(gc, gfx);
+	}
+	
+	@Override
+	public void init(GameContainer gc) throws SlickException
+	{
+		gc.setMaximumLogicUpdateInterval(Reference.MAX_FPS);
+		gc.setTargetFrameRate(Reference.MAX_FPS);
+		gc.setAlwaysRender(true);
+		gc.setShowFPS(Reference.DEBUG);
+		gc.setVSync(true);
+		
+		initializeResources();
+		
+		try
+		{
+			world = WorldLoader.generateWorldFromImage(ImageIO.read(new File("res/maps/map.png")));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			throw new IllegalStateException("Failed to Create World.");
+		}
+	}
+	
+	private void initializeResources()
+	{
+		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		registerSpriteSheet("wall", "wall.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		
+		registerImage("player", "player.png");
+	}
+	
+	private void registerImage(String name, String location)
+	{
+		Resources.registerImage(name, Resources.loadImage(location));
+	}
+	
+	private void registerSpriteSheet(String name, String location, int w, int h)
+	{
+		Resources.registerSpriteSheet(name, Resources.loadSpriteSheet(location, w, h));
+	}
+	
+	private void registerSound(String name, String location)
+	{
+		Resources.registerSound(name, Resources.loadSound(location));
+	}
+
+	@Override
+	public void update(GameContainer gc, int delta) throws SlickException
+	{
+		world.update(gc, delta);
+	}
+}
+=== Entity ===
+package com.corntrip.turnbased.gameobject;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.world.World;
+
+public abstract class Entity extends GameObject
+{
+	/**
+	 * For getting to know your surroundings
+	 */
+	private World world;
+	
+	/**
+	 * A GameObject that has an update function that runs every game tick
+	 * @param startX The starting x of the object
+	 * @param startY The starting y of the object
+	 * @param w The width of the object
+	 * @param h The height of the object
+	 * @param world The world the entity is in
+	 */
+	public Entity(float startX, float startY, float w, float h, World world)
+	{
+		super(startX, startY, w, h);
+		
+		this.world = world;
+	}
+	
+	/**
+	 * Called every game tick<br>
+	 * This should NOT be used for rendering (but I guess you can if u really want)<br>
+	 * Put any logic that needs to be called every frame in here
+	 * @param gc The GameContainer this is being called from
+	 * @param delta The total time passed since the last call
+	 * @throws SlickException If something bad were to happen
+	 */
+	public abstract void update(GameContainer gc, int delta) throws SlickException;
+	
+	// Getters & Setters //
+	
+	public World getWorld() { return world; }
+	public void setWorld(World w) { this.world = w; }
+}
+=== GameObject ===
+package com.corntrip.turnbased.gameobject;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.physics.ICollidable;
+import com.corntrip.turnbased.rendering.IRenderable;
+import com.corntrip.turnbased.util.Helper;
+
+public abstract class GameObject implements ICollidable, IRenderable, Cloneable
+{
+	/**
+	 * Used to differentiate between objects
+	 */
+	private long objectId;
+	
+	/**
+	 * Incremented every time a new GameObject is created.
+	 * This allows for each object to have a unique id to differentiate it from objects of the same type.
+	 */
+	private static long masterId = 0;
+	
+	/**
+	 * Position of the object
+	 */
+	private float x, y;
+	
+	private float xRot, yRot;
+	
+	/**
+	 * Dimensions of the object
+	 */
+	private float width, height;
+	
+	private float rotation = 0;
+	
+	/**
+	 * The most general form of something in the game scene.<br>
+	 * @param startX The x the object will start at
+	 * @param startY The y the object will start at
+	 * @param w The width of the object
+	 * @param h The height of the object
+	 */
+	public GameObject(float startX, float startY, float w, float h)
+	{
+		objectId = masterId;
+		masterId++;
+		
+		x = startX;
+		y = startY;
+		
+		width = w;
+		height = h;
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+	
+	@Override
+	public boolean collidingWith(ICollidable other)
+	{
+		return collidingWith(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+	}
+	
+	@Override
+	public boolean collidingWith(float x, float y, float width, float height)
+	{
+		if(x + width >= getX() && x <= getX() + getWidth())
+		{
+			if(y + height >= getY() && y <= getY() + getHeight())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other instanceof GameObject)
+		{
+			return ((GameObject)other).getObjectId() == getObjectId();
+		}
+		return false;
+	}
+	
+	// Getters & Setters
+	
+	@Override
+	public float getWidth() { return width; }
+	@Override
+	public float getHeight() { return height; }
+	@Override
+	public float getX() { return x; }
+	@Override
+	public float getY() { return y; }
+	
+	public void setX(float x) { this.x = x; }
+	public void setY(float y) { this.y = y; }
+	public void setWidth(float w) { this.width = w; }
+	public void setHeight(float h) { this.height = h; }
+	
+	public float getRotation()
+	{
+		return rotation;
+	}
+	
+	public void setRotation(float rotation, float anchorX, float anchorY)
+	{
+		this.rotation = rotation;
+		
+		// Convert to radians because java likes them
+		double radians = Math.toRadians(rotation);
+		
+		// Do fancy maths **not** stolen from stack overflow
+		xRot = (float)(Math.cos(radians) * (getX() - anchorX) - Math.sin(radians) * (getX() - anchorY) + anchorX);
+
+		yRot = (float)(Math.sin(radians) * (getX() - anchorX) + Math.cos(radians) * (getY() - anchorY) + anchorY);
+	}
+	
+	public void rotateTowards(float myX, float myY, float theirX, float theirY)
+	{		
+		rotation = Helper.getAngle(myX, myY, x, x);
+		
+	}
+	
+	public float getRotatedX() { return xRot; }
+	public float getRotatedY() { return yRot; }
+	
+	public long getObjectId() { return objectId; }
+}
+=== Enemy ===
+package com.corntrip.turnbased.gameobject.living;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.world.World;
+
+public abstract class Enemy extends LivingEntity
+{
+	/**
+	 * The target to go after
+	 */
+	private Entity target;
+	
+	/**
+	 * The Antagonist of the story
+	 * @param startX The starting x of the enemy
+	 * @param startY The starting y of the enemy
+	 * @param w The width of the player
+	 * @param h The height of the player
+	 * @param world The world the enemy is in
+	 * @param target The target for the enemy (doesn't have to be the player)
+	 */
+	public Enemy(float startX, float startY, float w, float h, World world, Entity target)
+	{
+		super(startX, startY, w, h, world);
+		
+		this.target = target;
+	}
+	
+	// Getters & Setters //
+	
+	public Entity getTarget() { return target; }
+	public void setTarget(Entity t) { this.target = t; }
+}
+=== LivingEntity ===
+package com.corntrip.turnbased.gameobject.living;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.world.World;
+
+public abstract class LivingEntity extends Entity implements Cloneable
+{
+	private int maxHealth;
+	private int health;
+	
+	/**
+	 * An Entity but with health and a clone function
+	 * @param startX The x position it starts at
+	 * @param startY THe y position it starts at
+	 * @param w The width of the LivingEntity
+	 * @param h The height of the LivingEntity
+	 * @param world The world the entity is in
+	 */
+	public LivingEntity(float startX, float startY, float w, float h, World world)
+	{
+		super(startX, startY, w, h, world);
+	}
+	
+	/**
+	 * Heals the LivingEntity a given amount
+	 * @param amt The amount to heal it by
+	 */
+	public void heal(int amt)
+	{
+		health += amt;
+	}
+	
+	/**
+	 * Deals damage to the LivingEntity, and if the health <= 0 it dies
+	 * @param amt
+	 */
+	public void takeDamage(int amt)
+	{
+		health -= amt;
+		if(health <= 0)
+			die();
+	}
+	
+	/**
+	 * TODO: make better
+	 * Removes the LivingEntity from the world
+	 */
+	public void die()
+	{
+		// TODO: Do this betterly
+		getWorld().removeObject(this);
+	}
+	
+	@Override
+	public abstract LivingEntity clone();
+	
+	public int getMaxHealth() { return maxHealth; }
+	public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }
+	
+	public int getHealth() { return health; }
+	public void setHealth(int health) { this.health = health; }
+}
+=== Player ===
+package com.corntrip.turnbased.gameobject.living;
+
+import java.util.List;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
+import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
+import com.corntrip.turnbased.util.Helper;
+import com.corntrip.turnbased.util.Reference;
+import com.corntrip.turnbased.util.Resources;
+import com.corntrip.turnbased.world.World;
+
+public class Player extends LivingEntity
+{
+	/**
+	 * Used for calculating movement
+	 */
+	private float velX = 0, velY = 0;
+	
+	/**
+	 * Holds the points aquired from scoring resources
+	 */
+	private int pts = 0;
+	
+	/**
+	 * Holds the resource the player may or may not be carrying
+	 */
+	private Resource resourceCarrying = null;
+	
+	/**
+	 * A flag to tell if the upgrade GUI should be displayed
+	 */
+	private boolean displayUpgradeGUI = false;
+	
+	/**
+	 * The texture of the player
+	 */
+	private Image texture = Resources.getImage("player");
+	
+	private static final float MAX_MOVE_SPEED = 5.0f;
+	
+	/**
+	 * Controllable Entity by the user
+	 * @param startX The x to start the player at
+	 * @param startY The y to start the player at
+	 * @param w The width of the player
+	 * @param h The height of the player
+	 * @param world The world the player is in
+	 */
+	public Player(float startX, float startY, float w, float h, World world)
+	{
+		super(startX, startY, w, h, world);
+	}
+	
+	@Override
+	public void update(GameContainer gc, int delta) throws SlickException
+	{
+		float subVal = 0.8f;
+		float moveBy = Reference.MAX_FPS * delta / 1000.0f;
+		
+		velX -= Math.signum(velX) * subVal * moveBy;
+		velY -= Math.signum(velY) * subVal * moveBy;
+		
+		// If the velocities are somewhere near 0, just set them to 0 so it doesn't slide forever
+		if(velX <= subVal && velX >= -subVal)
+			velX = 0;
+		if(velY <= subVal && velY >= -subVal)
+			velY = 0;
+		
+		// Fun movement calcs in here
+		
+		Input in = gc.getInput();
+		if(in.isKeyDown(Input.KEY_W) || in.isKeyDown(Input.KEY_UP))
+			velY += -2.0f * moveBy;
+		if(in.isKeyDown(Input.KEY_S) || in.isKeyDown(Input.KEY_DOWN))
+			velY += 2.0f * moveBy;
+		
+		if(in.isKeyDown(Input.KEY_A) || in.isKeyDown(Input.KEY_LEFT))
+			velX += -2.0f * moveBy;
+		if(in.isKeyDown(Input.KEY_D) || in.isKeyDown(Input.KEY_RIGHT))
+			velX += 2.0f * moveBy;
+		// End movement calcs
+				
+		if(resourceCarrying == null)
+		{
+			velX = Helper.clamp(velX, -MAX_MOVE_SPEED, MAX_MOVE_SPEED);
+			velY = Helper.clamp(velY, -MAX_MOVE_SPEED, MAX_MOVE_SPEED);
+		}
+		else
+		{
+			velX = Helper.clamp(velX, -MAX_MOVE_SPEED / 3, MAX_MOVE_SPEED / 3);
+			velY = Helper.clamp(velY, -MAX_MOVE_SPEED / 3, MAX_MOVE_SPEED / 3);
+		}
+		
+		float newX = velX + getX();
+		float newY = velY + getY();
+		
+		List<GameObject> objs = getWorld().getGameObjects();
+		for(int i = 0; i < objs.size(); i++)
+		{
+			if(!objs.get(i).equals(this))
+			{
+				GameObject go = objs.get(i);
+				
+				if(go.collidingWith(newX, newY, getWidth(), getHeight()))
+				{
+					if(go instanceof ResourceDeposit)
+					{
+						if(resourceCarrying != null)
+						{
+							scoreResource(resourceCarrying);
+							resourceCarrying = null;
+						}
+					}
+					else if(go instanceof Resource)
+					{
+						if(resourceCarrying == null)
+						{
+							resourceCarrying = (Resource) go;
+							getWorld().removeObject(go);
+						}
+					}
+					else
+					{
+						if(go.collidingWith(newX, newY, getWidth(), getHeight()))
+						{
+							float oldX = getX();
+							float oldY = getY();
+							
+							final float FACTOR = 0.001f; // the lower this is the more precise but the more iterations - this is a decent value
+							
+							float difX = newX - oldX;
+							float difY = newY - oldY;
+							
+							while(go.collidingWith(getX() + difX, getY(), getWidth(), getHeight()))
+								difX -= Math.signum(velX) * FACTOR;
+							while(go.collidingWith(getX(), getY() + difY, getWidth(), getHeight()))
+								difY -= Math.signum(velY) * FACTOR;								
+							
+							newX = getX() + difX;
+							newY = getY() + difY;
+						}
+					}
+				}
+			}
+		}
+		
+		if(newX != getX() + velX) // If the newX is not equal to the original calculation, the object collided into something causing it to change
+			velX = 0; // Since you just rammed into something, I don't think your going in that direction any more
+		if(newY != getY() + velY)
+			velY = 0;
+		
+		setX(newX);
+		setY(newY);
+		
+		setX(Helper.clamp(getX(), 0, getWorld().getWidth()));
+		setY(Helper.clamp(getY(), 0, getWorld().getHeight()));
+		
+		if(getWorld().getTownhall().withinRange(this))
+		{
+			displayUpgradeGUI = true;
+		}
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{		
+		gfx.setColor(Color.green);
+		
+		// For rotation
+		Input input = gc.getInput();
+		int mouseX = input.getMouseX();
+		int mouseY = input.getMouseY();
+		
+		float anchorX = getX() + getWidth() / 2 - offsetX;
+		float anchorY = getY() + getHeight() / 2 - offsetY;
+		
+		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY), anchorX, anchorY);
+		
+		if(Reference.DEBUG)
+			gfx.drawLine(anchorX, anchorY, input.getMouseX(), input.getMouseY());
+		
+		gfx.rotate(anchorX, anchorY, getRotation());
+		
+		float drawX = getX() - offsetX;
+		float drawY = getY() - offsetY;		
+		texture.draw(drawX, drawY);
+		
+		if(displayUpgradeGUI)
+		{
+			
+		}
+	}
+	
+	private void scoreResource(Resource r)
+	{
+		if(r != null)
+			pts += r.getPtsValue();
+	}
+	
+	@Override
+	public LivingEntity clone()
+	{
+		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld());
+	}
+	
+	public int getPoints() { return pts; }
+	public void setPoints(int p) { pts = p; }
+}
+=== TestEnemy ===
+package com.corntrip.turnbased.gameobject.living;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.util.Helper;
+import com.corntrip.turnbased.world.World;
+
+public class TestEnemy extends Enemy
+{
+	public TestEnemy(float startX, float startY, float w, float h, World world, Entity target)
+	{
+		super(startX, startY, w, h, world, target);
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
+	{
+		gfx.setColor(Color.red);
+		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+	}
+	
+	@Override
+	public void update(GameContainer gc, int delta) throws SlickException
+	{
+		Entity target = getTarget();
+		
+		if(target != null) // the target has been set
+		{
+			float targetX = target.getX();
+			float targetY = target.getY();
+			
+			float moveX = Helper.clamp(targetX - getX(), -5, 5);
+			float moveY = Helper.clamp(targetY - getY(), -5, 5);
+			
+			setX(getX() + moveX);
+			setY(getY() + moveY);
+		}
+	}
+
+	@Override
+	public LivingEntity clone()
+	{
+		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget());
+	}
+}
+=== Equipable ===
+package com.corntrip.turnbased.gameobject.modifier;
+
+import org.newdawn.slick.SpriteSheet;
+
+public abstract class Equipable
+{
+	public int tier;
+	
+	public abstract SpriteSheet getSprite();
+}
+//tacking on swords and stuff
+=== Modified ===
+package com.corntrip.turnbased.gameobject.modifier;
+import com.corntrip.turnbased.gameobject.living.LivingEntity;
+
+public abstract class Modified
+{
+	LivingEntity assigned = null;
+	//get and sets to what it's assigned
+	public  void setAssinged(LivingEntity a)
+	{
+		assigned = a;
+	}
+	public LivingEntity getAssigned()
+	{
+		return assigned;
+	}
+	
+	//lol we can have epic trees and super entities like bosses
+	public abstract void modifyStats(LivingEntity a);
+	
+	//changes name
+	public abstract String modifiedName(String n);
+}
+=== HPMod ===
+package com.corntrip.turnbased.gameobject.modifier.entityAddition;
+
+import java.util.ArrayList;
+
+import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.modifier.Modified;
+
+/*
+ * During unit spawn there should be a ArrayList of these bad boys and it should have a random chance to spawn a boss
+ * Which then links it to a new Creation of one of these
+ */
+
+
+public class HPMod extends Modified
+{
+
+	private ArrayList<String> modNames;
+	
+	HPMod()
+	{
+		modNames = new ArrayList<String>();
+		modNames.add("Giant");
+		modNames.add("Huge");
+		modNames.add("Gigantic");
+		modNames.add("Large");
+		modNames.add("Big");
+	}
+	
+	public void modifyStats(LivingEntity a)
+	{
+		a.setHealth(a.getHealth() + 10);
+	}
+
+	/* 
+	 * n: simply the name before
+	 * a: list of possible modifiers
+	 */
+	public String modifiedName(String n) 
+	{
+		return modNames.get((int)(Math.random()*modNames.size())) + " " + n;
+	}
+
+}
+=== Bow ===
+package com.corntrip.turnbased.gameobject.modifier.equips;
+
+import org.newdawn.slick.SpriteSheet;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrows;
+
+public class Bow extends Weapon
+{
+
+	public Bow(Entity owner, SpriteSheet a)
+	{
+		this.owner = owner;
+		tier = 1;
+		damage = (float) (tier*4.212);
+	}
+	
+	@Override
+	public void attack() 
+	{
+		Arrows a = new Arrows(owner.getX(), owner.getY(), owner.getWidth(), owner.getHeight(), owner.getWorld(), this);
+		
+	}
+
+	@Override
+	public float getDamage() 
+	{return damage;}
+
+	@Override
+	public Bow upgrade() {
+		tier++;
+		return new Bow(owner, null);
+	}
+
+	@Override
+	public SpriteSheet getSprite() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
+=== Sword ===
+package com.corntrip.turnbased.gameobject.modifier.equips;
+
+import java.util.ArrayList;
+
+import org.newdawn.slick.SpriteSheet;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.living.LivingEntity;
+
+public class Sword extends Weapon
+{
+	SpriteSheet swordSprite = null;
+	
+	
+	public Sword(Entity owner, SpriteSheet a)
+	{
+		//swordSprite = ''
+		tier = 1;
+		damage = (float) (tier*6.862);
+		this.owner = owner;
+	}
+	
+	public SpriteSheet getSprite() 
+	{ return swordSprite;}
+
+	@Override
+	public void attack() 
+	{
+		//test for damage and stuff until there is a better way
+		ArrayList<Entity> enemiesHit = generateHitbox(owner.getX(), owner.getY(), owner.getWidth(), -owner.getHeight());
+		
+		for(Entity hitEnemy : enemiesHit)
+		{
+			if(hitEnemy != null)
+			{
+				((LivingEntity) hitEnemy).takeDamage((int)(damage+0.5));;
+			}
+		}
+	}
+
+	@Override
+	public float getDamage()
+		{return damage;}
+
+	@Override
+	public Sword upgrade() 
+	{
+		tier++;
+		return new Sword(owner, null);
+	}
+}
+=== Weapon ===
+package com.corntrip.turnbased.gameobject.modifier.equips;
+
+import java.util.ArrayList;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.modifier.Equipable;
+
+public abstract class Weapon extends Equipable
+{
+	protected Entity owner;
+	protected float damage;
+	
+	
+	public abstract void attack();
+	public abstract float getDamage();
+	public abstract Weapon upgrade();
+	
+	//Start x and y are the owner's hit box
+	public ArrayList<Entity> generateHitbox(float startX, float startY, float width, float height)
+	{
+		ArrayList<Entity> itemsHit = new ArrayList<>();
+		
+		for(Entity a: owner.getWorld().getEntities())
+		{
+			if(a instanceof LivingEntity)
+			{
+				//hahah no longer hits owner
+				if((!owner.equals(a) && ((LivingEntity)a).collidingWith(startX, startY, width, height)))
+					itemsHit.add(a);
+			}
+		}
+		return itemsHit;
+	}
+	
+	public Entity getOwner() { return owner; }
+	
+	public void setOwner(Entity owner) { this.owner = owner; }
+	public void setDamage(float damage) { this.damage = damage; }
+}
+=== Arrows ===
+package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
+import com.corntrip.turnbased.world.World;
+
+public class Arrows extends Projectile
+{
+	public Arrows(float startX, float startY, float w, float h, World world, Weapon wep)
+	{
+		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation());
+		
+	}
+
+	@Override
+	public float flightSpeed() 
+	{
+		return 30.4f;
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
+		//to be done
+	}
+}
+=== Projectile ===
+package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
+
+import java.util.List;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
+import com.corntrip.turnbased.world.World;
+
+public abstract class Projectile extends Entity
+{
+	//host item that uses the projectile
+	private Weapon wep;
+	
+	//velocities, used to calc next x and/or y and rotation
+	private float velX, velY;
+	private float rot;
+	//total distance traveled
+	private float distanceTrav;
+	
+	/**
+	 * 
+	 * @param startX: starting coord for Entity
+	 * @param startY: same as x but y
+	 * @param w: width
+	 * @param h: height
+	 * @param world: world the Entity is in
+	 * @param wep: owner of the projecile (host)
+	 * @param rotation: where the player is pointing in radians
+	 */
+	public Projectile(float startX, float startY, float w, float h, World world, Weapon wep, float rotation)
+	{
+		super(startX, startY, w, h, world);
+		this.wep = wep;
+		rot = rotation;
+		distanceTrav = 0;
+		
+		setProjectileDirection();
+	}
+	
+	/**
+	 * how fast the projectile is going
+	 * @return Better freaking be < 32
+	 */
+	public abstract float flightSpeed();
+	
+	/**
+	 * 
+	 * @return sets how far the arrow will go
+	 */
+	public float flightMax()
+	{
+		return 3*(flightSpeed());
+	}
+	
+	/**removes the projectile from the world
+	 * 
+	 */
+	public void endPath()
+	{
+		getWorld().removeObject(this);
+	}
+	
+	/**uses super maths to set where the x,y will be aiming
+	 * 
+	 */
+	public void setProjectileDirection()
+	{
+		velX = rot / 90;
+		if(velX > 1)
+		{
+			while(velX > 1)
+			{
+				velX--;
+			}
+			velY = 1-velX;
+		}
+		else if(velX < -1)
+		{
+			while(velX < -1)
+			{
+				velX++;
+			}
+			velY = 1+velX;
+		}
+	}
+	
+	@Override
+	public void update(GameContainer gc, int delta) throws SlickException
+	{
+		//once it reaches it's distance it's removed from the world
+		//the issue with this is that the diagonals will be shorter than the verticals, I think
+		if(distanceTrav < flightMax())
+		{
+			endPath();
+		}
+		
+		//setting the new x,y coordinates according to the algorithm
+		super.setX(getX() + velX*flightSpeed());
+		super.setY(getY() + velY*flightSpeed());
+		
+		
+		//checks the enemies hit
+		List<Entity> enemiesHit = wep.generateHitbox(super.getX(), super.getY(), super.getWidth(), super.getHeight());
+		
+		//hits the first enemy and destroys the projectile
+		if(enemiesHit.size() > 0)
+		{
+			((LivingEntity)enemiesHit.get(0)).takeDamage((int)wep.getDamage());
+			endPath();
+		}
+		
+		//increases the current distance traveled
+		distanceTrav += flightSpeed();
+	}
+}
+=== Spawner ===
+package com.corntrip.turnbased.gameobject.nonliving;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.world.World;
+
+public class Spawner extends Entity
+{
+	/**
+	 * The LivingEntity to spawn
+	 */
+	private LivingEntity spawnable;
+	
+	/**
+	 * Keeps track of the time passed since the last time this spawner spawned a LivingEntity
+	 */
+	private int timeSinceLastSpawn = 0;
+	
+	/**
+	 * How often a LivingEntity should be spawned in milliseconds
+	 */
+	private int spawnRate;
+	
+	/**
+	 * Spawns a given LivingEntity around the spawner
+	 * @param startX The x of the spawner
+	 * @param startY The y of the spawner
+	 * @param w The width of the spawner
+	 * @param h The height of the spawner
+	 * @param world The world the spawner is in
+	 * @param spawnRate Milliseconds between each spawn
+	 * @param spawnable The LivingEntity to spawn **Must have a working clone() function**
+	 */
+	public Spawner(float startX, float startY, float w, float h,
+					World world, int spawnRate, LivingEntity spawnable)
+	{
+		super(startX, startY, w, h, world);
+		this.spawnRate = spawnRate;
+		this.spawnable = spawnable;
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
+	{
+		gfx.setColor(Color.pink);
+		gfx.drawRect(getX() - offsetX, getY() - offsetY, 30, 30);
+	}
+
+	@Override
+	public void update(GameContainer gc, int delta) throws SlickException
+	{
+		timeSinceLastSpawn += delta;
+		
+		if(timeSinceLastSpawn >= spawnRate)
+		{
+			LivingEntity spawned = spawnable.clone();
+			timeSinceLastSpawn = 0;
+			spawned.setX((int)(getX() + (Math.random() * 100) - 50));
+			spawned.setY((int)(getY() + (Math.random() * 100) - 50));
+			getWorld().addObject(spawned);
+		}
+	}
+}
+=== Wall ===
+package com.corntrip.turnbased.gameobject.nonliving;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+
+import com.corntrip.turnbased.gameobject.GameObject;
+
+public class Wall extends GameObject
+{
+	
+	private Image texture;
+	
+	/**
+	 * Sits there and acts like a wall.
+	 * @param startX The x to sit at
+	 * @param startY The y to sit at
+	 * @param w The width of the wall
+	 * @param h The height of the wall
+	 */
+	public Wall(float startX, float startY, float w, float h, Image texture)
+	{
+		super(startX, startY, w, h);
+		this.texture = texture;
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float xOffset, float yOffset)
+	{
+		texture.draw(getX() - xOffset, getY() - yOffset);
+	}
+}
+=== GoldResource ===
+package com.corntrip.turnbased.gameobject.nonliving.resources;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+
+public class GoldResource extends Resource
+{
+	public GoldResource(float startX, float startY, float w, float h)
+	{
+		super(startX, startY, w, h);
+	}
+	
+	@Override
+	public int getPtsValue()
+	{
+		return 1;
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
+	{
+		gfx.setColor(Color.yellow);
+		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+	}
+	
+	@Override
+	public Resource createNew()
+	{
+		return new GoldResource(getX(), getY(), getWidth(), getHeight());
+	}
+}
+=== Resource ===
+package com.corntrip.turnbased.gameobject.nonliving.resources;
+
+import com.corntrip.turnbased.gameobject.GameObject;
+
+public abstract class Resource extends GameObject
+{
+	public Resource(float startX, float startY, float w, float h)
+	{
+		super(startX, startY, w, h);
+	}
+	
+	public abstract int getPtsValue();
+	public abstract Resource createNew();
+}
+=== ResourceDeposit ===
+package com.corntrip.turnbased.gameobject.nonliving.resources;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.GameObject;
+
+public class ResourceDeposit extends GameObject
+{
+	public ResourceDeposit(float startX, float startY, float w, float h)
+	{
+		super(startX, startY, w, h);
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{		
+		gfx.setColor(Color.black);
+		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+	}
+}
+=== ResourceGenerator ===
+package com.corntrip.turnbased.gameobject.nonliving.resources;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.world.World;
+
+public class ResourceGenerator extends Entity
+{
+	private int timeSinceLastSpawn = 0;
+	private int spawnDelayMS;
+	private Resource resource;
+	private Resource resourceLaidDown = null;
+	
+	public ResourceGenerator(float startX, float startY, float w, float h, World world, int spawnDelayMS, Resource resource)
+	{
+		super(startX, startY, w, h, world);
+		this.spawnDelayMS = spawnDelayMS;
+		this.resource = resource;
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
+	{
+		gfx.setColor(Color.pink);
+		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+	}
+	
+	@Override
+	public void update(GameContainer gc, int delta) throws SlickException
+	{
+		if(resourceLaidDown != null)
+		{
+			if(!getWorld().containsObject(resourceLaidDown))
+			{
+				resourceLaidDown = null;
+			}
+		}
+		
+		if(resourceLaidDown == null)
+			timeSinceLastSpawn += delta; // Only spawn if no resource is present
+		else
+			timeSinceLastSpawn = 0;
+		
+		if(timeSinceLastSpawn >= spawnDelayMS)
+		{
+			resourceLaidDown = resource.createNew();
+			timeSinceLastSpawn = 0;
+			resourceLaidDown.setX((int)(getX() + (Math.random() * 200) - 50));
+			resourceLaidDown.setY((int)(getY() + (Math.random() * 200) - 50));
+			getWorld().addObject(resourceLaidDown);
+		}
+	}
+}
+=== Townhall ===
+package com.corntrip.turnbased.gameobject.nonliving.townhall;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.GameObject;
+
+public class Townhall extends GameObject
+{
+	public Townhall(float startX, float startY, float w, float h)
+	{
+		super(startX, startY, w, h);
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
+		gfx.setColor(Color.pink);
+		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+	}
+	
+	public boolean withinRange(GameObject go)
+	{
+		float thisAnchorX = getX() - getWidth() / 2;
+		float thisAnchorY = getY() - getHeight() / 2;
+		
+		float theirAnchorX = go.getX() + go.getWidth() / 2;
+		float theirAnchorY = go.getY() - go.getHeight() / 2;
+		
+		double distanceAway = Math.sqrt(Math.pow(theirAnchorX - thisAnchorX, 2) + Math.pow(theirAnchorY - thisAnchorY, 2));
+		
+		return distanceAway < (getWidth() + getHeight());
+	}
+}
+=== GUI ===
+package com.corntrip.turnbased.gui;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.rendering.IRenderable;
+
+public class GUI implements IRenderable
+{
+	List<GUIElement> elements = new ArrayList<>();
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
+		for(GUIElement e : elements)
+		{
+			e.render(gc, gfx, offsetX, offsetY);
+		}
+	}
+	
+	public void addElement(GUIElement elem)
+	{
+		elements.add(elem);
+	}
+	
+	public boolean removeElement(GUIElement elem)
+	{
+		return elements.remove(elem);
+	}
+	
+	public void keypress(int key)
+	{
+		for(GUIElement e : elements)
+		{
+			e.handleKey(key);
+		}
+	}
+}
+=== GUIElement ===
+package com.corntrip.turnbased.gui;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.rendering.IRenderable;
+
+public abstract class GUIElement implements IRenderable
+{
+	private int screenWidth, screenHeight;
+	
+	public GUIElement(int screenWidth, int screenHeight)
+	{
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+	
+	@Override
+	public abstract void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException;
+	
+	public abstract void handleKey(int j);
+
+	public int getScreenWidth() { return screenWidth; }
+	public void setScreenWidth(int screenWidth) { this.screenWidth = screenWidth; }
+
+	public int getScreenHeight() { return screenHeight; }
+	public void setScreenHeight(int screenHeight) { this.screenHeight = screenHeight; }
+}
+=== Inventory ===
+package com.corntrip.turnbased.gui;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.modifier.Equipable;
+
+public class Inventory extends GUIElement
+{
+	private final int SLOT_SIZE = 32;
+	private Equipable[] items;
+	
+	public Inventory(int screenWidth, int screenHeight, int size)
+	{
+		super(screenWidth, screenHeight);
+		items = new Equipable[size];
+	}
+	
+	public Equipable getItem(int i)
+	{
+		return items[i];
+	}
+	
+	public void setItem(int i, Equipable e)
+	{
+		items[i] = e;
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
+		int ofx = SLOT_SIZE * items.length / 2;
+		int drawY = getScreenHeight() - SLOT_SIZE;
+		
+		for(int i = 0; i < items.length; i++)
+		{
+			
+			gfx.drawRect(ofx + i * SLOT_SIZE - offsetX, drawY - offsetY, SLOT_SIZE, SLOT_SIZE);
+		}
+	}
+
+	@Override
+	public void handleKey(int k)
+	{
+		
+	}
+}
+=== ICollidable ===
+package com.corntrip.turnbased.physics;
+
+public interface ICollidable
+{
+	/**
+	 * Sees if this collidable object is colliding with another collidable object
+	 * @param other The object to check if the collision is happening with
+	 * @return true if it is colliding, false if not
+	 */
+	public boolean collidingWith(ICollidable other);
+	
+	/**
+	 * Checks if the specified position and dimensions would collide with another collidable object
+	 * @param other The object to check if the collision is happening with
+	 * @param x The x coordinate to check
+	 * @param y The y coordinate to check
+	 * @param width The width of the area to check
+	 * @param height The height of the area to check
+	 * @return true if it is colliding, false if not
+	 */
+	public boolean collidingWith(float x, float y, float width, float height);
+	
+	// Getters & Setters //
+	public float getWidth();
+	public float getHeight();
+	
+	public float getX();
+	public float getY();
+}
+=== Camera ===
+package com.corntrip.turnbased.rendering;
+
+import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.util.Helper;
+
+public class Camera
+{
+	private float xOffset, yOffset;
+	private float visibleWidth, visibleHeight;
+	private float mapWidth, mapHeight;
+	
+	/**
+	 * Creates a Camera Object used to center around a given GameObject using the screen's width & height
+	 * @param x The starting x offset of the camera
+	 * @param y The starting y offset of the camera
+	 * @param vw The screen's width
+	 * @param vh The screen's height
+	 * @param mw The total area the camera can travel in's width
+	 * @param mh The total area the camera can travel in's height
+	 */
+	public Camera(float x, float y, float vw, float vh, float mw, float mh)
+	{
+		xOffset = x;
+		yOffset = y;
+		visibleWidth = vw;
+		visibleHeight = vh;
+		mapHeight = mh;
+		mapWidth = mw;
+	}
+	
+	/**
+	 * Puts the object to center around in the center of the camera's viewpoint, but by slowly gliding/slipping there
+	 * @param go The GameObject to center around
+	 */
+	public void slippyCenter(GameObject go)
+	{
+		float slippyFactor = 0.1f;
+		
+		xOffset += slippyFactor * (go.getX() - visibleWidth / 2 + go.getWidth() / 2 - xOffset);
+		yOffset += slippyFactor * (go.getY() - visibleHeight / 2 + go.getHeight() / 2 - yOffset);
+		
+		xOffset = Helper.clamp(xOffset, 0, mapWidth - visibleWidth);
+		yOffset = Helper.clamp(yOffset, 0, mapHeight - visibleHeight);
+	}
+	
+	/**
+	 * Puts the object to center around in the center of the camera's viewpoint
+	 * @param go The GameObject to center around
+	 */
+	public void center(GameObject go)
+	{
+		xOffset = go.getX() - visibleWidth / 2 + go.getWidth() / 2;
+		yOffset = go.getY() - visibleHeight / 2 + go.getHeight() / 2;
+		
+		xOffset = Helper.clamp(xOffset, 0, mapWidth - visibleWidth);
+		yOffset = Helper.clamp(yOffset, 0, mapHeight - visibleHeight);
+	}
+	
+	// Getters & Setters //
+	
+	public float getXOffset() { return xOffset; }
+	public void setXOffset(float xOffset) { this.xOffset = xOffset; }
+
+	public float getYOffset() { return yOffset; }
+	public void setYOffset(float yOffset) { this.yOffset = yOffset; }
+
+	public float getScreenWidth() { return visibleWidth; }
+	public void setScreenWidth(float screenWidth) { this.visibleWidth = screenWidth; }
+	
+	public float getScreenHeight() { return visibleHeight; }
+	public void setScreenHeight(float screenHeight) { this.visibleHeight = screenHeight; }
+}
+=== IRenderable ===
+package com.corntrip.turnbased.rendering;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+public interface IRenderable
+{
+	/**
+	 * Draws the object at a position on the window
+	 * @param gc The main game's container
+	 * @param gfx The Graphics object to use to draw
+	 * @throws SlickException Potentially thrown when drawing
+	 */
+	public void render(GameContainer gc, Graphics gfx) throws SlickException;
+	
+	/**
+	 * Draws the object at a specified position on the window
+	 * @param gc The main game's container
+	 * @param gfx The Graphics object to use to draw
+	 * @param offsetX The offset on the x axis to use when drawing the object
+	 * @param offsetY The offset on the y axis to use when drawing the object
+	 * @throws SlickException Potentially thrown when drawing
+	 */
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException;
+}
+=== Helper ===
+package com.corntrip.turnbased.util;
+
+public class Helper
+{
+	/**
+	 * Clamps a value between a minimum and a maximum
+	 * @param val The value to clamp between the minimum and maximum
+	 * @param min The minimum value to constrain the value between
+	 * @param max The maximum value to constrain the value between
+	 * @return if the value is less than the minimum, the minimum value passed; if it is greator than the max, then the max is returned.  Otherwise the value passed in is returned.
+	 */
+	public static float clamp(float val, float min, float max)
+	{
+		if(val < min)
+			return min;
+		if(val > max)
+			return max;
+		return val;
+	}
+	
+	/**
+	 * Finds the angle in degrees from point A to point B
+	 * @param fromX Point A's x coordinate
+	 * @param fromY Point A's y coordinate
+	 * @param toX Point B's x coordinate
+	 * @param toY Point B's y coordinate
+	 * @return The angle in degrees from point A to point B
+	 */
+	public static float getAngle(float fromX, float fromY, float toX, float toY)
+	{
+		return (float)Math.toDegrees(Math.atan2(toY - fromY, toX - fromX));
+	}
+}
+=== Reference ===
+package com.corntrip.turnbased.util;
+
+import java.awt.Color;
+
+public class Reference
+{
+	/**
+	 * Indicates whether or not the game is currently being debugged
+	 */
+	public static final boolean DEBUG = true;
+	
+	/**
+	 * The maximum FPS the window should reach
+	 */
+	public static final int MAX_FPS = 60;
+	
+	/**
+	 * Each tile in the world is 32x32
+	 */
+	public static final int TILE_DIMENSIONS = 32;
+	
+	/**
+	 * The dimensions of the window
+	 */
+	public static final int WINDOW_WIDTH = 1420, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
+	
+	/**
+	 * If a float is +- off a number by this amount they're basically equal
+	 */
+	public static final float ALMOST_EQUAL = 0.004f;
+	
+	public static final Color RESOURCE_SPAWN_POINT_KEY = new Color(255, 0, 0);
+	public static final Color TREE_SPAWN_KEY           = new Color(0, 255, 0);
+	public static final Color WALL_SPAWN_KEY           = new Color(0, 0, 255);
+	public static final Color TOWN_HALL_KEY            = new Color(255, 0, 255);
+	public static final Color DEPOSIT_KEY              = new Color(0, 0, 0);
+	public static final Color PLAYER_KEY               = new Color(255, 255, 0);
+}
+=== Resources ===
+package com.corntrip.turnbased.util;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
+
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
+import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.util.BufferedImageUtil;
+
+/**
+ * Handles all the resources of the game
+ */
+public class Resources
+{
+	/**
+	 * Stores Images in accordance with their keys
+	 */
+	private static Map<String, Image> images = new HashMap<>();
+	
+	/**
+	 * Stores SpriteSheets in accordance with their keys
+	 */
+	private static Map<String, SpriteSheet> spriteSheets = new HashMap<>();
+	
+	/**
+	 * Stores Sounds in accordance with their keys
+	 */
+	private static Map<String, Sound> sounds = new HashMap<>();
+	
+	/**
+	 * Loads a SpriteSheet found at a given file path starting in res/images/spritesheets/
+	 * @param path The path to the file in the res/images/spritesheets/ directory
+	 * @return The SpriteSheet found, or null if the file was not found or unable to be parsed
+	 */
+	public static SpriteSheet loadSpriteSheet(String path, int tileWidth, int tileHeight)
+	{
+		path = "spritesheets/" + path;
+		return new SpriteSheet(loadImage(path), tileWidth, tileHeight);
+	}
+	
+	/**
+	 * Loads an Image found at a given file path starting in res/images/
+	 * @param path The path to the file in the res/images/ directory
+	 * @return The Image found, or null if the file was not found or unable to be parsed
+	 */
+	public static Image loadImage(String path)
+	{
+		path = "res/images/" + path;
+		Image i = null;
+		try
+		{
+			System.out.println(path);
+			
+			// The PNG loader breaks whenever I try and load a png, so I had to do this :(
+			BufferedImage bufferedImage = ImageIO.read(new File(path));
+		    Texture texture = BufferedImageUtil.getTexture("", bufferedImage);
+		    i = new Image(texture.getImageWidth(), texture.getImageHeight());
+		    i.setTexture(texture);
+		    i.setFilter(Image.FILTER_NEAREST);
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+			Logger.getLogger("error").log(Level.SEVERE, "Image [" + path + "] failed to load.", ex);
+		}
+		return i;
+	}
+	
+	/**
+	 * Loads a Sound found at a given file path starting in res/sounds/
+	 * @param path The path to the file in the res/sounds/ directory
+	 * @return The Sound found, or null if the file was not found or unable to be parsed
+	 */
+	public static Sound loadSound(String path)
+	{
+		Sound s = null;
+		try
+		{
+			s = new Sound("res/sounds/" + path);
+		}
+		catch(SlickException ex)
+		{
+			Logger.getLogger("error").log(Level.SEVERE, "Sound [" + path + "] failed to load.", ex);
+		}
+		return s;
+	}
+	
+	/**
+	 * Registers a sound that can be found by a given sound name.
+	 * @param soundName The String key to recieve the sound by. <b>Note: If a sound with this name already exists it will be overwritten</b>
+	 * @param sound The Sound to store
+	 */
+	public static void registerSound(String soundName, Sound sound)
+	{
+		sounds.put(soundName, sound);
+	}
+	
+	/**
+	 * Registers an image that can be found by a given image name.
+	 * @param imageName The String key to recieve the image by. <b>Note: If an image with this name already exists it will be overwritten</b>
+	 * @param img The Image to store
+	 */
+	public static void registerImage(String imageName, Image img)
+	{
+		images.put(imageName, img);
+	}
+	
+	/**
+	 * Registers a spritesheet that can be found by a given sound name.
+	 * @param soundName The String key to recieve the spritesheet by. <b>Note: If a spritesheet with this name already exists it will be overwritten</b>
+	 * @param sound The SpriteSheet to store
+	 */
+	public static void registerSpriteSheet(String spriteSheetName, SpriteSheet sheet)
+	{
+		spriteSheets.put(spriteSheetName, sheet);
+	}
+	
+	/**
+	 * Returns the Sound found at the given String key
+	 * @param name The key the Sound is stored at
+	 * @return The Sound found at the given String key if found, null if not present.
+	 */
+	public static Sound getSound(String name)
+	{
+		return sounds.get(name);
+	}
+	
+	/**
+	 * Returns the SpriteSheet found at the given String key
+	 * @param name The key the SpriteSheet is stored at
+	 * @return The SpriteSheet found at the given String key if found, null if not present.
+	 */
+	public static SpriteSheet getSpriteSheet(String name)
+	{
+		return spriteSheets.get(name);
+	}
+	
+	/**
+	 * Returns the Image found at the given String key
+	 * @param name The key the Image is stored at
+	 * @return The Image found at the given String key if found, null if not present.
+	 */
+	public static Image getSpriteImage(String name, int x, int y)
+	{
+		return spriteSheets.get(name).getSubImage(x, y);
+	}
+	
+	/**
+	 * Returns the Image found at the given String key
+	 * @param name The key the Image is stored at
+	 * @return The Image found at the given String key if found, null if not present.
+	 */
+	public static Image getImage(String name)
+	{
+		return images.get(name);
+	}
+}
+=== Tile ===
+package com.corntrip.turnbased.world;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.rendering.IRenderable;
+
+public class Tile implements IRenderable
+{
+	private float x, y;
+	private float width, height;
+	
+	private Image texture;
+
+	/**
+	 * A simple thing to render
+	 * @param x The x position to draw at
+	 * @param y The y position to draw at
+	 * @param w The width of the tile to draw
+	 * @param h The height of the tile to draw
+	 */
+	public Tile(float x, float y, float w, float h, Image texture)
+	{
+		this.x = x;
+		this.y = y;
+		this.width = w;
+		this.height = h;
+		this.texture = texture;
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
+		texture.draw(x - offsetX, y - offsetY);
+	}
+
+	public float getX() { return x; }
+	public void setX(float x) { this.x = x; }
+
+	public float getY() { return y; }
+	public void setY(float y) { this.y = y; }
+
+	public float getWidth() { return width; }
+	public void setWidth(float width) { this.width = width; }
+
+	public float getHeight() { return height; }
+	public void setHeight(float height) { this.height = height; }
+}
+=== World ===
+package com.corntrip.turnbased.world;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.gameobject.living.Enemy;
+import com.corntrip.turnbased.gameobject.living.TestEnemy;
+import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
+import com.corntrip.turnbased.rendering.Camera;
+import com.corntrip.turnbased.rendering.IRenderable;
+import com.corntrip.turnbased.util.Reference;
+import com.corntrip.turnbased.util.Resources;
+
+public class World implements IRenderable
+{	
+	/**
+	 * Keeps track of the Entity to be treated as the player
+	 */
+	private Entity player = null;
+	
+	/**
+	 * Keeps track of the GameObject to be treated as the town hall
+	 */
+	private Townhall townhall = null;
+	
+	/**
+	 * Every GameObject in the scene (including Entities) is stored in here
+	 */
+	private List<GameObject> gameObjects = new ArrayList<>();
+	
+	/**
+	 * Every Entity in the scene is stored here (each entity will also have a copy in the gameObjects List)
+	 */
+	private List<Entity> entities = new ArrayList<>();
+	
+	/**
+	 * The Camera used when rendering the world; if no player is defined it simply remains in its default position
+	 */
+	private Camera cam;
+	
+	/**
+	 * Time in ms since the last spawn
+	 */
+	private int timeSinceLastSpawn = 0;
+	
+	/**
+	 * Keeps track of which wave of enemies it is on
+	 */
+	private int wave = 1;
+	
+	/**
+	 * The dimensions of the world
+	 */
+	private final int WIDTH, HEIGHT;
+	
+	/**
+	 * Every tile in the world
+	 */
+	private Tile[][] tiles;
+	
+	/**
+	 * Keeps track of objects to be removed after being messed with
+	 */
+	private List<GameObject> objectsToBeRemoved = new ArrayList<>();
+	
+	/**
+	 * A world holds every object in a scene and handles rendering and updating them all
+	 * @param width The total width of the world
+	 * @param height The total height of the world
+	 */
+	public World(int width, int height)
+	{
+		WIDTH = width;
+		HEIGHT = height;
+		
+		int tilesAmtY = HEIGHT / Reference.TILE_DIMENSIONS;
+		int tilesAmtX = WIDTH  / Reference.TILE_DIMENSIONS;
+		
+		tiles = new Tile[tilesAmtY][tilesAmtX];
+		
+		// Fills the tiles array with new tiles (TODO: Replace with an image-loaded scene)
+		for(int ty = 0; ty < tilesAmtY; ty++)
+		{
+			for(int tx = 0; tx < tilesAmtX; tx++)
+			{
+				tiles[ty][tx] = new Tile(tx * Reference.TILE_DIMENSIONS, ty * Reference.TILE_DIMENSIONS, 
+											Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS, 
+											Resources.getSpriteImage("tiles", (int)(Math.random() + 0.5), (int)(Math.random() + 0.5)));
+			}
+		}
+		
+		if(Reference.DEBUG)
+			System.out.println("Total Tiles: " + tiles.length * tiles[0].length);
+		
+		cam = new Camera(0, 0, Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, WIDTH, HEIGHT);
+	}
+	
+	/**
+	 * Renders each object in the world with a specified offset added to the camera's offset
+	 */
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float passedXOff, float passedYOff) throws SlickException
+	{
+		float camXOff = cam.getXOffset();
+		float camYOff = cam.getYOffset();
+		
+		for(int y = (int) (camYOff / Reference.TILE_DIMENSIONS); y < (camYOff + cam.getScreenHeight()) / Reference.TILE_DIMENSIONS && y < HEIGHT / Reference.TILE_DIMENSIONS; y++)
+		{
+			for(int x = (int) (camXOff / Reference.TILE_DIMENSIONS); x < (camXOff + cam.getScreenWidth()) / Reference.TILE_DIMENSIONS && x < WIDTH / Reference.TILE_DIMENSIONS; x++)
+			{
+				tiles[y][x].render(gc, gfx, camXOff, camYOff);
+			}
+		}
+		
+		for(GameObject o : gameObjects)
+		{
+			if(!o.equals(getPlayer()))
+			{
+				if(o.getX() + o.getWidth() > cam.getXOffset() && o.getX() < cam.getXOffset() + cam.getScreenWidth())
+				{
+					if(o.getY() + o.getHeight() > cam.getYOffset() && o.getY() < cam.getYOffset() + cam.getScreenHeight())
+					{
+						gfx.pushTransform(); // Makes sure this drawing doesn't mess w/ any others
+						o.render(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
+						gfx.popTransform();
+					}
+				}
+			}
+		}
+		
+		if(getPlayer() != null) // Render the player last so it's not behind walls n stuff
+			getPlayer().render(gc, gfx, camXOff + passedXOff, camYOff + passedYOff);
+	}
+	
+	@Override
+	public void render(GameContainer gc, Graphics gfx) throws SlickException
+	{
+		render(gc, gfx, 0, 0);
+	}
+	
+	public void update(GameContainer gc, int delta) throws SlickException
+	{
+		for(int i = 0;  i < entities.size(); i++)
+		{
+			Entity e = entities.get(i);
+			e.update(gc, delta);
+		}
+		
+		if(player != null)
+			cam.slippyCenter(player);
+		
+		timeSinceLastSpawn += delta;
+		if(timeSinceLastSpawn > 1000)
+		{
+			//spawnEnemies();
+			timeSinceLastSpawn = 0;
+			wave++;
+		}
+		
+		while(objectsToBeRemoved.size() > 0)
+		{
+			GameObject go = objectsToBeRemoved.remove(0);
+			removeObjectUnsafely(go);
+		}
+	}
+	
+	public void spawnEnemies()
+	{
+		int enemyW = 32;
+		int enemyH = 32;
+		
+		int numOfEnemies = (int)Math.pow(6, wave * 0.1);
+
+		for(int i = 0; i < numOfEnemies; i++)
+		{
+			float x, y;
+			
+			// Loop for searching for a good position
+			searchLoop:
+			do
+			{
+				x = (float) (Math.random() * WIDTH);
+				y = (float) (Math.random() * HEIGHT);
+				
+				// Make sure it's not colliding with any objects in the scene
+				for(GameObject go : gameObjects)
+				{
+					if(go.collidingWith(x, y, enemyW, enemyH))
+					{
+						continue searchLoop;
+					}
+				}
+			} while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
+				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); // Makes sure it won't spawn in the player's viewpoint
+			
+			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer());
+			addObject(e);
+		}
+	}
+	
+	/**
+	 * Tells the world who to center the camera on and other things that are player-specific. This also adds the player to the object list.
+	 * @param ent The Entity to treat as the player
+	 */
+	public void setPlayer(Entity ent)
+	{
+		player = ent;
+		cam.center(player);
+		addObject(player);
+	}
+	
+	/**
+	 * Assigns the town hall in the world to be the given object, and adds it to the world's registered objects.
+	 * @param th The Townhall to be added
+	 */
+	public void setTownhall(Townhall th)
+	{
+		addObject(th);
+		townhall = th;
+	}
+	
+	/**
+	 * Adds an object to be handled by the world
+	 * @param obj The object to add to the world
+	 */
+	public void addObject(GameObject obj)
+	{
+		if(obj instanceof Entity)
+			entities.add((Entity)obj);
+		
+		gameObjects.add(obj);
+	}
+	
+	/**
+	 * Removes an object from the world after the world is done updating
+	 * @param obj The object to remove
+	 */
+	public void removeObject(GameObject obj)
+	{
+		objectsToBeRemoved.add(obj);
+	}
+	
+	/**
+	 * Removes an object from the world regardless of if things are updating or not
+	 * @param obj The object to remove
+	 */
+	private void removeObjectUnsafely(GameObject obj)
+	{
+		gameObjects.remove(obj);
+		if(obj instanceof Entity)
+			entities.remove(obj);
+	}
+	
+	public boolean containsObject(GameObject obj)
+	{
+		for(GameObject o : gameObjects)
+			if(o.equals(obj))
+				return true;
+		return false;
+	}
+	
+	public List<GameObject> getGameObjects() { return gameObjects; }
+	public List<Entity> getEntities() { return entities; }
+	
+	public Entity getPlayer() { return player; }
+	
+	public Townhall getTownhall() { return townhall; }
+
+	public float getWidth() { return WIDTH; }
+	public float getHeight() { return HEIGHT; }
+}
+=== WorldLoader ===
+package com.corntrip.turnbased.world;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+
+import com.corntrip.turnbased.gameobject.living.Player;
+import com.corntrip.turnbased.gameobject.nonliving.Wall;
+import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;
+import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
+import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceGenerator;
+import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
+import com.corntrip.turnbased.util.Reference;
+import com.corntrip.turnbased.util.Resources;
+
+public class WorldLoader
+{
+	public static World generateWorldFromImage(BufferedImage img)
+	{
+		World world = new World(img.getWidth() * Reference.TILE_DIMENSIONS, img.getHeight() * Reference.TILE_DIMENSIONS);
+		
+		final int w = Reference.TILE_DIMENSIONS, h = Reference.TILE_DIMENSIONS;
+		
+		for(int y = 0; y < img.getHeight(); y++)
+		{
+			for(int x = 0; x < img.getWidth(); x++)
+			{
+				Color c = new Color(img.getRGB(x, y));
+				
+				final float actualX = x * w;
+				final float actualY = y * h;
+				
+				if(c.equals(Reference.RESOURCE_SPAWN_POINT_KEY))
+				{
+					world.addObject(new ResourceGenerator(actualX, actualY, w, h, world, 10000, 
+							new GoldResource(actualX + w / 2, actualY + h / 2, w / 2, h / 2)));
+				}
+				else if(c.equals(Reference.TREE_SPAWN_KEY) || c.equals(Reference.WALL_SPAWN_KEY))
+				{
+					world.addObject(new Wall(actualX, actualY, w, h, 
+										Resources.getSpriteImage("wall", (int)(Math.random() + 0.5), (int)(Math.random() + 0.5)))); // TODO: Work w/ 3x3
+				}
+				else if(c.equals(Reference.TOWN_HALL_KEY))
+				{
+					world.setTownhall(new Townhall(actualX, actualY, w * 4, h * 4));
+				}
+				else if(c.equals(Reference.PLAYER_KEY))
+				{
+					world.setPlayer(new Player(actualX, actualY, w, h, world));
+				}
+				else if(c.equals(Reference.DEPOSIT_KEY))
+				{
+					float myW = w / 2, myH = h / 2;
+					world.addObject(new ResourceDeposit(actualX - myW / 2, actualY - myH / 2, myW, myH));
+				}
+			}
+		}
+		
+		return world;
+	}
+}
