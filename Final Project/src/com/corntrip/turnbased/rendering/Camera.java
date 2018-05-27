@@ -56,7 +56,7 @@ public class Camera
 		yOffset = Helper.clamp(yOffset, 0, mapHeight - visibleHeight);
 	}
 	
-	// Getters & Setters
+	// Getters & Setters //
 	
 	public float getXOffset() { return xOffset; }
 	public void setXOffset(float xOffset) { this.xOffset = xOffset; }

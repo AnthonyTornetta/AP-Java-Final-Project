@@ -22,14 +22,17 @@ public class Reference
 	/**
 	 * The dimensions of the window
 	 */
-	public static final int WINDOW_WIDTH = 960, WINDOW_HEIGHT = 640;
+	public static final int WINDOW_WIDTH = 1420, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
 	
+	/**
+	 * If a float is +- off a number by this amount they're basically equal
+	 */
+	public static final float ALMOST_EQUAL = 0.004f;
 	
 	public static final Color RESOURCE_SPAWN_POINT_KEY = new Color(255, 0, 0);
-	
-	public static final Color TREE_SPAWN_KEY = new Color(0, 255, 0);
-	
-	public static final Color WALL_SPAWN_KEY = new Color(0, 0, 255);
-	
-	public static final Color TOWN_HALL_KEY = new Color(255, 0, 255);
+	public static final Color TREE_SPAWN_KEY           = new Color(0, 255, 0);
+	public static final Color WALL_SPAWN_KEY           = new Color(0, 0, 255);
+	public static final Color TOWN_HALL_KEY            = new Color(255, 0, 255);
+	public static final Color DEPOSIT_KEY              = new Color(0, 0, 0);
+	public static final Color PLAYER_KEY               = new Color(255, 255, 0);
 }

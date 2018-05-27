@@ -38,7 +38,7 @@ public class Tile implements IRenderable
 	
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
-	{		
+	{
 		texture.draw(x - offsetX, y - offsetY);
 	}
 
