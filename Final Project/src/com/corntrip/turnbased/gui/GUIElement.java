@@ -8,12 +8,12 @@ import com.corntrip.turnbased.rendering.IRenderable;
 
 public abstract class GUIElement implements IRenderable
 {
-	private int screenWidth, screenHeight;
+	private float x, y;
 	
-	public GUIElement(int screenWidth, int screenHeight)
+	public GUIElement(float x, float y)
 	{
-		this.screenWidth = screenWidth;
-		this.screenHeight = screenHeight;
+		this.x = x;
+		this.y = y;
 	}
 	
 	@Override
@@ -25,11 +25,11 @@ public abstract class GUIElement implements IRenderable
 	@Override
 	public abstract void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException;
 	
-	public abstract void handleKey(int j);
+	//public abstract void handleKey(int key); <-- TODO: Put me somewhere else
 
-	public int getScreenWidth() { return screenWidth; }
-	public void setScreenWidth(int screenWidth) { this.screenWidth = screenWidth; }
+	public float getX() { return x; }
+	public void setX(float x) { this.x = x; }
 
-	public int getScreenHeight() { return screenHeight; }
-	public void setScreenHeight(int screenHeight) { this.screenHeight = screenHeight; }
+	public float getY() { return y; }
+	public void setY(float y) { this.y = y; }
 }

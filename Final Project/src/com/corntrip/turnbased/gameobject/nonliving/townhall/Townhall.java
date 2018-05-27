@@ -23,8 +23,8 @@ public class Townhall extends GameObject
 	
 	public boolean withinRange(GameObject go)
 	{
-		float thisAnchorX = getX() - getWidth() / 2;
-		float thisAnchorY = getY() - getHeight() / 2;
+		float thisAnchorX = getX() + getWidth() / 2;
+		float thisAnchorY = getY() + getHeight() / 2;
 		
 		float theirAnchorX = go.getX() + go.getWidth() / 2;
 		float theirAnchorY = go.getY() - go.getHeight() / 2;

@@ -10,8 +10,15 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.gameobject.modifier.equips.Bow;
+import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
 import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
+import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
+import com.corntrip.turnbased.gui.GUIElement;
+import com.corntrip.turnbased.gui.HealthBarGUI;
+import com.corntrip.turnbased.gui.ImageGUI;
+import com.corntrip.turnbased.gui.TextGUI;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
@@ -44,7 +51,21 @@ public class Player extends LivingEntity
 	 */
 	private Image texture = Resources.getImage("player");
 	
+	/**
+	 * Max velocity the player should move
+	 */
 	private static final float MAX_MOVE_SPEED = 5.0f;
+	
+	/**
+	 * A healthbar to display
+	 */
+	private HealthBarGUI healthBar;
+	
+	private TextGUI txt;
+	
+	private ImageGUI[] upgradeSlots = new ImageGUI[3];
+	
+	private Weapon weapon;
 	
 	/**
 	 * Controllable Entity by the user
@@ -56,7 +77,21 @@ public class Player extends LivingEntity
 	 */
 	public Player(float startX, float startY, float w, float h, World world)
 	{
-		super(startX, startY, w, h, world);
+		super(startX, startY, w, h, world, 20);
+		
+		healthBar = new HealthBarGUI(getX(), getY() - 8, getWidth(), 6, Color.red, Color.green, getHealth(), getMaxHealth());
+		txt = new TextGUI(getX(), getY() - 20, "Joe Shmoe", Color.red);
+		txt.setCentered(true);
+		
+		setHealth(getHealth() / 2);
+		healthBar.setHealth(getHealth());
+		
+		
+		System.out.println(Resources.getImage("player"));
+		
+		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getImage("player"));
+		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("player"));
+		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("player"));
 	}
 	
 	@Override
@@ -108,6 +143,15 @@ public class Player extends LivingEntity
 			if(!objs.get(i).equals(this))
 			{
 				GameObject go = objs.get(i);
+				
+				if(go instanceof Townhall)
+				{
+					Townhall th = (Townhall)go;
+					if(th.withinRange(this))
+						displayUpgradeGUI = true;
+					else
+						displayUpgradeGUI = false;
+				}
 				
 				if(go.collidingWith(newX, newY, getWidth(), getHeight()))
 				{
@@ -163,6 +207,19 @@ public class Player extends LivingEntity
 		setX(Helper.clamp(getX(), 0, getWorld().getWidth()));
 		setY(Helper.clamp(getY(), 0, getWorld().getHeight()));
 		
+		healthBar.setX(getX());
+		healthBar.setY(getY() - 16);
+		
+		txt.setX(getX() + getWidth() / 2);
+		txt.setY(getY() - 46);
+		
+		upgradeSlots[0].setX(getX() - 48);
+		upgradeSlots[0].setY(getY() - 128);
+		upgradeSlots[1].setX(getX());
+		upgradeSlots[1].setY(getY() - 128);
+		upgradeSlots[2].setX(getX() + 48);
+		upgradeSlots[2].setY(getY() - 128);
+		
 		if(getWorld().getTownhall().withinRange(this))
 		{
 			displayUpgradeGUI = true;
@@ -182,21 +239,28 @@ public class Player extends LivingEntity
 		float anchorX = getX() + getWidth() / 2 - offsetX;
 		float anchorY = getY() + getHeight() / 2 - offsetY;
 		
+		healthBar.render(gc, gfx, offsetX, offsetY);
+		txt.render(gc, gfx, offsetX, offsetY);
+		
+		if(displayUpgradeGUI)
+		{
+			for(GUIElement elem : upgradeSlots)
+			{
+				elem.render(gc, gfx, offsetX, offsetY);
+			}
+		}
+		
 		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY), anchorX, anchorY);
 		
+		gfx.setColor(Color.green);
 		if(Reference.DEBUG)
 			gfx.drawLine(anchorX, anchorY, input.getMouseX(), input.getMouseY());
 		
 		gfx.rotate(anchorX, anchorY, getRotation());
 		
 		float drawX = getX() - offsetX;
-		float drawY = getY() - offsetY;		
+		float drawY = getY() - offsetY;
 		texture.draw(drawX, drawY);
-		
-		if(displayUpgradeGUI)
-		{
-			
-		}
 	}
 	
 	private void scoreResource(Resource r)
