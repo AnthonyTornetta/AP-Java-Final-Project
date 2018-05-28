@@ -17,10 +17,11 @@ public abstract class Projectile extends Entity
 	private Weapon wep;
 	//velocities, used to calc next x and/or y and rotation
 	private float velX, velY;
-	private float rot;
 	//total distance traveled
 	private float distanceTrav;
 	private Image image;
+	
+	private static final float INNACURACY = 25f; // more = less :P
 	
 	/**
 	 * 
@@ -35,9 +36,9 @@ public abstract class Projectile extends Entity
 	public Projectile(float startX, float startY, float w, float h, World world, Weapon wep, float rotation, Image image)
 	{
 		super(startX, startY, w, h, world);
+		setRotation(rotation);
 		this.image = image;
 		this.wep = wep;
-		rot = rotation;
 		distanceTrav = 0;
 		
 		setProjectileDirection();
@@ -55,7 +56,7 @@ public abstract class Projectile extends Entity
 	 */
 	public float flightMax()
 	{
-		return 120*(flightSpeed());
+		return 600*(flightSpeed());
 	}
 	
 	/**removes the projectile from the world
@@ -71,25 +72,35 @@ public abstract class Projectile extends Entity
 	 */
 	public void setProjectileDirection()
 	{
-		velX = rot / 90;
-		if(velX > 1)
+		/*
+		 * == TODO ==
+		 * This calculation causes the arrow to move in a diamond-like pattern, causing innacuracies when moving towards the target.
+		 * This effect is strongest at angles +-45 and +-135
+		 * This effect is weakest at angles +- 0 and +- 180
+		 */
+		if(getRotation() >= 0 && getRotation() < 90)
 		{
-			while(velX > 1)
-			{
-				System.out.println("ruinasdasd");
-				velX--;
-			}
-			velY = 1-velX;
+			velY = getRotation() / 90;
+			velX = 1 - velY;
 		}
-		else if(velX < -1)
+		else if(getRotation() >= 90 && getRotation() <= 180)
 		{
-			while(velX < -1)
-			{
-				System.out.println("ruinasdasd 2");
-				velX++;
-			}
-			velY = 1+velX;
+			velY = Math.abs(getRotation() / 90 - 2);
+			velX = -1 + velY;
 		}
+		else if(getRotation() > -180 && getRotation() < -90)
+		{
+			velY = ((getRotation() + 180) / -90);
+			velX = -1 - velY;
+		}
+		else
+		{
+			velY = getRotation() / 90;
+			velX = 1 + velY;
+		}
+		
+		velY += (Math.random() / INNACURACY - 0.5 / INNACURACY);
+		velX += (Math.random() / INNACURACY - 0.5 / INNACURACY);
 	}
 	
 	@Override
@@ -97,15 +108,14 @@ public abstract class Projectile extends Entity
 	{
 		//once it reaches it's distance it's removed from the world
 		//the issue with this is that the diagonals will be shorter than the verticals, I think
-		if(distanceTrav < flightMax())
+		if(distanceTrav >= flightMax())
 		{
 			endPath();
 		}
 		
 		//setting the new x,y coordinates according to the algorithm
-		super.setX(getX() + velX*flightSpeed());
-		super.setY(getY() + velY*flightSpeed());
-		
+		setX(getX() + velX * flightSpeed());
+		setY(getY() + velY * flightSpeed());
 		
 		//checks the enemies hit
 		List<Entity> enemiesHit = wep.generateHitbox(super.getX(), super.getY(), super.getWidth(), super.getHeight());
@@ -124,4 +134,6 @@ public abstract class Projectile extends Entity
 	public Image getImage() { return image; }
 
 	public void setImage(Image image) { this.image = image;}
+
+	public Weapon getWeapon() { return wep; }
 }

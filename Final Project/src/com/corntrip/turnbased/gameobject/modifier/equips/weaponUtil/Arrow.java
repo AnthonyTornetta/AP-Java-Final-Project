@@ -24,6 +24,7 @@ public class Arrow extends Projectile
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
-		//to be done
+		gfx.rotate((getX() - offsetX) + getWidth() / 2, (getY() - offsetY) + getHeight() / 2, getRotation());
+		getImage().draw(getX() - offsetX, getY() - offsetY);
 	}
 }

@@ -12,6 +12,7 @@ import org.newdawn.slick.SlickException;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.modifier.equips.Bow;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
+import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Projectile;
 import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
 import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
 import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
@@ -23,8 +24,6 @@ import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
-
-import javafx.scene.input.MouseButton;
 
 public class Player extends LivingEntity
 {
@@ -87,10 +86,7 @@ public class Player extends LivingEntity
 		
 		setHealth(getHealth() / 2);
 		healthBar.setHealth(getHealth());
-		
-		
-		System.out.println(Resources.getImage("player"));
-		
+				
 		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getImage("player"));
 		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("player"));
 		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("player"));
@@ -130,7 +126,6 @@ public class Player extends LivingEntity
 		if(in.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
 		{
 			weapon.attack();
-			System.out.println("xd");
 		}
 		// End movement calcs
 				
@@ -186,6 +181,15 @@ public class Player extends LivingEntity
 					{
 						if(go.collidingWith(newX, newY, getWidth(), getHeight()))
 						{
+							if(go instanceof Projectile)
+							{
+								Projectile proj = (Projectile)go;
+								if(proj.getWeapon().getOwner().equals(this))
+								{
+									continue;
+								}
+							}
+							
 							float oldX = getX();
 							float oldY = getY();
 							
@@ -235,6 +239,8 @@ public class Player extends LivingEntity
 		{
 			displayUpgradeGUI = true;
 		}
+		
+		System.out.println(getX() + getWidth() / 2);
 	}
 	
 	@Override
@@ -261,7 +267,7 @@ public class Player extends LivingEntity
 			}
 		}
 		
-		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY), anchorX, anchorY);
+		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY));
 		
 		gfx.setColor(Color.green);
 		if(Reference.DEBUG)
