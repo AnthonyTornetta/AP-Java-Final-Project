@@ -16,9 +16,11 @@ public abstract class LivingEntity extends Entity implements Cloneable
 	 * @param h The height of the LivingEntity
 	 * @param world The world the entity is in
 	 */
-	public LivingEntity(float startX, float startY, float w, float h, World world)
+	public LivingEntity(float startX, float startY, float w, float h, World world, int maxHealth)
 	{
 		super(startX, startY, w, h, world);
+		health = maxHealth;
+		this.maxHealth = maxHealth;
 	}
 	
 	/**
@@ -42,12 +44,10 @@ public abstract class LivingEntity extends Entity implements Cloneable
 	}
 	
 	/**
-	 * TODO: make better
-	 * Removes the LivingEntity from the world
+=	 * Removes the LivingEntity from the world
 	 */
 	public void die()
 	{
-		// TODO: Do this betterly
 		getWorld().removeObject(this);
 	}
 	

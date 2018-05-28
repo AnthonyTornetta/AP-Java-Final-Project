@@ -8,9 +8,9 @@ import org.newdawn.slick.SlickException;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.world.World;
 
-public class Arrows extends Projectile
+public class Arrow extends Projectile
 {
-	public Arrows(float startX, float startY, float w, float h, World world, Weapon wep, Image image)
+	public Arrow(float startX, float startY, float w, float h, World world, Weapon wep, Image image)
 	{
 		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation(), image);	
 	}
@@ -24,6 +24,7 @@ public class Arrows extends Projectile
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
-		//to be done
+		gfx.rotate((getX() - offsetX) + getWidth() / 2, (getY() - offsetY) + getHeight() / 2, getRotation());
+		getImage().draw(getX() - offsetX, getY() - offsetY);
 	}
 }

@@ -21,7 +21,7 @@ public abstract class Enemy extends LivingEntity
 	 */
 	public Enemy(float startX, float startY, float w, float h, World world, Entity target)
 	{
-		super(startX, startY, w, h, world);
+		super(startX, startY, w, h, world, 20);
 		
 		this.target = target;
 	}

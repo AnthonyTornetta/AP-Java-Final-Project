@@ -18,7 +18,7 @@ public class GUI implements IRenderable
 	{
 		render(gc, gfx, 0, 0);
 	}
-
+	
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
@@ -40,9 +40,9 @@ public class GUI implements IRenderable
 	
 	public void keypress(int key)
 	{
-		for(GUIElement e : elements)
+		/*for(GUIElement e : elements)
 		{
 			e.handleKey(key);
-		}
+		}*/
 	}
 }

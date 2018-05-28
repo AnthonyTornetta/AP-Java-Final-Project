@@ -31,7 +31,9 @@ public abstract class Weapon extends Equipable
 			{
 				//hahah no longer hits owner
 				if((!owner.equals(a) && ((LivingEntity)a).collidingWith(startX, startY, width, height)))
+				{
 					itemsHit.add((Entity) a);
+				}
 			}
 		}
 		return itemsHit;
