@@ -3,17 +3,26 @@ package com.corntrip.turnbased.gameobject.living;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
-import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gui.HealthBarGUI;
 import com.corntrip.turnbased.util.Helper;
+import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
 public class TestEnemy extends Enemy
 {
-	public TestEnemy(float startX, float startY, float w, float h, World world, Entity target)
+	private HealthBarGUI hb;
+	private Image img;
+	
+	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target)
 	{
 		super(startX, startY, w, h, world, target);
+		
+		img = Resources.getImage("enemy");
+		
+		hb = new HealthBarGUI(getX(), getY() - 16, getWidth(), 6, Color.red, Color.green, getMaxHealth(), getMaxHealth());
 	}
 	
 	@Override
@@ -23,16 +32,19 @@ public class TestEnemy extends Enemy
 	}
 	
 	@Override
-	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
+		hb.render(gc, gfx, offsetX, offsetY);
+		
 		gfx.setColor(Color.red);
-		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+		gfx.rotate(getAnchorPointX(offsetX), getAnchorPointY(offsetY), getRotation());
+		img.draw(getX() - offsetX, getY() - offsetY);
 	}
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		Entity target = getTarget();
+		LivingEntity target = getTarget();
 		
 		if(target != null) // the target has been set
 		{
@@ -44,7 +56,19 @@ public class TestEnemy extends Enemy
 			
 			setX(getX() + moveX);
 			setY(getY() + moveY);
+			
+			setRotation(Helper.getAngle(getAnchorPointX(), getAnchorPointY(), target.getAnchorPointX(), target.getAnchorPointY()));
+			
+			if(this.collidingWith(target))
+			{
+				getWorld().removeObject(this);
+				target.takeDamage(1);
+			}
 		}
+		
+		hb.setHealth(getHealth());
+		hb.setX(getX());
+		hb.setY(getY() - 16);
 	}
 
 	@Override

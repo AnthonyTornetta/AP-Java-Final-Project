@@ -5,8 +5,9 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.util.Resources;
 
-public class Wall extends GameObject
+public class Tree extends GameObject
 {
 	private Image texture;
 	
@@ -17,10 +18,11 @@ public class Wall extends GameObject
 	 * @param w The width of the wall
 	 * @param h The height of the wall
 	 */
-	public Wall(float startX, float startY, float w, float h, Image texture)
+	public Tree(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
-		this.texture = texture;
+		
+		texture = Resources.getImage("tree");
 	}
 
 	@Override

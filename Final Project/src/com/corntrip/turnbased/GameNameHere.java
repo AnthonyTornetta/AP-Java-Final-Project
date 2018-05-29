@@ -71,11 +71,18 @@ public class GameNameHere extends BasicGame
 	private void initializeResources()
 	{
 		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
-		registerSpriteSheet("wall", "wall.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		
 		registerImage("player", "player.png");
 		registerImage("bow", "bow.png");
 		registerImage("arrow", "arrow.png");
+		registerImage("sword", "sword.png");
+		registerImage("wall", "wall.png");
+		registerImage("enemy", "enemy.png");
+		registerImage("tree", "tree.png");
+		registerImage("gold", "gold.png");
+		registerImage("deposit", "resource-deposit.png");
+		registerImage("generator", "resource-generator.png");
+		registerImage("townhall", "townhall.png");
 	}
 	
 	private void registerImage(String name, String location)
@@ -88,6 +95,7 @@ public class GameNameHere extends BasicGame
 		Resources.registerSpriteSheet(name, Resources.loadSpriteSheet(location, w, h));
 	}
 	
+	@SuppressWarnings("unused")
 	private void registerSound(String name, String location)
 	{
 		Resources.registerSound(name, Resources.loadSound(location));

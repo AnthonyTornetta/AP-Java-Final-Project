@@ -18,7 +18,7 @@ public class Arrow extends Projectile
 	@Override
 	public float flightSpeed() 
 	{
-		return 30.4f;
+		return 20.0f + getWeapon().getTier();
 	}
 
 	@Override

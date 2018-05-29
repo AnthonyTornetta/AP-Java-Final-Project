@@ -2,8 +2,13 @@ package com.corntrip.turnbased.world;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.corntrip.turnbased.gameobject.living.Enemy;
 import com.corntrip.turnbased.gameobject.living.Player;
+import com.corntrip.turnbased.gameobject.living.TestEnemy;
+import com.corntrip.turnbased.gameobject.nonliving.Tree;
 import com.corntrip.turnbased.gameobject.nonliving.Wall;
 import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;
 import com.corntrip.turnbased.gameobject.nonliving.resources.ResourceDeposit;
@@ -20,6 +25,8 @@ public class WorldLoader
 		
 		final int w = Reference.TILE_DIMENSIONS, h = Reference.TILE_DIMENSIONS;
 		
+		List<Enemy> enemies = new ArrayList<>();
+		
 		for(int y = 0; y < img.getHeight(); y++)
 		{
 			for(int x = 0; x < img.getWidth(); x++)
@@ -31,13 +38,17 @@ public class WorldLoader
 				
 				if(c.equals(Reference.RESOURCE_SPAWN_POINT_KEY))
 				{
-					world.addObject(new ResourceGenerator(actualX, actualY, w, h, world, 10000, 
-							new GoldResource(actualX + w / 2, actualY + h / 2, w / 2, h / 2)));
+					world.addObject(new ResourceGenerator(actualX, actualY, w * 2, h * 2, world, 10000, 
+							new GoldResource(actualX + w / 2, actualY + h / 2, w, h)));
 				}
-				else if(c.equals(Reference.TREE_SPAWN_KEY) || c.equals(Reference.WALL_SPAWN_KEY))
+				else if(c.equals(Reference.TREE_SPAWN_KEY))
+				{
+					world.addObject(new Tree(actualX, actualY, w * 2, h * 3));
+				}
+				else if(c.equals(Reference.WALL_SPAWN_KEY))
 				{
 					world.addObject(new Wall(actualX, actualY, w, h, 
-										Resources.getSpriteImage("wall", (int)(Math.random() + 0.5), (int)(Math.random() + 0.5)))); // TODO: Work w/ 3x3
+										Resources.getImage("wall")));
 				}
 				else if(c.equals(Reference.TOWN_HALL_KEY))
 				{
@@ -49,10 +60,20 @@ public class WorldLoader
 				}
 				else if(c.equals(Reference.DEPOSIT_KEY))
 				{
-					float myW = w / 2, myH = h / 2;
-					world.addObject(new ResourceDeposit(actualX - myW / 2, actualY - myH / 2, myW, myH));
+					world.addObject(new ResourceDeposit(actualX, actualY, w, h));
+				}
+				else if(c.equals(Reference.TEST_ENEMY))
+				{
+					Enemy e = new TestEnemy(actualY, actualY, w, h, world, null);
+					world.addObject(e);
+					enemies.add(e);
 				}
 			}
+		}
+		
+		for(Enemy e : enemies)
+		{
+			e.setTarget(world.getPlayer());
 		}
 		
 		return world;

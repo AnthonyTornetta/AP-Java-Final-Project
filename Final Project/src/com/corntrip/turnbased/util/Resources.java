@@ -57,9 +57,7 @@ public class Resources
 		path = "res/images/" + path;
 		Image i = null;
 		try
-		{
-			System.out.println(path);
-			
+		{			
 			// The PNG loader breaks whenever I try and load a png, so I had to do this :(
 			BufferedImage bufferedImage = ImageIO.read(new File(path));
 		    Texture texture = BufferedImageUtil.getTexture("", bufferedImage);

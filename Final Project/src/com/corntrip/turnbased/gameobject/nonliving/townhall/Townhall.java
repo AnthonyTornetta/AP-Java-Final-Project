@@ -1,24 +1,28 @@
 package com.corntrip.turnbased.gameobject.nonliving.townhall;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.util.Resources;
 
 public class Townhall extends GameObject
 {
+	private Image img;
+	
 	public Townhall(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
+		
+		img = Resources.getImage("townhall");
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
-		gfx.setColor(Color.pink);
-		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+		img.draw(getX() - offsetX, getY() - offsetY);
 	}
 	
 	public boolean withinRange(GameObject go)

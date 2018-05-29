@@ -10,7 +10,8 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
-import com.corntrip.turnbased.gameobject.modifier.equips.Bow;
+import com.corntrip.turnbased.gameobject.modifier.equips.Sword;
+import com.corntrip.turnbased.gameobject.modifier.equips.SwungWeapon;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Projectile;
 import com.corntrip.turnbased.gameobject.nonliving.resources.Resource;
@@ -84,19 +85,21 @@ public class Player extends LivingEntity
 		txt = new TextGUI(getX(), getY() - 20, "Joe Shmoe", Color.red);
 		txt.setCentered(true);
 		
-		setHealth(getHealth() / 2);
+		setHealth(getHealth());
 		healthBar.setHealth(getHealth());
-				
+		
 		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getImage("player"));
 		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("player"));
 		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("player"));
 		
-		weapon = new Bow(this, Resources.getImage("bow"));
+		weapon = new Sword(getX() + getWidth(), getY(), 32, 32, this, Resources.getImage("sword"), 1);//new Bow(this, Resources.getImage("bow"));
 	}
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
+		weapon.update(delta);
+		
 		float subVal = 0.8f;
 		float moveBy = Reference.MAX_FPS * delta / 1000.0f;
 		
@@ -222,6 +225,22 @@ public class Player extends LivingEntity
 		setX(Helper.clamp(getX(), 0, getWorld().getWidth()));
 		setY(Helper.clamp(getY(), 0, getWorld().getHeight()));
 		
+		if(weapon instanceof SwungWeapon)
+		{
+			SwungWeapon sw = (SwungWeapon)weapon;
+			
+			// you have no idea
+			// how long
+			// it took me
+			// to figure out
+			// these big maths.
+			// i have pictures.
+			// i will show you said pictures.
+			
+			sw.setX(getX() + (-2 * (Math.abs(getRotation()) / 90) + 2) * getWidth());
+			sw.setY(getY() + ((getRotation() % 45) / 45.0f) * getHeight());
+		}
+		
 		healthBar.setX(getX());
 		healthBar.setY(getY() - 16);
 		
@@ -239,8 +258,6 @@ public class Player extends LivingEntity
 		{
 			displayUpgradeGUI = true;
 		}
-		
-		System.out.println(getX() + getWidth() / 2);
 	}
 	
 	@Override
@@ -253,8 +270,8 @@ public class Player extends LivingEntity
 		int mouseX = input.getMouseX();
 		int mouseY = input.getMouseY();
 		
-		float anchorX = getX() + getWidth() / 2 - offsetX;
-		float anchorY = getY() + getHeight() / 2 - offsetY;
+		float anchorX = getAnchorPointX(offsetX);
+		float anchorY = getAnchorPointY(offsetY);
 		
 		healthBar.render(gc, gfx, offsetX, offsetY);
 		txt.render(gc, gfx, offsetX, offsetY);
@@ -279,7 +296,7 @@ public class Player extends LivingEntity
 		float drawY = getY() - offsetY;
 		texture.draw(drawX, drawY);
 		
-		weapon.getImage().draw(drawX + getWidth(), drawY);
+		weapon.renderAt(gc, gfx, drawX + getWidth(), drawY);
 	}
 	
 	private void scoreResource(Resource r)

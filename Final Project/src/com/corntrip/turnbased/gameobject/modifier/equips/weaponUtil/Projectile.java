@@ -51,24 +51,24 @@ public abstract class Projectile extends Entity
 	public abstract float flightSpeed();
 	
 	/**
-	 * 
+	 * sets how far the arrow will go
 	 * @return sets how far the arrow will go
 	 */
 	public float flightMax()
 	{
-		return 600*(flightSpeed());
+		return wep.getTier() * 600 * flightSpeed();
 	}
 	
-	/**removes the projectile from the world
-	 * 
+	/**
+	 * removes the projectile from the world
 	 */
 	public void endPath()
 	{
 		getWorld().removeObject(this);
 	}
 	
-	/**uses super maths to set where the x,y will be aiming
-	 * 
+	/**
+	 * uses super maths to set where the x,y will be aiming
 	 */
 	public void setProjectileDirection()
 	{
