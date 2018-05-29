@@ -30,4 +30,22 @@ public class Helper
 	{
 		return (float)Math.toDegrees(Math.atan2(toY - fromY, toX - fromX));
 	}
+	
+	public static float getXCoordFromRotation(float rotation, float anchorX, float anchorY, float oldX)
+	{
+		// Convert to radians because java likes them
+		double radians = Math.toRadians(rotation);
+		
+		// Do fancy maths **not** stolen from stack overflow
+		return (float)(Math.cos(radians) * (oldX - anchorX) - Math.sin(radians) * (oldX - anchorY) + anchorX);
+	}
+	
+	public static float getYCoordFromRotation(float rotation, float anchorX, float anchorY, float oldX, float oldY)
+	{
+		// Convert to radians because java likes them
+		double radians = Math.toRadians(rotation);
+		
+		// Do fancy maths **not** stolen from stack overflow
+		return (float)(Math.sin(radians) * (oldX - anchorX) + Math.cos(radians) * (oldY - anchorY) + anchorY);
+	}
 }

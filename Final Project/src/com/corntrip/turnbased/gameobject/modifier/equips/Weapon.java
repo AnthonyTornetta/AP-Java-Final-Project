@@ -2,6 +2,8 @@ package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import java.util.ArrayList;
 
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import com.corntrip.turnbased.gameobject.Entity;
@@ -14,11 +16,7 @@ public abstract class Weapon extends Equipable
 	private Entity owner;
 	private float damage;
 	private Image image;
-	
-	
-	public abstract void attack();
-	
-	public abstract Weapon upgrade();
+	private int tier;
 	
 	//Start x and y are the owner's hit box
 	public ArrayList<Entity> generateHitbox(float startX, float startY, float width, float height)
@@ -39,7 +37,20 @@ public abstract class Weapon extends Equipable
 		return itemsHit;
 	}
 	
+	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
+	{
+		getImage().draw(x, y);
+	}
 	
+	public abstract void attack();
+	
+	public abstract Weapon upgrade();
+	public abstract void update(int delta);
+	
+	// Getters & Setters //
+	
+	public void setTier(int t) { tier = t; }
+	public int getTier() { return tier; }
 	public float getDamage() { return damage; }
 	public Entity getOwner() { return owner; }
 	public Image getImage() { return image; }

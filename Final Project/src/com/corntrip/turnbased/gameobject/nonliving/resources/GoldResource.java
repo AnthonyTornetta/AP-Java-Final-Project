@@ -1,14 +1,20 @@
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+
+import com.corntrip.turnbased.util.Resources;
 
 public class GoldResource extends Resource
 {
+	private Image img;
+	
 	public GoldResource(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
+		
+		img = Resources.getImage("gold");
 	}
 	
 	@Override
@@ -20,8 +26,7 @@ public class GoldResource extends Resource
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
-		gfx.setColor(Color.yellow);
-		gfx.fillRect(getX() - offsetX, getY() - offsetY, getWidth(), getHeight());
+		img.draw(getX() - offsetX, getY() - offsetY);
 	}
 	
 	@Override

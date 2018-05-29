@@ -1,6 +1,5 @@
 package com.corntrip.turnbased.gameobject.living;
 
-import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.world.World;
 
 public abstract class Enemy extends LivingEntity
@@ -8,7 +7,7 @@ public abstract class Enemy extends LivingEntity
 	/**
 	 * The target to go after
 	 */
-	private Entity target;
+	private LivingEntity target;
 	
 	/**
 	 * The Antagonist of the story
@@ -19,15 +18,15 @@ public abstract class Enemy extends LivingEntity
 	 * @param world The world the enemy is in
 	 * @param target The target for the enemy (doesn't have to be the player)
 	 */
-	public Enemy(float startX, float startY, float w, float h, World world, Entity target)
+	public Enemy(float startX, float startY, float w, float h, World world, LivingEntity target)
 	{
-		super(startX, startY, w, h, world, 20);
+		super(startX, startY, w, h, world, 2);
 		
 		this.target = target;
 	}
 	
 	// Getters & Setters //
 	
-	public Entity getTarget() { return target; }
-	public void setTarget(Entity t) { this.target = t; }
+	public LivingEntity getTarget() { return target; }
+	public void setTarget(LivingEntity t) { this.target = t; }
 }

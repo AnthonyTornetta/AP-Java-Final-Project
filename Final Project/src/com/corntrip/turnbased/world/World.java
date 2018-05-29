@@ -10,8 +10,8 @@ import org.newdawn.slick.SlickException;
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.Enemy;
+import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.living.TestEnemy;
-import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrow;
 import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
 import com.corntrip.turnbased.rendering.Camera;
 import com.corntrip.turnbased.rendering.IRenderable;
@@ -23,7 +23,7 @@ public class World implements IRenderable
 	/**
 	 * Keeps track of the Entity to be treated as the player
 	 */
-	private Entity player = null;
+	private LivingEntity player = null;
 	
 	/**
 	 * Keeps track of the GameObject to be treated as the town hall
@@ -209,7 +209,7 @@ public class World implements IRenderable
 	 * Tells the world who to center the camera on and other things that are player-specific. This also adds the player to the object list.
 	 * @param ent The Entity to treat as the player
 	 */
-	public void setPlayer(Entity ent)
+	public void setPlayer(LivingEntity ent)
 	{
 		player = ent;
 		cam.center(player);
@@ -269,7 +269,7 @@ public class World implements IRenderable
 	public List<GameObject> getGameObjects() { return gameObjects; }
 	public List<Entity> getEntities() { return entities; }
 	
-	public Entity getPlayer() { return player; }
+	public LivingEntity getPlayer() { return player; }
 	
 	public Townhall getTownhall() { return townhall; }
 

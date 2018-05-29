@@ -2,40 +2,45 @@ package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import java.util.ArrayList;
 
-import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.Image;
 
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 
-public class Sword extends Weapon
-{	
-	public Sword(Entity owner, SpriteSheet a)
+public class Sword extends SwungWeapon
+{
+	public Sword(float x, float y, float w, float h, Entity owner, Image a, int tier)
 	{
-		//swordSprite = ''
-		tier = 1;
+		super(x, y, w, h, 500 / tier);
+		setTier(tier);
 		setDamage((float) (tier*6.862));
 		setOwner(owner);
+		setImage(a);
 	}
-
+	
 	@Override
-	public void attack() 
+	public void attack()
 	{
-		//test for damage and stuff until there is a better way
-		ArrayList<Entity> enemiesHit = generateHitbox(getOwner().getX(), getOwner().getY(), getOwner().getWidth(), -getOwner().getHeight());
+		if(getTimeSinceLastSwing() < getWaitTimesBetweenSwings())
+			return;
+		setTimeSinceLastSwing(0);
+		
+		ArrayList<Entity> enemiesHit = generateHitbox(getX(), getY(), getWidth(), getHeight());
 		
 		for(Entity hitEnemy : enemiesHit)
 		{
-			if(hitEnemy != null)
+			if(hitEnemy instanceof LivingEntity)
 			{
 				((LivingEntity) hitEnemy).takeDamage((int)(getDamage()+0.5));;
 			}
 		}
+		
+		setRotation(90);
 	}
-
+	
 	@Override
 	public Sword upgrade() 
-	{
-		tier++;
-		return new Sword(getOwner(), null);
+	{		
+		return new Sword(getX(), getY(), getWidth(), getHeight(), getOwner(), getImage(), getTier() + 1);
 	}
 }
