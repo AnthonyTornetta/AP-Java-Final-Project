@@ -62,12 +62,12 @@ public class WorldLoader
 				{
 					world.addObject(new ResourceDeposit(actualX, actualY, w, h));
 				}
-				else if(c.equals(Reference.TEST_ENEMY))
-				{
-					Enemy e = new TestEnemy(actualY, actualY, w, h, world, null);
-					world.addObject(e);
-					enemies.add(e);
-				}
+//				else if(c.equals(Reference.TEST_ENEMY))
+//				{
+//					Enemy e = new TestEnemy(actualY, actualY, w, h, world, null, "INSERT NAME HERE TOO");
+//					world.addObject(e);
+//					enemies.add(e);
+//				}
 			}
 		}
 		

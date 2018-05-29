@@ -230,14 +230,6 @@ public class Player extends LivingEntity
 		{
 			SwungWeapon sw = (SwungWeapon)weapon;
 			
-			// you have no idea
-			// how long
-			// it took me
-			// to figure out
-			// these big maths.
-			// i have pictures.
-			// i will show you said pictures.
-			
 			sw.setX(getX() + Helper.clamp(-2 * (Math.abs(getRotation()) / 90) + 2 * getWidth(), -1, 1));
 			sw.setY(getY() + ((getRotation() % 45) / 45.0f) * getHeight());
 		}
@@ -305,6 +297,13 @@ public class Player extends LivingEntity
 	{
 		if(r != null)
 			pts += r.getPtsValue();
+	}
+	
+	@Override
+	public void die()
+	{
+		super.die();
+		getWorld().removeObject(this);
 	}
 	
 	@Override

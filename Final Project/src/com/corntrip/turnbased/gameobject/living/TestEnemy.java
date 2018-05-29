@@ -16,9 +16,9 @@ public class TestEnemy extends Enemy
 	private HealthBarGUI hb;
 	private Image img;
 	
-	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target)
+	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target, String name)
 	{
-		super(startX, startY, w, h, world, target);
+		super(startX, startY, w, h, world, target, name);
 		
 		img = Resources.getImage("enemy");
 		
@@ -77,6 +77,6 @@ public class TestEnemy extends Enemy
 	@Override
 	public LivingEntity clone()
 	{
-		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget());
+		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget(), getName());
 	}
 }

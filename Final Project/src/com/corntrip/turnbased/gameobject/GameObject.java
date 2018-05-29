@@ -13,7 +13,7 @@ import org.newdawn.slick.SlickException;
 import com.corntrip.turnbased.physics.ICollidable;
 import com.corntrip.turnbased.rendering.IRenderable;
 
-public abstract class GameObject implements ICollidable, IRenderable
+public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 {
 	/**
 	 * Used to differentiate between objects

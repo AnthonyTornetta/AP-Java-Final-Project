@@ -200,7 +200,7 @@ public class World implements IRenderable
 			} while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
 				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); // Makes sure it won't spawn in the player's viewpoint
 			
-			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer());
+			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "INSERT NAME HERE TROY");
 			addObject(e);
 		}
 	}
