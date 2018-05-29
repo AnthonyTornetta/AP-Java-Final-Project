@@ -159,7 +159,7 @@ public class World implements IRenderable
 		timeSinceLastSpawn += delta;
 		if(timeSinceLastSpawn > 1000)
 		{
-			//spawnEnemies();
+			spawnEnemies();
 			timeSinceLastSpawn = 0;
 			wave++;
 		}

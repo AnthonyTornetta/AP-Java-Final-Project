@@ -11,7 +11,6 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.modifier.equips.Bow;
-import com.corntrip.turnbased.gameobject.modifier.equips.Sword;
 import com.corntrip.turnbased.gameobject.modifier.equips.SwungWeapon;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Projectile;
@@ -93,8 +92,8 @@ public class Player extends LivingEntity
 		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("player"));
 		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("player"));
 		
-		//eapon = new Bow(this, Resources.getImage("bow"), 1);
-		weapon = new Sword(getX() + getWidth(), getY(), 32, 32, this, Resources.getImage("sword"), 1);//new Bow(this, Resources.getImage("bow"));
+		weapon = new Bow(this, Resources.getImage("bow"), 1);
+		//weapon = new Sword(getX() + getWidth(), getY(), 32, 32, this, Resources.getImage("sword"), 1);//new Bow(this, Resources.getImage("bow"));
 	}
 	
 	@Override
@@ -239,7 +238,7 @@ public class Player extends LivingEntity
 			// i have pictures.
 			// i will show you said pictures.
 			
-			sw.setX(getX() + (-2 * (Math.abs(getRotation()) / 90) + 2) * getWidth());
+			sw.setX(getX() + Helper.clamp(-2 * (Math.abs(getRotation()) / 90) + 2 * getWidth(), -1, 1));
 			sw.setY(getY() + ((getRotation() % 45) / 45.0f) * getHeight());
 		}
 		

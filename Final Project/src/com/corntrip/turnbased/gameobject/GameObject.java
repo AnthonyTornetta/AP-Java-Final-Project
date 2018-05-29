@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 5/31/18
+ * This is our own work except the Slick2D library - ACT & TC
+ * The most general form of something in the game scene.
+ */
+
 package com.corntrip.turnbased.gameobject;
 
 import org.newdawn.slick.GameContainer;
@@ -7,7 +13,7 @@ import org.newdawn.slick.SlickException;
 import com.corntrip.turnbased.physics.ICollidable;
 import com.corntrip.turnbased.rendering.IRenderable;
 
-public abstract class GameObject implements ICollidable, IRenderable, Cloneable
+public abstract class GameObject implements ICollidable, IRenderable
 {
 	/**
 	 * Used to differentiate between objects
@@ -24,8 +30,6 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	 * Position of the object
 	 */
 	private float x, y;
-	
-	private float xRot, yRot;
 	
 	/**
 	 * Dimensions of the object
@@ -117,19 +121,7 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	public void setRotation(float rotation, float anchorX, float anchorY)
 	{
 		this.rotation = rotation;
-		
-		// Convert to radians because java likes them
-		double radians = Math.toRadians(rotation);
-		
-		// Do fancy maths **not** stolen from stack overflow
-		xRot = (float)(Math.cos(radians) * (getX() - anchorX) - Math.sin(radians) * (getX() - anchorY) + anchorX);
-
-		yRot = (float)(Math.sin(radians) * (getX() - anchorX) + Math.cos(radians) * (getY() - anchorY) + anchorY);
-	}
-	
-	public float getRotatedX() { return xRot; }
-	public float getRotatedY() { return yRot; }
-	
+	}	
 	public long getObjectId() { return objectId; }
 	
 	public float getAnchorPointX() { return getAnchorPointX(0); }

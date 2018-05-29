@@ -42,7 +42,7 @@ public class Textifier
 				{
 					BufferedReader br = new BufferedReader(new FileReader(f));
 					
-					bigHunkOfFiles += "=== " + f.getName().substring(0, f.getName().indexOf(".java")) + " ===\n";
+					bigHunkOfFiles += "\n=== " + f.getName().substring(0, f.getName().indexOf(".java")) + " ===\n";
 					
 					for(String line = br.readLine(); line != null; line = br.readLine())
 					{
