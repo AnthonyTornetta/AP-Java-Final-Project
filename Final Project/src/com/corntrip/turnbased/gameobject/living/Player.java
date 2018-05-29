@@ -222,8 +222,8 @@ public class Player extends LivingEntity
 		setX(newX);
 		setY(newY);
 		
-		setX(Helper.clamp(getX(), 0, getWorld().getWidth()));
-		setY(Helper.clamp(getY(), 0, getWorld().getHeight()));
+		setX(Helper.clamp(getX(), 0, getWorld().getWidth() - getWidth()));
+		setY(Helper.clamp(getY(), 0, getWorld().getHeight() - getHeight()));
 		
 		if(weapon instanceof SwungWeapon)
 		{
