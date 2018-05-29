@@ -10,6 +10,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.gameobject.modifier.equips.Bow;
 import com.corntrip.turnbased.gameobject.modifier.equips.Sword;
 import com.corntrip.turnbased.gameobject.modifier.equips.SwungWeapon;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
@@ -92,6 +93,7 @@ public class Player extends LivingEntity
 		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("player"));
 		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("player"));
 		
+		//eapon = new Bow(this, Resources.getImage("bow"), 1);
 		weapon = new Sword(getX() + getWidth(), getY(), 32, 32, this, Resources.getImage("sword"), 1);//new Bow(this, Resources.getImage("bow"));
 	}
 	
@@ -243,6 +245,7 @@ public class Player extends LivingEntity
 		
 		healthBar.setX(getX());
 		healthBar.setY(getY() - 16);
+		healthBar.setHealth(getHealth());
 		
 		txt.setX(getX() + getWidth() / 2);
 		txt.setY(getY() - 46);

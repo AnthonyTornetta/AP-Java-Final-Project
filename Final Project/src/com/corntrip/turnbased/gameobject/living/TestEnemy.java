@@ -51,8 +51,11 @@ public class TestEnemy extends Enemy
 			float targetX = target.getX();
 			float targetY = target.getY();
 			
-			float moveX = Helper.clamp(targetX - getX(), -5, 5);
-			float moveY = Helper.clamp(targetY - getY(), -5, 5);
+			float xd = Helper.clamp(targetX - getX(), -1, 1);
+			float xdy = Helper.clamp(targetY - getY(), -1, 1);
+			
+			float moveX = (float)Math.random() * 10 - 5 + xd;
+			float moveY = (float)Math.random() * 10 - 5 + xdy;
 			
 			setX(getX() + moveX);
 			setY(getY() + moveY);
