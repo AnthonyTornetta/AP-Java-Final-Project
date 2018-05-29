@@ -22,7 +22,7 @@ public class Reference
 	/**
 	 * The dimensions of the window
 	 */
-	public static final int WINDOW_WIDTH = 1420, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
+	public static final int WINDOW_WIDTH = 720, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
 	
 	/**
 	 * If a float is +- off a number by this amount they're basically equal
