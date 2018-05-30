@@ -16,27 +16,20 @@ import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 import com.corntrip.turnbased.world.WorldLoader;
 
-public class GameNameHere extends BasicGame
+public class CornTrip extends BasicGame
 {
 	private World world;
 	
-	public GameNameHere()
+	public CornTrip()
 	{
-		super("a (good?) game.");
+		super("CornTrip");
 	}
 	
-	public static void main(String[] args)
+	public static void main(String[] args) throws SlickException
 	{
-		try
-        {
-            AppGameContainer app = new AppGameContainer(new GameNameHere());
-            app.setDisplayMode(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, false);
-            app.start();
-        }
-        catch (SlickException e)
-        {
-            e.printStackTrace();
-        }
+        AppGameContainer app = new AppGameContainer(new CornTrip());
+        app.setDisplayMode(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, false);
+        app.start();
 	}
 
 	@Override
@@ -83,6 +76,7 @@ public class GameNameHere extends BasicGame
 		registerImage("deposit", "resource-deposit.png");
 		registerImage("generator", "resource-generator.png");
 		registerImage("townhall", "townhall.png");
+		registerImage("health", "health.png");
 	}
 	
 	private void registerImage(String name, String location)

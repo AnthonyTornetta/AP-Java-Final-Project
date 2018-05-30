@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.world.World;
 
@@ -124,6 +125,13 @@ public abstract class Projectile extends Entity
 		if(enemiesHit.size() > 0)
 		{
 			((LivingEntity)enemiesHit.get(0)).takeDamage((int)(wep.getDamage()+0.5));
+			
+			if(getWeapon().getOwner() instanceof Player)
+			{
+				Player p = (Player)getWeapon().getOwner();
+				p.addXp(getWeapon().getTier() * 10);
+			}
+			
 			endPath();
 		}
 		

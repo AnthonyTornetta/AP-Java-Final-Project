@@ -1,6 +1,7 @@
 package com.corntrip.turnbased.gameobject.living;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
 public abstract class LivingEntity extends Entity implements Cloneable
@@ -29,7 +30,7 @@ public abstract class LivingEntity extends Entity implements Cloneable
 	 */
 	public void heal(int amt)
 	{
-		health += amt;
+		health = (int) Helper.clamp(amt + getHealth(), 0, getMaxHealth());
 	}
 	
 	/**

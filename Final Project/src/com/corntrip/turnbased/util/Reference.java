@@ -1,13 +1,16 @@
 package com.corntrip.turnbased.util;
 
 import java.awt.Color;
+import java.awt.Font;
+
+import org.newdawn.slick.TrueTypeFont;
 
 public class Reference
 {
 	/**
 	 * Indicates whether or not the game is currently being debugged
 	 */
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	
 	/**
 	 * The maximum FPS the window should reach
@@ -37,4 +40,7 @@ public class Reference
 	public static final Color PLAYER_KEY               = new Color(255, 255, 0);
 	
 	public static final Color TEST_ENEMY               = new Color(255, 0, 128);
+	
+	public static final TrueTypeFont FONT_DEFAULT = new TrueTypeFont(new Font("Verdana", Font.PLAIN, 16), true);
+	public static final TrueTypeFont FONT_BOLD    = new TrueTypeFont(new Font("Verdana", Font.BOLD , 16), true);
 }

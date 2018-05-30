@@ -1,12 +1,11 @@
 package com.corntrip.turnbased.gui;
 
-import java.awt.Font;
-
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.TrueTypeFont;
+
+import com.corntrip.turnbased.util.Reference;
 
 public class TextGUI extends GUIElement
 {
@@ -15,7 +14,6 @@ public class TextGUI extends GUIElement
 	private boolean centered = false;
 	
 	private int fontWidth = 0;
-	private TrueTypeFont font = new TrueTypeFont(new Font("Verdana", Font.PLAIN, 16), true);
 	
 	public TextGUI(float x, float y, String text, Color textColor)
 	{
@@ -23,7 +21,7 @@ public class TextGUI extends GUIElement
 		this.text = text;
 		this.textColor = textColor;
 		
-		fontWidth = font.getWidth(text);
+		fontWidth = Reference.FONT_DEFAULT.getWidth(text);
 	}
 
 	@Override
@@ -32,11 +30,11 @@ public class TextGUI extends GUIElement
 		gfx.setColor(textColor);
 		if(!centered)
 		{
-			font.drawString(getX() - offsetX, getY() - offsetY, text, textColor);
+			Reference.FONT_DEFAULT.drawString(getX() - offsetX, getY() - offsetY, text, textColor);
 		}
 		else
 		{
-			font.drawString(getX() - fontWidth / 2 - offsetX, getY() - offsetY, text, textColor);
+			Reference.FONT_DEFAULT.drawString(getX() - fontWidth / 2 - offsetX, getY() - offsetY, text, textColor);
 		}
 	}
 	
@@ -48,7 +46,4 @@ public class TextGUI extends GUIElement
 
 	public Color getTextColor() { return textColor; }
 	public void setTextColor(Color textColor) { this.textColor = textColor; }
-
-	public TrueTypeFont getFont() { return font; }
-	public void setFont(TrueTypeFont font) { this.font = font; }
 }

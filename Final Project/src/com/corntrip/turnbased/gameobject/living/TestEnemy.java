@@ -6,14 +6,12 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
-import com.corntrip.turnbased.gui.HealthBarGUI;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
 public class TestEnemy extends Enemy
 {
-	private HealthBarGUI hb;
 	private Image img;
 	
 	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target, String name)
@@ -21,8 +19,6 @@ public class TestEnemy extends Enemy
 		super(startX, startY, w, h, world, target, name);
 		
 		img = Resources.getImage("enemy");
-		
-		hb = new HealthBarGUI(getX(), getY() - 16, getWidth(), 6, Color.red, Color.green, getMaxHealth(), getMaxHealth());
 	}
 	
 	@Override
@@ -34,7 +30,7 @@ public class TestEnemy extends Enemy
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
-		hb.render(gc, gfx, offsetX, offsetY);
+		renderGUI(gc, gfx, offsetX, offsetY);
 		
 		gfx.setColor(Color.red);
 		gfx.rotate(getAnchorPointX(offsetX), getAnchorPointY(offsetY), getRotation());
@@ -69,9 +65,7 @@ public class TestEnemy extends Enemy
 			}
 		}
 		
-		hb.setHealth(getHealth());
-		hb.setX(getX());
-		hb.setY(getY() - 16);
+		updateGUIPos();
 	}
 
 	@Override

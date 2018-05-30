@@ -6,6 +6,7 @@ import org.newdawn.slick.Image;
 
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.living.Player;
 
 public class Sword extends SwungWeapon
 {
@@ -32,6 +33,12 @@ public class Sword extends SwungWeapon
 			if(hitEnemy instanceof LivingEntity)
 			{
 				((LivingEntity) hitEnemy).takeDamage((int)(getDamage()+0.5));;
+				
+				if(getOwner() instanceof Player)
+				{
+					Player p = (Player)getOwner();
+					p.addXp(getTier() * 5);
+				}
 			}
 		}
 		

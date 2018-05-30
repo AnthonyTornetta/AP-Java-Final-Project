@@ -15,7 +15,7 @@ public class Bow extends Weapon
 	{
 		setOwner(owner);
 		setTier(tier);
-		waitTimesBetweenShots = timeSinceLastShot = 0 / tier;
+		waitTimesBetweenShots = timeSinceLastShot = 2000 / tier;
 		setDamage((float)(tier*4.212));
 		setImage(a);
 	}

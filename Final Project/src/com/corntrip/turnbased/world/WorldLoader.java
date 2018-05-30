@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.corntrip.turnbased.gameobject.living.Enemy;
 import com.corntrip.turnbased.gameobject.living.Player;
-import com.corntrip.turnbased.gameobject.living.TestEnemy;
 import com.corntrip.turnbased.gameobject.nonliving.Tree;
 import com.corntrip.turnbased.gameobject.nonliving.Wall;
 import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;

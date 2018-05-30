@@ -177,7 +177,7 @@ public class World implements IRenderable
 		int enemyH = 32;
 		
 		int numOfEnemies = (int)Math.pow(6, wave * 0.1);
-
+		
 		for(int i = 0; i < numOfEnemies; i++)
 		{
 			float x, y;
@@ -200,7 +200,7 @@ public class World implements IRenderable
 			} while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
 				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); // Makes sure it won't spawn in the player's viewpoint
 			
-			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "INSERT NAME HERE TROY");
+			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "x");
 			addObject(e);
 		}
 	}
