@@ -22,8 +22,10 @@ public abstract class Enemy extends LivingEntity
 	 */
 	private LivingEntity target;
 	
+	//simply name
 	private String name;
 	
+	//health and it's Gui
 	private HealthBarGUI healthBar;
 	private TextGUI nameGUI;
 	
@@ -52,6 +54,9 @@ public abstract class Enemy extends LivingEntity
 	}
 	
 	@Override
+	/**
+	 * Forces them to take damage as passed
+	 */
 	public void takeDamage(int dmg)
 	{
 		super.takeDamage(dmg);
@@ -59,12 +64,18 @@ public abstract class Enemy extends LivingEntity
 	}
 	
 	@Override
+	/*
+	 * restores some of the HP lost
+	 */
 	public void heal(int amt)
 	{
 		super.heal(amt);
 		healthBar.setHealth(getHealth());
 	}
 	
+	/**
+	 * updates the GUI's x and y to match the movement
+	 */
 	public void updateGUIPos()
 	{
 		healthBar.setX(getX());
@@ -74,6 +85,14 @@ public abstract class Enemy extends LivingEntity
 		nameGUI.setY(getY() - 20);
 	}
 	
+	/**
+	 * 
+	 * @param gc: game container
+	 * @param gfx: the graphics used
+	 * @param offsetX: simply the offset of x
+	 * @param offsetY: simply the y offset
+	 * @throws SlickException: makes sure it doesn't break, no try/catch
+	 */
 	public void renderGUI(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		healthBar.render(gc, gfx, offsetX, offsetY);

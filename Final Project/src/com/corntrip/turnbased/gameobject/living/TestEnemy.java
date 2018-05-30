@@ -24,8 +24,9 @@ public class TestEnemy extends Enemy
 	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target, String name, int tier)
 	{
 		super(startX, startY, w, h, world, target, name);
-		this.tier = Helper.clamp(tier, 1, getMaxTier());
-		img = Resources.getImage("enemy");
+		this.tier = Helper.clamp(tier, 0, getMaxTier());
+		//implements the spritesheet stuffs
+		img = Resources.getSpriteImage("enemy", tier - 1, 0);
 	}
 	
 	@Override

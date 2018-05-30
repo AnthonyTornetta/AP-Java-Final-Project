@@ -15,6 +15,12 @@ public class ImageGUI extends GUIElement
 {
 	private Image image;
 	
+	/**
+	 * 
+	 * @param x: start x
+	 * @param y: start y
+	 * @param image: image that is being used
+	 */
 	public ImageGUI(float x, float y, Image image)
 	{
 		super(x, y);
@@ -22,11 +28,16 @@ public class ImageGUI extends GUIElement
 	}
 
 	@Override
+	/**
+	 * draws the image into the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		image.draw(getX() - offsetX, getY() - offsetY);
 	}
 
+	// Getters & Setters //
+	
 	public Image getImage() { return image; }
 	public void setImage(Image image) { this.image = image; }
 }

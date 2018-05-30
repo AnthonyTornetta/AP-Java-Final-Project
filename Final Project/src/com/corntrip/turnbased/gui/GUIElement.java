@@ -16,6 +16,11 @@ public abstract class GUIElement implements IRenderable
 {
 	private float x, y;
 	
+	/**
+	 * Assigning the starting spot
+	 * @param x; start x
+	 * @param y; start y
+	 */
 	public GUIElement(float x, float y)
 	{
 		this.x = x;
@@ -23,12 +28,18 @@ public abstract class GUIElement implements IRenderable
 	}
 	
 	@Override
+	/**
+	 * rendering with offesets
+	 */
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
 		render(gc, gfx, 0, 0);
 	}
 	
 	@Override
+	/**
+	 * rendering that'll be done with other GUI items
+	 */
 	public abstract void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException;
 	
 	//public abstract void handleKey(int key); <-- TODO: Put me somewhere else

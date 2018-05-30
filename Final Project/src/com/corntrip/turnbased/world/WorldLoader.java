@@ -26,21 +26,26 @@ public class WorldLoader
 {
 	public static World generateWorldFromImage(BufferedImage img)
 	{
+		//intialization of a world
 		World world = new World(img.getWidth() * Reference.TILE_DIMENSIONS, img.getHeight() * Reference.TILE_DIMENSIONS);
 		
 		final int w = Reference.TILE_DIMENSIONS, h = Reference.TILE_DIMENSIONS;
 		
 		List<Enemy> enemies = new ArrayList<>();
 		
+		//scanning of the map's image and comparing of each individual color
 		for(int y = 0; y < img.getHeight(); y++)
 		{
 			for(int x = 0; x < img.getWidth(); x++)
 			{
 				Color c = new Color(img.getRGB(x, y));
 				
+				//all squares and in terms of tiles
 				final float actualX = x * w;
 				final float actualY = y * h;
 				
+				//big if statementes to generate all the items from the paint image
+				//basically compares color code to the drawn map
 				if(c.equals(Reference.RESOURCE_SPAWN_POINT_KEY))
 				{
 					world.addObject(new ResourceGenerator(actualX, actualY, w * 2, h * 2, world, 10000, 
@@ -76,6 +81,7 @@ public class WorldLoader
 			}
 		}
 		
+		//sets all the enemies to the player
 		for(Enemy e : enemies)
 		{
 			e.setTarget(world.getPlayer());

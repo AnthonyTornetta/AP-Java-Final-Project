@@ -9,6 +9,13 @@ package com.corntrip.turnbased.gui;
 public abstract class GUIBar extends GUIElement
 {
 	private float width, height;
+	/**
+	 * Generates a bar as a GUI
+	 * @param x: starting x
+	 * @param y: starting y
+	 * @param w: width
+	 * @param h: height
+	 */
 	public GUIBar(float x, float y, float w, float h)
 	{
 		super(x, y);

@@ -21,6 +21,13 @@ public class TextGUI extends GUIElement
 	
 	private int fontWidth = 0;
 	
+	/**
+	 * 
+	 * @param x: start x
+	 * @param y: start y
+	 * @param text: what is displayed
+	 * @param textColor: what color the text is
+	 */
 	public TextGUI(float x, float y, String text, Color textColor)
 	{
 		super(x, y);
@@ -31,9 +38,13 @@ public class TextGUI extends GUIElement
 	}
 
 	@Override
+	/**
+	 * displays the text into the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		gfx.setColor(textColor);
+		//centers the text
 		if(!centered)
 		{
 			Reference.FONT_DEFAULT.drawString(getX() - offsetX, getY() - offsetY, text, textColor);
@@ -43,6 +54,8 @@ public class TextGUI extends GUIElement
 			Reference.FONT_DEFAULT.drawString(getX() - fontWidth / 2 - offsetX, getY() - offsetY, text, textColor);
 		}
 	}
+	
+	// Getters & Setters //
 	
 	public void setCentered(boolean c) { centered = c; }
 	public boolean isCentered() { return centered; }

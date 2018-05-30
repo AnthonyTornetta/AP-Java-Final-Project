@@ -16,6 +16,17 @@ public class HealthBarGUI extends GUIBar
 	private Color healthBackground, healthColor;
 	private int health, maxHealth;
 	
+	/**
+	 * 
+	 * @param x: start x
+	 * @param y: start y
+	 * @param w: width
+	 * @param h: height
+	 * @param healthBackground: what shows when hp is lost
+	 * @param healthColor: what hp looks like
+	 * @param health: numerical representation of health
+	 * @param maxHealth: maximum health
+	 */
 	public HealthBarGUI(float x, float y, float w, float h, Color healthBackground, Color healthColor, int health, int maxHealth)
 	{		
 		super(x, y, w, h);
@@ -25,6 +36,9 @@ public class HealthBarGUI extends GUIBar
 		this.maxHealth = maxHealth;
 	}
 
+	/**
+	 * Sets the health bar above the entity's head when called
+	 */
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{

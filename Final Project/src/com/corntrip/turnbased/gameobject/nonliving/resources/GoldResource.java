@@ -16,6 +16,13 @@ public class GoldResource extends Resource
 {
 	private Image img;
 	
+	/**
+	 * Builds a new gold resource
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: height
+	 */
 	public GoldResource(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
@@ -24,18 +31,27 @@ public class GoldResource extends Resource
 	}
 	
 	@Override
+	/**
+	 * returns how many points the player has earned
+	 */
 	public int getPtsValue()
 	{
 		return 1;
 	}
 	
 	@Override
+	/**
+	 * actually places the image into the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		img.draw(getX() - offsetX, getY() - offsetY);
 	}
 	
 	@Override
+	/**
+	 * adds another gold resource if it was destroyed
+	 */
 	public Resource createNew()
 	{
 		return new GoldResource(getX(), getY(), getWidth(), getHeight());

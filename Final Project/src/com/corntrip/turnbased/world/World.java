@@ -113,6 +113,7 @@ public class World implements IRenderable
 		float camXOff = cam.getXOffset();
 		float camYOff = cam.getYOffset();
 		
+		//renders the intial tiles, aka the grass
 		for(int y = (int) (camYOff / Reference.TILE_DIMENSIONS); y < (camYOff + cam.getScreenHeight()) / Reference.TILE_DIMENSIONS && y < HEIGHT / Reference.TILE_DIMENSIONS; y++)
 		{
 			for(int x = (int) (camXOff / Reference.TILE_DIMENSIONS); x < (camXOff + cam.getScreenWidth()) / Reference.TILE_DIMENSIONS && x < WIDTH / Reference.TILE_DIMENSIONS; x++)
@@ -121,6 +122,7 @@ public class World implements IRenderable
 			}
 		}
 		
+		//draws anything not in the inital camera (I think)
 		for(GameObject o : gameObjects)
 		{
 			if(!o.equals(getPlayer()))
@@ -147,17 +149,23 @@ public class World implements IRenderable
 		render(gc, gfx, 0, 0);
 	}
 	
+	/*
+	 * updates all the entities and centers the camera as well as removing dead items
+	 */
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
+		//updates game objects
 		for(int i = 0;  i < entities.size(); i++)
 		{
 			Entity e = entities.get(i);
 			e.update(gc, delta);
 		}
 		
+		//centers camera
 		if(player != null)
 			cam.slippyCenter(player);
 		
+		//removes objects
 		while(objectsToBeRemoved.size() > 0)
 		{
 			GameObject go = objectsToBeRemoved.remove(0);
@@ -165,6 +173,9 @@ public class World implements IRenderable
 		}
 	}
 	
+	/**
+	 * Spawns the enemies into the world and out of the camera
+	 */
 	public void spawnEnemies()
 	{
 		int enemyW = 32;
@@ -191,8 +202,10 @@ public class World implements IRenderable
 						continue searchLoop;
 					}
 				}
-			} while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
-				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); // Makes sure it won't spawn in the player's viewpoint
+			} 
+			// Makes sure it won't spawn in the player's viewpoint
+			while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
+				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); 
 			
 			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "Evil Ghost", Helper.clamp((int)Math.ceil(wave / 3 * Math.random()), 1, 5));
 			
@@ -255,6 +268,11 @@ public class World implements IRenderable
 			entities.remove(obj);
 	}
 	
+	/**
+	 * Sees if the world's objects has the item
+	 * @param obj: object being checked
+	 * @return
+	 */
 	public boolean containsObject(GameObject obj)
 	{
 		for(GameObject o : gameObjects)
@@ -263,12 +281,19 @@ public class World implements IRenderable
 		return false;
 	}
 	
+	/*
+	 * starts the next wave of enemies
+	 */
 	public void initateNextWave()
 	{
-		System.out.println("spawning");
+		if(Reference.DEBUG)
+			System.out.println("spawning");
 		spawnEnemies();
 		wave++;
 	}
+	
+	// Getters & Setters //
+	
 	public int getWave() { return wave; }
 	
 	public List<GameObject> getGameObjects() { return gameObjects; }

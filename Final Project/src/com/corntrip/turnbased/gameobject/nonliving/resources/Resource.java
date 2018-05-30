@@ -10,10 +10,19 @@ import com.corntrip.turnbased.gameobject.GameObject;
 
 public abstract class Resource extends GameObject
 {
+	/**
+	 * 
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: hieght
+	 */
 	public Resource(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
 	}
+	
+	// Getters & Setters //
 	
 	public abstract int getPtsValue();
 	public abstract Resource createNew();

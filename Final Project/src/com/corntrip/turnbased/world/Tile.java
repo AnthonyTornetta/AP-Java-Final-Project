@@ -43,11 +43,16 @@ public class Tile implements IRenderable
 	}
 	
 	@Override
+	/**
+	 * draws the tile into the world
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		texture.draw(x - offsetX, y - offsetY);
 	}
 
+	// Getters & Setters //
+	
 	public float getX() { return x; }
 	public void setX(float x) { this.x = x; }
 

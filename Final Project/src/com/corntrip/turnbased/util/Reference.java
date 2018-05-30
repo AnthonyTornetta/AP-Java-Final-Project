@@ -33,15 +33,17 @@ public class Reference
 	 */
 	public static final int WINDOW_WIDTH = 1480 /*720*/, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
 	
+	
+	//all colors used when reading in the map
 	public static final Color RESOURCE_SPAWN_POINT_KEY = new Color(255, 0, 0);
 	public static final Color TREE_SPAWN_KEY           = new Color(0, 255, 0);
 	public static final Color WALL_SPAWN_KEY           = new Color(0, 0, 255);
 	public static final Color TOWN_HALL_KEY            = new Color(255, 0, 255);
 	public static final Color DEPOSIT_KEY              = new Color(0, 0, 0);
 	public static final Color PLAYER_KEY               = new Color(255, 255, 0);
-	
 	public static final Color TEST_ENEMY               = new Color(255, 0, 128);
 	
+	//adding in the fonts
 	public static final TrueTypeFont FONT_DEFAULT = new TrueTypeFont(new Font("Verdana", Font.PLAIN, 16), true);
 	public static final TrueTypeFont FONT_BOLD    = new TrueTypeFont(new Font("Verdana", Font.BOLD , 16), true);
 }

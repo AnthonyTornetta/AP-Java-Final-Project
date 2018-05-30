@@ -18,6 +18,13 @@ public class ResourceDeposit extends GameObject
 {
 	private Image img;
 	
+	/**
+	 * Builds a new resource deposit
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: hieght
+	 */
 	public ResourceDeposit(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
@@ -26,6 +33,9 @@ public class ResourceDeposit extends GameObject
 	}
 
 	@Override
+	/**
+	 * shows the deposit in the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{		
 		img.draw(getX() - offsetX, getY() - offsetY);

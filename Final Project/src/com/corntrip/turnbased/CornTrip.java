@@ -74,6 +74,7 @@ public class CornTrip extends BasicGame
 		Resources.registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		Resources.registerSpriteSheet("bows", "bows.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		Resources.registerSpriteSheet("swords", "swords.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		Resources.registerSpriteSheet("enemy", "enemies.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		
 		Resources.registerImage("player", "player.png");
 		Resources.registerImage("arrow", "arrow.png");

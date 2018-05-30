@@ -18,6 +18,13 @@ public class Townhall extends GameObject
 {
 	private Image img;
 	
+	/**
+	 * Builds a new townhall into the world
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: hieght
+	 */
 	public Townhall(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
@@ -26,11 +33,19 @@ public class Townhall extends GameObject
 	}
 
 	@Override
+	/**
+	 * shows the townhall
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		img.draw(getX() - offsetX, getY() - offsetY);
 	}
 	
+	/**
+	 * 
+	 * @param go: game object
+	 * @return True/False if the object is in range
+	 */
 	public boolean withinRange(GameObject go)
 	{
 		float thisAnchorX = getX() + getWidth() / 2;
@@ -39,6 +54,7 @@ public class Townhall extends GameObject
 		float theirAnchorX = go.getX() + go.getWidth() / 2;
 		float theirAnchorY = go.getY() - go.getHeight() / 2;
 		
+		//calculation to see if they're in range
 		double distanceAway = Math.sqrt(Math.pow(theirAnchorX - thisAnchorX, 2) + Math.pow(theirAnchorY - thisAnchorY, 2));
 		
 		return distanceAway < (getWidth() + getHeight());
