@@ -9,6 +9,11 @@ public class Bow extends Weapon
 	private int timeSinceLastShot = 0;
 	private int waitTimesBetweenShots = 2000;
 	
+	/**
+	 * 
+	 * @param owner: who the weapon belongs to
+	 * @param tier: what stage the weapon is in (how strong)
+	 */
 	public Bow(Entity owner, int tier)
 	{
 		setOwner(owner);
@@ -19,6 +24,9 @@ public class Bow extends Weapon
 	}
 	
 	@Override
+	/**
+	 * checks to make sure you're within attack time then creates a new arrow at the bow's centre
+	 */
 	public void attack() 
 	{
 		if(timeSinceLastShot < waitTimesBetweenShots)
@@ -32,17 +40,26 @@ public class Bow extends Weapon
 	}
 	
 	@Override
+	/**
+	 * delta is the game timer, increases as the game goes
+	 */
 	public void update(int delta)
 	{
 		timeSinceLastShot += delta;
 	}
 	
 	@Override
+	/**
+	 * creates the new bow in the old one's place and upgrades it
+	 */
 	public Bow upgrade() 
 	{
 		return new Bow(getOwner(), getTier() + 1);
 	}
 	
 	@Override
+	/*
+	 * makes sure the the tier is not higher than the max
+	 */
 	public boolean isMaxTier() { return getTier() >= 5; }
 }

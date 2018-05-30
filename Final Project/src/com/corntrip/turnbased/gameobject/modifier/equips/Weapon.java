@@ -13,6 +13,7 @@ import com.corntrip.turnbased.gameobject.modifier.Equipable;
 
 public abstract class Weapon extends Equipable
 {
+	//simply the stuffers
 	private Entity owner;
 	private float damage;
 	private Image image;
@@ -37,11 +38,13 @@ public abstract class Weapon extends Equipable
 		return itemsHit;
 	}
 	
+	//draws the items
 	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
 	{
 		getImage().draw(x, y);
 	}
 	
+	//defined in depth later
 	public abstract void attack();
 	
 	public abstract Weapon upgrade();

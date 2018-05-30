@@ -9,6 +9,15 @@ import com.corntrip.turnbased.util.Resources;
 
 public class Sword extends SwungWeapon
 {
+	/**
+	 * 
+	 * @param x: x start
+	 * @param y: y start
+	 * @param w: width
+	 * @param h: height
+	 * @param owner: the entity who controls it
+	 * @param tier: how upgraded the sword is
+	 */
 	public Sword(float x, float y, float w, float h, Entity owner, int tier)
 	{
 		super(x, y, w, h, 500 / tier);
@@ -19,6 +28,10 @@ public class Sword extends SwungWeapon
 	}
 	
 	@Override
+	/**
+	 * swings the sword and brings a hitbox to the game
+	 * also adds the damage and kills items
+	 */
 	public void attack()
 	{
 		if(getTimeSinceLastSwing() < getWaitTimesBetweenSwings())
@@ -45,11 +58,17 @@ public class Sword extends SwungWeapon
 	}
 	
 	@Override
+	/**
+	 * upgrades the sword like the bow
+	 */
 	public Sword upgrade() 
 	{		
 		return new Sword(getX(), getY(), getWidth(), getHeight(), getOwner(), getTier() + 1);
 	}
 	
 	@Override
+	/**
+	 * max tier as seen before
+	 */
 	public boolean isMaxTier() { return getTier() >= 4; }
 }

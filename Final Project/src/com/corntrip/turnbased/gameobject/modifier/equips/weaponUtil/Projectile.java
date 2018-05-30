@@ -75,7 +75,7 @@ public abstract class Projectile extends Entity
 	{
 		/*
 		 * == TODO ==
-		 * This calculation causes the arrow to move in a diamond-like pattern, causing innacuracies when moving towards the target.
+		 * This calculation causes the arrow to move in a diamond-like pattern, causing inaccuracies when moving towards the target.
 		 * This effect is strongest at angles +-45 and +-135
 		 * This effect is weakest at angles +- 0 and +- 180
 		 */
@@ -139,6 +139,7 @@ public abstract class Projectile extends Entity
 		distanceTrav += flightSpeed();
 	}
 
+	//get and sets
 	public Image getImage() { return image; }
 
 	public void setImage(Image image) { this.image = image;}
