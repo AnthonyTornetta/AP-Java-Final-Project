@@ -21,6 +21,7 @@ import com.corntrip.turnbased.gameobject.living.TestEnemy;
 import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
 import com.corntrip.turnbased.rendering.Camera;
 import com.corntrip.turnbased.rendering.IRenderable;
+import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 
@@ -50,11 +51,6 @@ public class World implements IRenderable
 	 * The Camera used when rendering the world; if no player is defined it simply remains in its default position
 	 */
 	private Camera cam;
-	
-	/**
-	 * Time in ms since the last spawn
-	 */
-	private int timeSinceLastSpawn = 0;
 	
 	/**
 	 * Keeps track of which wave of enemies it is on
@@ -162,14 +158,6 @@ public class World implements IRenderable
 		if(player != null)
 			cam.slippyCenter(player);
 		
-		timeSinceLastSpawn += delta;
-		if(timeSinceLastSpawn > 1000)
-		{
-			spawnEnemies();
-			timeSinceLastSpawn = 0;
-			wave++;
-		}
-		
 		while(objectsToBeRemoved.size() > 0)
 		{
 			GameObject go = objectsToBeRemoved.remove(0);
@@ -182,7 +170,7 @@ public class World implements IRenderable
 		int enemyW = 32;
 		int enemyH = 32;
 		
-		int numOfEnemies = (int)Math.pow(6, wave * 0.1);
+		int numOfEnemies = (int)Math.pow(6, wave * 0.5);
 		
 		for(int i = 0; i < numOfEnemies; i++)
 		{
@@ -206,7 +194,10 @@ public class World implements IRenderable
 			} while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
 				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); // Makes sure it won't spawn in the player's viewpoint
 			
-			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "x");
+			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "Evil Ghost", Helper.clamp((int)Math.ceil(wave / 3 * Math.random()), 1, 5));
+			
+			System.out.println(e);
+			
 			addObject(e);
 		}
 	}
@@ -271,6 +262,14 @@ public class World implements IRenderable
 				return true;
 		return false;
 	}
+	
+	public void initateNextWave()
+	{
+		System.out.println("spawning");
+		spawnEnemies();
+		wave++;
+	}
+	public int getWave() { return wave; }
 	
 	public List<GameObject> getGameObjects() { return gameObjects; }
 	public List<Entity> getEntities() { return entities; }

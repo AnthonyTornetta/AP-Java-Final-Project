@@ -19,11 +19,12 @@ import com.corntrip.turnbased.world.World;
 public class TestEnemy extends Enemy
 {
 	private Image img;
+	private int tier;
 	
-	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target, String name)
+	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target, String name, int tier)
 	{
 		super(startX, startY, w, h, world, target, name);
-		
+		this.tier = Helper.clamp(tier, 1, getMaxTier());
 		img = Resources.getImage("enemy");
 	}
 	
@@ -67,16 +68,18 @@ public class TestEnemy extends Enemy
 			if(this.collidingWith(target))
 			{
 				getWorld().removeObject(this);
-				target.takeDamage(1);
+				target.takeDamage(tier);
 			}
 		}
 		
 		updateGUIPos();
 	}
-
+	
 	@Override
 	public LivingEntity clone()
 	{
-		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget(), getName());
+		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget(), getName(), tier);
 	}
+	
+	public int getMaxTier() { return 5; }
 }

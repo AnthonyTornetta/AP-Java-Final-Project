@@ -31,12 +31,7 @@ public class Reference
 	/**
 	 * The dimensions of the window
 	 */
-	public static final int WINDOW_WIDTH = 720, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
-	
-	/**
-	 * If a float is +- off a number by this amount they're basically equal
-	 */
-	public static final float ALMOST_EQUAL = 0.004f;
+	public static final int WINDOW_WIDTH = 1480 /*720*/, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
 	
 	public static final Color RESOURCE_SPAWN_POINT_KEY = new Color(255, 0, 0);
 	public static final Color TREE_SPAWN_KEY           = new Color(0, 255, 0);

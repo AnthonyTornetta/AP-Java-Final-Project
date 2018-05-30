@@ -102,15 +102,15 @@ public class Player extends LivingEntity
 		setHealth(getHealth());
 		healthBar.setHealth(getHealth());
 		
-		xpGUI = new TextGUI(10, 10, "0", Color.green);
-		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH - 16, 10, "0", Color.green);
+		xpGUI = new TextGUI(30, 30, "0", Color.green);
+		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH - 80, 30, "0", Color.green);
 		
 		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getSpriteImage("swords", 0, 0));
 		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getSpriteImage("bows", 0, 0));
 		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("health"));
 		
-		weapons[0] = new Bow(this, 1);
-		weapons[1] = new Sword(getX() + getWidth(), getY(), 32, 32, this, 1);
+		weapons[1] = new Bow(this, 1);
+		weapons[0] = new Sword(getX() + getWidth(), getY(), 32, 32, this, 1);
 	}
 	
 	@Override
@@ -156,14 +156,22 @@ public class Player extends LivingEntity
 			{
 				if(!weapons[0].isMaxTier())
 				{
-					weapons[0] = weapons[0].upgrade();
+					if(xp - 7 >= 0)
+					{
+						weapons[0] = weapons[0].upgrade();
+						xp -= 7;
+					}
 				}
 			}
 			else if(in.isKeyDown(Input.KEY_X))
 			{
 				if(!weapons[1].isMaxTier())
 				{
-					weapons[1] = weapons[1].upgrade();
+					if(xp - 10 >= 0)
+					{
+						weapons[1] = weapons[1].upgrade();
+						xp -= 10;
+					}
 				}
 			}
 			else if(in.isKeyDown(Input.KEY_C))
@@ -177,7 +185,6 @@ public class Player extends LivingEntity
 		else if(in.isKeyDown(Input.KEY_2))
 			curWeapon = 1;
 		
-				
 		if(resourceCarrying == null)
 		{
 			velX = Helper.clamp(velX, -MAX_MOVE_SPEED, MAX_MOVE_SPEED);
@@ -318,6 +325,9 @@ public class Player extends LivingEntity
 		healthBar.render(gc, gfx, offsetX, offsetY);
 		nameGUI.render(gc, gfx, offsetX, offsetY);
 		
+		xpGUI.render(gc, gfx);
+		scoreGUI.render(gc, gfx);
+		
 		if(displayUpgradeGUI)
 		{
 			for(GUIElement elem : upgradeSlots)
@@ -344,7 +354,10 @@ public class Player extends LivingEntity
 	private void scoreResource(Resource r)
 	{
 		if(r != null)
+		{
 			pts += r.getPtsValue();
+			getWorld().initateNextWave();
+		}
 	}
 	
 	@Override
