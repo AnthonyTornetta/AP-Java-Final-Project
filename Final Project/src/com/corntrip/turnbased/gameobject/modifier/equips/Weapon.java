@@ -57,4 +57,6 @@ public abstract class Weapon extends Equipable
 	public void setImage(Image image) { this.image = image; }
 	public void setOwner(Entity owner) { this.owner = owner; }
 	public void setDamage(float damage) { this.damage = damage; }
+
+	public abstract boolean isMaxTier();
 }

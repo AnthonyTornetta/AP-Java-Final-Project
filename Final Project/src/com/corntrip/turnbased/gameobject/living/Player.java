@@ -99,12 +99,12 @@ public class Player extends LivingEntity
 		xpGUI = new TextGUI(10, 10, "0", Color.green);
 		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH - 16, 10, "0", Color.green);
 		
-		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getImage("sword"));
-		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("bow"));
+		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getSpriteImage("swords", 0, 0));
+		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getSpriteImage("bows", 0, 0));
 		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("health"));
 		
-		weapons[0] = new Bow(this, Resources.getImage("bow"), 1);
-		weapons[1] = new Sword(getX() + getWidth(), getY(), 32, 32, this, Resources.getImage("sword"), 1);
+		weapons[0] = new Bow(this, 1);
+		weapons[1] = new Sword(getX() + getWidth(), getY(), 32, 32, this, 1);
 	}
 	
 	@Override
@@ -148,17 +148,28 @@ public class Player extends LivingEntity
 		{
 			if(in.isKeyDown(Input.KEY_Z))
 			{
-				weapons[0] = weapons[0].upgrade();
+				if(!weapons[0].isMaxTier())
+				{
+					weapons[0] = weapons[0].upgrade();
+				}
 			}
 			else if(in.isKeyDown(Input.KEY_X))
 			{
-				weapons[1] = weapons[1].upgrade();
+				if(!weapons[0].isMaxTier())
+				{
+					weapons[1] = weapons[1].upgrade();
+				}
 			}
 			else if(in.isKeyDown(Input.KEY_C))
 			{
 				heal(getMaxHealth());
 			}
 		}
+		
+		if(in.isKeyDown(Input.KEY_1))
+			curWeapon = 0;
+		else if(in.isKeyDown(Input.KEY_2))
+			curWeapon = 1;
 		
 				
 		if(resourceCarrying == null)

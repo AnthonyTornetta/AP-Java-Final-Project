@@ -2,21 +2,20 @@ package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import java.util.ArrayList;
 
-import org.newdawn.slick.Image;
-
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.living.Player;
+import com.corntrip.turnbased.util.Resources;
 
 public class Sword extends SwungWeapon
 {
-	public Sword(float x, float y, float w, float h, Entity owner, Image a, int tier)
+	public Sword(float x, float y, float w, float h, Entity owner, int tier)
 	{
 		super(x, y, w, h, 500 / tier);
 		setTier(tier);
 		setDamage((float) (tier*6.862));
 		setOwner(owner);
-		setImage(a);
+		setImage(Resources.getSpriteImage("swords", tier - 1, 0));
 	}
 	
 	@Override
@@ -48,6 +47,9 @@ public class Sword extends SwungWeapon
 	@Override
 	public Sword upgrade() 
 	{		
-		return new Sword(getX(), getY(), getWidth(), getHeight(), getOwner(), getImage(), getTier() + 1);
+		return new Sword(getX(), getY(), getWidth(), getHeight(), getOwner(), getTier() + 1);
 	}
+	
+	@Override
+	public boolean isMaxTier() { return getTier() >= 4; }
 }

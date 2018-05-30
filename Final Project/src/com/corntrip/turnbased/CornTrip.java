@@ -64,11 +64,11 @@ public class CornTrip extends BasicGame
 	private void initializeResources()
 	{
 		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		registerSpriteSheet("bows", "bows.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		registerSpriteSheet("swords", "swords.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		
 		registerImage("player", "player.png");
-		registerImage("bow", "bow.png");
 		registerImage("arrow", "arrow.png");
-		registerImage("sword", "sword.png");
 		registerImage("wall", "wall.png");
 		registerImage("enemy", "enemy.png");
 		registerImage("tree", "tree.png");
