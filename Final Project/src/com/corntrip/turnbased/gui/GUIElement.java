@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that is renderable in the scene as a GUI element
+ */
+
 package com.corntrip.turnbased.gui;
 
 import org.newdawn.slick.GameContainer;

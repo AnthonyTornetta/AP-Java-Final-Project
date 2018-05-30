@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A simple tree that sits there and is a tree
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving;
 
 import org.newdawn.slick.GameContainer;

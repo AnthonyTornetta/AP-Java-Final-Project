@@ -1,6 +1,10 @@
-package com.corntrip.turnbased.gameobject.modifier.equips;
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Shoots an arrow when fired
+ */
 
-import org.newdawn.slick.Image;
+package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrow;
@@ -11,16 +15,24 @@ public class Bow extends Weapon
 	private int timeSinceLastShot = 0;
 	private int waitTimesBetweenShots = 2000;
 	
-	public Bow(Entity owner, Image a, int tier)
+	/**
+	 * 
+	 * @param owner: who the weapon belongs to
+	 * @param tier: what stage the weapon is in (how strong)
+	 */
+	public Bow(Entity owner, int tier)
 	{
 		setOwner(owner);
 		setTier(tier);
 		waitTimesBetweenShots = timeSinceLastShot = 2000 / tier;
 		setDamage((float)(tier*4.212));
-		setImage(a);
+		setImage(Resources.getSpriteImage("bows", tier - 1, 0));
 	}
 	
 	@Override
+	/**
+	 * checks to make sure you're within attack time then creates a new arrow at the bow's centre
+	 */
 	public void attack() 
 	{
 		if(timeSinceLastShot < waitTimesBetweenShots)
@@ -34,14 +46,26 @@ public class Bow extends Weapon
 	}
 	
 	@Override
+	/**
+	 * delta is the game timer, increases as the game goes
+	 */
 	public void update(int delta)
 	{
 		timeSinceLastShot += delta;
 	}
 	
 	@Override
+	/**
+	 * creates the new bow in the old one's place and upgrades it
+	 */
 	public Bow upgrade() 
 	{
-		return new Bow(getOwner(), getImage(), getTier() + 1);
+		return new Bow(getOwner(), getTier() + 1);
 	}
+	
+	@Override
+	/*
+	 * makes sure the the tier is not higher than the max
+	 */
+	public boolean isMaxTier() { return getTier() >= 5; }
 }

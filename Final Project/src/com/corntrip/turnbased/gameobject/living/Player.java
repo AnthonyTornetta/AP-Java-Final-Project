@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * The player is a LivingEntity controlled by the user
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import java.util.List;
@@ -10,6 +16,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
+import com.corntrip.turnbased.gameobject.modifier.equips.Bow;
 import com.corntrip.turnbased.gameobject.modifier.equips.Sword;
 import com.corntrip.turnbased.gameobject.modifier.equips.SwungWeapon;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
@@ -39,6 +46,11 @@ public class Player extends LivingEntity
 	private int pts = 0;
 	
 	/**
+	 * Stores the experience for getting upgrades
+	 */
+	private int xp = 0;
+	
+	/**
 	 * Holds the resource the player may or may not be carrying
 	 */
 	private Resource resourceCarrying = null;
@@ -63,11 +75,13 @@ public class Player extends LivingEntity
 	 */
 	private HealthBarGUI healthBar;
 	
-	private TextGUI txt;
+	private TextGUI nameGUI;
+	private TextGUI xpGUI;
+	private TextGUI scoreGUI;
 	
 	private ImageGUI[] upgradeSlots = new ImageGUI[3];
-	
-	private Weapon weapon;
+	private Weapon[] weapons = new Weapon[2];
+	private int curWeapon = 0;
 	
 	/**
 	 * Controllable Entity by the user
@@ -82,23 +96,27 @@ public class Player extends LivingEntity
 		super(startX, startY, w, h, world, 20);
 		
 		healthBar = new HealthBarGUI(getX(), getY() - 8, getWidth(), 6, Color.red, Color.green, getHealth(), getMaxHealth());
-		txt = new TextGUI(getX(), getY() - 20, "Joe Shmoe", Color.red);
-		txt.setCentered(true);
+		nameGUI = new TextGUI(getX(), getY() - 20, "Joe Shmoe", Color.red);
+		nameGUI.setCentered(true);
 		
 		setHealth(getHealth());
 		healthBar.setHealth(getHealth());
 		
-		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getImage("player"));
-		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("player"));
-		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("player"));
+		xpGUI = new TextGUI(30, 30, "0", Color.green);
+		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH - 80, 30, "0", Color.green);
 		
-		weapon = new Sword(getX() + getWidth(), getY(), 32, 32, this, Resources.getImage("sword"), 1);//new Bow(this, Resources.getImage("bow"));
+		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getSpriteImage("swords", 0, 0));
+		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getSpriteImage("bows", 0, 0));
+		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("health"));
+		
+		weapons[1] = new Bow(this, 1);
+		weapons[0] = new Sword(getX() + getWidth(), getY(), 32, 32, this, 1);
 	}
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		weapon.update(delta);
+		getHeldWeapon().update(delta);
 		
 		float subVal = 0.8f;
 		float moveBy = Reference.MAX_FPS * delta / 1000.0f;
@@ -125,13 +143,48 @@ public class Player extends LivingEntity
 		if(in.isKeyDown(Input.KEY_D) || in.isKeyDown(Input.KEY_RIGHT))
 			velX += 2.0f * moveBy;
 		
+		// End movement calcs
 		
 		if(in.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
 		{
-			weapon.attack();
+			getHeldWeapon().attack();
 		}
-		// End movement calcs
-				
+		
+		if(displayUpgradeGUI)
+		{
+			if(in.isKeyDown(Input.KEY_Z))
+			{
+				if(!weapons[0].isMaxTier())
+				{
+					if(xp - 7 >= 0)
+					{
+						weapons[0] = weapons[0].upgrade();
+						xp -= 7;
+					}
+				}
+			}
+			else if(in.isKeyDown(Input.KEY_X))
+			{
+				if(!weapons[1].isMaxTier())
+				{
+					if(xp - 10 >= 0)
+					{
+						weapons[1] = weapons[1].upgrade();
+						xp -= 10;
+					}
+				}
+			}
+			else if(in.isKeyDown(Input.KEY_C))
+			{
+				heal(getMaxHealth());
+			}
+		}
+		
+		if(in.isKeyDown(Input.KEY_1))
+			curWeapon = 0;
+		else if(in.isKeyDown(Input.KEY_2))
+			curWeapon = 1;
+		
 		if(resourceCarrying == null)
 		{
 			velX = Helper.clamp(velX, -MAX_MOVE_SPEED, MAX_MOVE_SPEED);
@@ -222,30 +275,23 @@ public class Player extends LivingEntity
 		setX(newX);
 		setY(newY);
 		
-		setX(Helper.clamp(getX(), 0, getWorld().getWidth()));
-		setY(Helper.clamp(getY(), 0, getWorld().getHeight()));
+		setX(Helper.clamp(getX(), 0, getWorld().getWidth() - getWidth()));
+		setY(Helper.clamp(getY(), 0, getWorld().getHeight() - getHeight()));
 		
-		if(weapon instanceof SwungWeapon)
+		if(getHeldWeapon() instanceof SwungWeapon)
 		{
-			SwungWeapon sw = (SwungWeapon)weapon;
+			SwungWeapon sw = (SwungWeapon)getHeldWeapon();
 			
-			// you have no idea
-			// how long
-			// it took me
-			// to figure out
-			// these big maths.
-			// i have pictures.
-			// i will show you said pictures.
-			
-			sw.setX(getX() + (-2 * (Math.abs(getRotation()) / 90) + 2) * getWidth());
+			sw.setX(getX() + -2 * (Math.abs(getRotation()) / 90) + 2 * getWidth());
 			sw.setY(getY() + ((getRotation() % 45) / 45.0f) * getHeight());
 		}
 		
 		healthBar.setX(getX());
 		healthBar.setY(getY() - 16);
+		healthBar.setHealth(getHealth());
 		
-		txt.setX(getX() + getWidth() / 2);
-		txt.setY(getY() - 46);
+		nameGUI.setX(getX() + getWidth() / 2);
+		nameGUI.setY(getY() - 46);
 		
 		upgradeSlots[0].setX(getX() - 48);
 		upgradeSlots[0].setY(getY() - 128);
@@ -258,6 +304,9 @@ public class Player extends LivingEntity
 		{
 			displayUpgradeGUI = true;
 		}
+		
+		xpGUI.setText(getXp() + "xp");
+		scoreGUI.setText(getScore() + " score");
 	}
 	
 	@Override
@@ -274,7 +323,10 @@ public class Player extends LivingEntity
 		float anchorY = getAnchorPointY(offsetY);
 		
 		healthBar.render(gc, gfx, offsetX, offsetY);
-		txt.render(gc, gfx, offsetX, offsetY);
+		nameGUI.render(gc, gfx, offsetX, offsetY);
+		
+		xpGUI.render(gc, gfx);
+		scoreGUI.render(gc, gfx);
 		
 		if(displayUpgradeGUI)
 		{
@@ -296,13 +348,23 @@ public class Player extends LivingEntity
 		float drawY = getY() - offsetY;
 		texture.draw(drawX, drawY);
 		
-		weapon.renderAt(gc, gfx, drawX + getWidth(), drawY);
+		getHeldWeapon().renderAt(gc, gfx, drawX + getWidth(), drawY);
 	}
 	
 	private void scoreResource(Resource r)
 	{
 		if(r != null)
+		{
 			pts += r.getPtsValue();
+			getWorld().initateNextWave();
+		}
+	}
+	
+	@Override
+	public void die()
+	{
+		super.die();
+		getWorld().removeObject(this);
 	}
 	
 	@Override
@@ -311,6 +373,11 @@ public class Player extends LivingEntity
 		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld());
 	}
 	
-	public int getPoints() { return pts; }
+	public int getScore() { return pts; }
 	public void setPoints(int p) { pts = p; }
+	
+	public Weapon getHeldWeapon() { return weapons[curWeapon]; }
+	
+	public int getXp() { return xp; }
+	public void addXp(int amt) { xp += amt; }
 }

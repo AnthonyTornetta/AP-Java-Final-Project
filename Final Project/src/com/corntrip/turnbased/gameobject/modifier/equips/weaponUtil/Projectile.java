@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Travels in a given direction based off the shooter's rotation with slight variation
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
 
 import java.util.List;
@@ -7,7 +13,9 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.world.World;
 
@@ -74,7 +82,7 @@ public abstract class Projectile extends Entity
 	{
 		/*
 		 * == TODO ==
-		 * This calculation causes the arrow to move in a diamond-like pattern, causing innacuracies when moving towards the target.
+		 * This calculation causes the arrow to move in a diamond-like pattern, causing inaccuracies when moving towards the target.
 		 * This effect is strongest at angles +-45 and +-135
 		 * This effect is weakest at angles +- 0 and +- 180
 		 */
@@ -118,12 +126,28 @@ public abstract class Projectile extends Entity
 		setY(getY() + velY * flightSpeed());
 		
 		//checks the enemies hit
-		List<Entity> enemiesHit = wep.generateHitbox(super.getX(), super.getY(), super.getWidth(), super.getHeight());
+		List<GameObject> thingsHit = wep.generateHitbox(super.getX(), super.getY(), super.getWidth(), super.getHeight());
 		
 		//hits the first enemy and destroys the projectile
-		if(enemiesHit.size() > 0)
+		if(thingsHit.size() > 0)
 		{
-			((LivingEntity)enemiesHit.get(0)).takeDamage((int)(wep.getDamage()+0.5));
+			for(GameObject go : thingsHit)
+			{
+				if(!(go instanceof LivingEntity))
+				{
+					endPath();
+					return;
+				}
+			}
+			
+			((LivingEntity)thingsHit.get(0)).takeDamage((int)(wep.getDamage()+0.5));
+			
+			if(getWeapon().getOwner() instanceof Player)
+			{
+				Player p = (Player)getWeapon().getOwner();
+				p.addXp(getWeapon().getTier() * 10);
+			}
+			
 			endPath();
 		}
 		
@@ -131,6 +155,7 @@ public abstract class Projectile extends Entity
 		distanceTrav += flightSpeed();
 	}
 
+	//get and sets
 	public Image getImage() { return image; }
 
 	public void setImage(Image image) { this.image = image;}

@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Just stores variables for the offset and some helpful centering functions
+ */
+
 package com.corntrip.turnbased.rendering;
 
 import com.corntrip.turnbased.gameobject.GameObject;

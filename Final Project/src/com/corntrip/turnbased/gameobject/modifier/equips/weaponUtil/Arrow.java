@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A projectile that is an arrow
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
 
 import org.newdawn.slick.GameContainer;
@@ -10,20 +16,26 @@ import com.corntrip.turnbased.world.World;
 
 public class Arrow extends Projectile
 {
+	//building of an arrow based off the projectile
 	public Arrow(float startX, float startY, float w, float h, World world, Weapon wep, Image image)
 	{
 		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation(), image);	
 	}
 
+	/**
+	 * individual flight speed
+	 */
 	@Override
 	public float flightSpeed() 
 	{
-		return 20.0f + getWeapon().getTier();
+		return 25.0f;
 	}
 
+	//actually adding the arrow to the game
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
+		//rotating so it adds correctly and then drawing it
 		gfx.rotate((getX() - offsetX) + getWidth() / 2, (getY() - offsetY) + getHeight() / 2, getRotation());
 		getImage().draw(getX() - offsetX, getY() - offsetY);
 	}

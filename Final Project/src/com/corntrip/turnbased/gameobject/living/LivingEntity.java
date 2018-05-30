@@ -1,9 +1,16 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * An entity that is also living, that has health and a max health and can die
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
-public abstract class LivingEntity extends Entity implements Cloneable
+public abstract class LivingEntity extends Entity
 {
 	private int maxHealth;
 	private int health;
@@ -29,7 +36,7 @@ public abstract class LivingEntity extends Entity implements Cloneable
 	 */
 	public void heal(int amt)
 	{
-		health += amt;
+		health = (int) Helper.clamp(amt + getHealth(), 0, getMaxHealth());
 	}
 	
 	/**

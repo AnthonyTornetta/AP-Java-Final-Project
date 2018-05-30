@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Creates a new World object based off an image
+ */
+
 package com.corntrip.turnbased.world;
 
 import java.awt.Color;
@@ -7,7 +13,6 @@ import java.util.List;
 
 import com.corntrip.turnbased.gameobject.living.Enemy;
 import com.corntrip.turnbased.gameobject.living.Player;
-import com.corntrip.turnbased.gameobject.living.TestEnemy;
 import com.corntrip.turnbased.gameobject.nonliving.Tree;
 import com.corntrip.turnbased.gameobject.nonliving.Wall;
 import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;
@@ -62,12 +67,12 @@ public class WorldLoader
 				{
 					world.addObject(new ResourceDeposit(actualX, actualY, w, h));
 				}
-				else if(c.equals(Reference.TEST_ENEMY))
-				{
-					Enemy e = new TestEnemy(actualY, actualY, w, h, world, null);
-					world.addObject(e);
-					enemies.add(e);
-				}
+//				else if(c.equals(Reference.TEST_ENEMY))
+//				{
+//					Enemy e = new TestEnemy(actualY, actualY, w, h, world, null, "INSERT NAME HERE TOO");
+//					world.addObject(e);
+//					enemies.add(e);
+//				}
 			}
 		}
 		

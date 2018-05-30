@@ -1,9 +1,17 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * ?
+ */
+
 package com.corntrip.turnbased.gameobject.modifier;
+
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 
 public abstract class Modified
 {
 	LivingEntity assigned = null;
+	
 	//get and sets to what it's assigned
 	public  void setAssinged(LivingEntity a)
 	{
@@ -14,7 +22,7 @@ public abstract class Modified
 		return assigned;
 	}
 	
-	//lol we can have epic trees and super entities like bosses
+	//changes stats to correspond with the name
 	public abstract void modifyStats(LivingEntity a);
 	
 	//changes name

@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A test enemy that moves to you in a "creative" way
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import org.newdawn.slick.Color;
@@ -6,23 +12,20 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
-import com.corntrip.turnbased.gui.HealthBarGUI;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
 public class TestEnemy extends Enemy
 {
-	private HealthBarGUI hb;
 	private Image img;
+	private int tier;
 	
-	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target)
+	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target, String name, int tier)
 	{
-		super(startX, startY, w, h, world, target);
-		
+		super(startX, startY, w, h, world, target, name);
+		this.tier = Helper.clamp(tier, 1, getMaxTier());
 		img = Resources.getImage("enemy");
-		
-		hb = new HealthBarGUI(getX(), getY() - 16, getWidth(), 6, Color.red, Color.green, getMaxHealth(), getMaxHealth());
 	}
 	
 	@Override
@@ -34,7 +37,7 @@ public class TestEnemy extends Enemy
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
-		hb.render(gc, gfx, offsetX, offsetY);
+		renderGUI(gc, gfx, offsetX, offsetY);
 		
 		gfx.setColor(Color.red);
 		gfx.rotate(getAnchorPointX(offsetX), getAnchorPointY(offsetY), getRotation());
@@ -51,8 +54,11 @@ public class TestEnemy extends Enemy
 			float targetX = target.getX();
 			float targetY = target.getY();
 			
-			float moveX = Helper.clamp(targetX - getX(), -5, 5);
-			float moveY = Helper.clamp(targetY - getY(), -5, 5);
+			float xd = Helper.clamp(targetX - getX(), -1, 1);
+			float xdy = Helper.clamp(targetY - getY(), -1, 1);
+			
+			float moveX = (float)Math.random() * 10 - 5 + xd;
+			float moveY = (float)Math.random() * 10 - 5 + xdy;
 			
 			setX(getX() + moveX);
 			setY(getY() + moveY);
@@ -62,18 +68,18 @@ public class TestEnemy extends Enemy
 			if(this.collidingWith(target))
 			{
 				getWorld().removeObject(this);
-				target.takeDamage(1);
+				target.takeDamage(tier);
 			}
 		}
 		
-		hb.setHealth(getHealth());
-		hb.setX(getX());
-		hb.setY(getY() - 16);
+		updateGUIPos();
 	}
-
+	
 	@Override
 	public LivingEntity clone()
 	{
-		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget());
+		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget(), getName(), tier);
 	}
+	
+	public int getMaxTier() { return 5; }
 }

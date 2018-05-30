@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * ?
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.entityAddition;
 
 import java.util.ArrayList;

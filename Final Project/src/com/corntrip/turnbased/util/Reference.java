@@ -1,13 +1,22 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Stores useful information used across classes
+ */
+
 package com.corntrip.turnbased.util;
 
 import java.awt.Color;
+import java.awt.Font;
+
+import org.newdawn.slick.TrueTypeFont;
 
 public class Reference
 {
 	/**
 	 * Indicates whether or not the game is currently being debugged
 	 */
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	
 	/**
 	 * The maximum FPS the window should reach
@@ -22,12 +31,7 @@ public class Reference
 	/**
 	 * The dimensions of the window
 	 */
-	public static final int WINDOW_WIDTH = 1420, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
-	
-	/**
-	 * If a float is +- off a number by this amount they're basically equal
-	 */
-	public static final float ALMOST_EQUAL = 0.004f;
+	public static final int WINDOW_WIDTH = 1480 /*720*/, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
 	
 	public static final Color RESOURCE_SPAWN_POINT_KEY = new Color(255, 0, 0);
 	public static final Color TREE_SPAWN_KEY           = new Color(0, 255, 0);
@@ -37,4 +41,7 @@ public class Reference
 	public static final Color PLAYER_KEY               = new Color(255, 255, 0);
 	
 	public static final Color TEST_ENEMY               = new Color(255, 0, 128);
+	
+	public static final TrueTypeFont FONT_DEFAULT = new TrueTypeFont(new Font("Verdana", Font.PLAIN, 16), true);
+	public static final TrueTypeFont FONT_BOLD    = new TrueTypeFont(new Font("Verdana", Font.BOLD , 16), true);
 }

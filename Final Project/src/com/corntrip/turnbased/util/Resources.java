@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Handles all the resources of the game
+ */
+
 package com.corntrip.turnbased.util;
 
 import java.awt.image.BufferedImage;
@@ -160,5 +166,35 @@ public class Resources
 	public static Image getImage(String name)
 	{
 		return images.get(name);
+	}
+	
+	/**
+	 * Registers an image by the file and registers it with the given name
+	 * @param name The name to register the image with
+	 * @param location The file of the image
+	 */
+	public static void registerImage(String name, String location)
+	{
+		registerImage(name, Resources.loadImage(location));
+	}
+	
+	/**
+	 * Registers a SpriteSheet by the file and registers it with the given name
+	 * @param name The name to register the image with
+	 * @param location The file of the image
+	 */
+	public static void registerSpriteSheet(String name, String location, int w, int h)
+	{
+		registerSpriteSheet(name, Resources.loadSpriteSheet(location, w, h));
+	}
+	
+	/**
+	 * Registers a Sound by the file and registers it with the given name
+	 * @param name The name to register the image with
+	 * @param location The file of the image
+	 */
+	public static void registerSound(String name, String location)
+	{
+		registerSound(name, Resources.loadSound(location));
 	}
 }
