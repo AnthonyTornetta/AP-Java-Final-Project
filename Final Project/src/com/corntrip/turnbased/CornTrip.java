@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A fun 2D game based on adventure and collecting resources
+ */
+
 package com.corntrip.turnbased;
 
 import java.io.File;
@@ -18,6 +24,8 @@ import com.corntrip.turnbased.world.WorldLoader;
 
 public class CornTrip extends BasicGame
 {
+	// (-|r| + 90) / 90 = f(r)?
+	
 	private World world;
 	
 	public CornTrip()
@@ -63,36 +71,20 @@ public class CornTrip extends BasicGame
 	
 	private void initializeResources()
 	{
-		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
-		registerSpriteSheet("bows", "bows.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
-		registerSpriteSheet("swords", "swords.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		Resources.registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		Resources.registerSpriteSheet("bows", "bows.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		Resources.registerSpriteSheet("swords", "swords.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		
-		registerImage("player", "player.png");
-		registerImage("arrow", "arrow.png");
-		registerImage("wall", "wall.png");
-		registerImage("enemy", "enemy.png");
-		registerImage("tree", "tree.png");
-		registerImage("gold", "gold.png");
-		registerImage("deposit", "resource-deposit.png");
-		registerImage("generator", "resource-generator.png");
-		registerImage("townhall", "townhall.png");
-		registerImage("health", "health.png");
-	}
-	
-	private void registerImage(String name, String location)
-	{
-		Resources.registerImage(name, Resources.loadImage(location));
-	}
-	
-	private void registerSpriteSheet(String name, String location, int w, int h)
-	{
-		Resources.registerSpriteSheet(name, Resources.loadSpriteSheet(location, w, h));
-	}
-	
-	@SuppressWarnings("unused")
-	private void registerSound(String name, String location)
-	{
-		Resources.registerSound(name, Resources.loadSound(location));
+		Resources.registerImage("player", "player.png");
+		Resources.registerImage("arrow", "arrow.png");
+		Resources.registerImage("wall", "wall.png");
+		Resources.registerImage("enemy", "enemy.png");
+		Resources.registerImage("tree", "tree.png");
+		Resources.registerImage("gold", "gold.png");
+		Resources.registerImage("deposit", "resource-deposit.png");
+		Resources.registerImage("generator", "resource-generator.png");
+		Resources.registerImage("townhall", "townhall.png");
+		Resources.registerImage("health", "health.png");
 	}
 
 	@Override

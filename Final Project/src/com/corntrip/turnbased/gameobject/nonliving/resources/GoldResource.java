@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A resource that looks like gold
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
 import org.newdawn.slick.GameContainer;

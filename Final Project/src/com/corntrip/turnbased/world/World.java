@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Stores everything in a given scene and updates & renders them
+ */
+
 package com.corntrip.turnbased.world;
 
 import java.util.ArrayList;

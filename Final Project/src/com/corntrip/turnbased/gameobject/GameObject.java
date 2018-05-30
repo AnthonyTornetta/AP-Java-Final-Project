@@ -1,7 +1,7 @@
 /*
  * Anthony Tornetta & Troy Cope | P5 | 5/31/18
  * This is our own work except the Slick2D library - ACT & TC
- * The most general form of something in the game scene.
+ * The most general form of an object in the scene
  */
 
 package com.corntrip.turnbased.gameobject;

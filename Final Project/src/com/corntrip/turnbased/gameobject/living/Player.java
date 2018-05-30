@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * The player is a LivingEntity controlled by the user
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import java.util.List;
@@ -155,7 +161,7 @@ public class Player extends LivingEntity
 			}
 			else if(in.isKeyDown(Input.KEY_X))
 			{
-				if(!weapons[0].isMaxTier())
+				if(!weapons[1].isMaxTier())
 				{
 					weapons[1] = weapons[1].upgrade();
 				}

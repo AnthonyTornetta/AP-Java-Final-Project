@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Acts as the upgrading center for the player
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.townhall;
 
 import org.newdawn.slick.GameContainer;

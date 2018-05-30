@@ -1,6 +1,14 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A weapon that has an attack function
+ * Whenever an enemy is hit, if the owner is a player it's xp goes up
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -20,15 +28,16 @@ public abstract class Weapon extends Equipable
 	private int tier;
 	
 	//Start x and y are the owner's hit box
-	public ArrayList<Entity> generateHitbox(float startX, float startY, float width, float height)
+	public List<GameObject> generateHitbox(float startX, float startY, float width, float height)
 	{
-		ArrayList<Entity> itemsHit = new ArrayList<>();
+		List<GameObject> itemsHit = new ArrayList<>();
 		
-		for(GameObject a: owner.getWorld().getEntities())
+		for(GameObject a: owner.getWorld().getGameObjects())
 		{
+			//hahah no longer hits owner
+			
 			if(a instanceof LivingEntity)
 			{
-				//hahah no longer hits owner
 				if((!owner.equals(a) && ((LivingEntity)a).collidingWith(startX, startY, width, height)))
 				{
 					itemsHit.add((Entity) a);

@@ -1,4 +1,11 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * ?
+ */
+
 package com.corntrip.turnbased.gameobject.modifier;
+
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 
 public abstract class Modified

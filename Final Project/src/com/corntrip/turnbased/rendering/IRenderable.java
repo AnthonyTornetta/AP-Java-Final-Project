@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that can be rendered on a scene
+ */
+
 package com.corntrip.turnbased.rendering;
 
 import org.newdawn.slick.GameContainer;

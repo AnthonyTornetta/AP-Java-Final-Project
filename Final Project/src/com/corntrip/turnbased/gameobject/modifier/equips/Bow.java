@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Shoots an arrow when fired
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import com.corntrip.turnbased.gameobject.Entity;

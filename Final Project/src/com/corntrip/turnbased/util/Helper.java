@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Adds some helpful functions
+ */
+
 package com.corntrip.turnbased.util;
 
 public class Helper

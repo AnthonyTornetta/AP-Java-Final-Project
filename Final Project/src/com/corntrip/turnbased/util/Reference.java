@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Stores useful information used across classes
+ */
+
 package com.corntrip.turnbased.util;
 
 import java.awt.Color;

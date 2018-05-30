@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * An Enemy that has a given target to chase after and displays its name and healthbar above it
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import org.newdawn.slick.Color;

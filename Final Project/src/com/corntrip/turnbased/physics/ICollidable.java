@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that is collidable in the scene with other objects
+ */
+
 package com.corntrip.turnbased.physics;
 
 public interface ICollidable

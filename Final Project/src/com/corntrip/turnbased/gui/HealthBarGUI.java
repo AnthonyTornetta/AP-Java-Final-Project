@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Displays a healthbar in the scene based off the amount of health and the max health
+ */
+
 package com.corntrip.turnbased.gui;
 
 import org.newdawn.slick.Color;

@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A test enemy that moves to you in a "creative" way
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import org.newdawn.slick.Color;

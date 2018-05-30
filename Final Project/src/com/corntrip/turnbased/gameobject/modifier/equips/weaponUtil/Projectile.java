@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Travels in a given direction based off the shooter's rotation with slight variation
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
 
 import java.util.List;
@@ -7,6 +13,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
@@ -119,12 +126,21 @@ public abstract class Projectile extends Entity
 		setY(getY() + velY * flightSpeed());
 		
 		//checks the enemies hit
-		List<Entity> enemiesHit = wep.generateHitbox(super.getX(), super.getY(), super.getWidth(), super.getHeight());
+		List<GameObject> thingsHit = wep.generateHitbox(super.getX(), super.getY(), super.getWidth(), super.getHeight());
 		
 		//hits the first enemy and destroys the projectile
-		if(enemiesHit.size() > 0)
+		if(thingsHit.size() > 0)
 		{
-			((LivingEntity)enemiesHit.get(0)).takeDamage((int)(wep.getDamage()+0.5));
+			for(GameObject go : thingsHit)
+			{
+				if(!(go instanceof LivingEntity))
+				{
+					endPath();
+					return;
+				}
+			}
+			
+			((LivingEntity)thingsHit.get(0)).takeDamage((int)(wep.getDamage()+0.5));
 			
 			if(getWeapon().getOwner() instanceof Player)
 			{

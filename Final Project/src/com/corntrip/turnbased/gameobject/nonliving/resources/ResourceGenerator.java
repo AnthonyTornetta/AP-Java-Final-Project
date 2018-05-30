@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Creates a resources in the scene every time the time ellapsed is greator than the spawn delay
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
 import org.newdawn.slick.GameContainer;
@@ -6,6 +12,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
@@ -59,8 +66,27 @@ public class ResourceGenerator extends Entity
 		{
 			resourceLaidDown = resource.createNew();
 			timeSinceLastSpawn = 0;
-			resourceLaidDown.setX((int)(getX() + (Math.random() * 200) - 50));
-			resourceLaidDown.setY((int)(getY() + (Math.random() * 200) - 50));
+			
+			boolean colliding = false;
+			
+			do
+			{
+				colliding = false;
+				resourceLaidDown.setX((int)(getX() + (Math.random() * 200) - 50));
+				resourceLaidDown.setY((int)(getY() + (Math.random() * 200) - 50));
+				
+				for(GameObject go : getWorld().getGameObjects())
+				{
+					if(go.collidingWith(resourceLaidDown))
+					{
+						colliding = true;
+						break;
+					}
+				}
+				
+				
+			} while(colliding);
+			
 			getWorld().addObject(resourceLaidDown);
 		}
 	}

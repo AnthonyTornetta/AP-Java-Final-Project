@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Creates a new World object based off an image
+ */
+
 package com.corntrip.turnbased.world;
 
 import java.awt.Color;

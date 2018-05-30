@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that is collectible by the player and can be used to gain points
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
 import com.corntrip.turnbased.gameobject.GameObject;

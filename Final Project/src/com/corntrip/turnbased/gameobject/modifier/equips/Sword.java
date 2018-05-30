@@ -1,8 +1,15 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Hits in a box around it's width, height, x, and y.
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.util.Resources;
@@ -38,9 +45,9 @@ public class Sword extends SwungWeapon
 			return;
 		setTimeSinceLastSwing(0);
 		
-		ArrayList<Entity> enemiesHit = generateHitbox(getX(), getY(), getWidth(), getHeight());
+		List<GameObject> thingsHit = generateHitbox(getX(), getY(), getWidth(), getHeight());
 		
-		for(Entity hitEnemy : enemiesHit)
+		for(GameObject hitEnemy : thingsHit)
 		{
 			if(hitEnemy instanceof LivingEntity)
 			{

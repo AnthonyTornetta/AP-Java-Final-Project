@@ -1,3 +1,9 @@
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A place where the player can deposit his/her resource
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
 import org.newdawn.slick.GameContainer;
