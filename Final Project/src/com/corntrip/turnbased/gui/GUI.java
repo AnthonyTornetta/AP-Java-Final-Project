@@ -17,10 +17,17 @@ import com.corntrip.turnbased.rendering.IRenderable;
 
 public class GUI implements IRenderable
 {
-	List<GUIElement> elements = new ArrayList<>();
+	/**
+	 * Each element present in the array
+	 */
+	private List<GUIElement> elements = new ArrayList<>();
 	
+	/**
+	 * Is a GUI holder and renders each
+	 * @param e All the elements to initialize the GUI with
+	 */
 	public GUI(GUIElement... e)
-	{		
+	{
 		for(GUIElement elem : e)
 		{
 			elements.add(elem);

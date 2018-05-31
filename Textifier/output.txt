@@ -1,5 +1,11 @@
 
-=== GameNameHere ===
+=== CornTrip ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A fun 2D game based on adventure and collecting resources
+ */
+
 package com.corntrip.turnbased;
 
 import java.io.File;
@@ -13,44 +19,53 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.gui.DeathScreenGUI;
+import com.corntrip.turnbased.gui.GUI;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 import com.corntrip.turnbased.world.WorldLoader;
 
-public class GameNameHere extends BasicGame
+public class CornTrip extends BasicGame
 {
+	/**
+	 * Holds everything in the scene
+	 */
 	private World world;
 	
-	public GameNameHere()
+	/**
+	 * Shows up when you die
+	 */
+	private GUI deathScreen;
+	
+	public CornTrip()
 	{
-		super("a (good?) game.");
+		super("CornTrip"); // Window title
 	}
 	
-	public static void main(String[] args)
+	public static void main(String[] args) throws SlickException
 	{
-		try
-        {
-            AppGameContainer app = new AppGameContainer(new GameNameHere());
-            app.setDisplayMode(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, false);
-            app.start();
-        }
-        catch (SlickException e)
-        {
-            e.printStackTrace();
-        }
+		// Creates the window n jazz
+        AppGameContainer app = new AppGameContainer(new CornTrip());
+        app.setDisplayMode(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, false);
+        app.start();
 	}
 
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
 		gfx.clear();
-		world.render(gc, gfx);
+		
+		if(world.getPlayer() != null)
+			world.render(gc, gfx);
+		else if(deathScreen != null)
+			deathScreen.render(gc, gfx);
 	}
 	
 	@Override
 	public void init(GameContainer gc) throws SlickException
 	{
+		// Setup the window
 		gc.setMaximumLogicUpdateInterval(Reference.MAX_FPS);
 		gc.setTargetFrameRate(Reference.MAX_FPS);
 		gc.setAlwaysRender(true);
@@ -66,51 +81,46 @@ public class GameNameHere extends BasicGame
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			throw new IllegalStateException("Failed to Create World.");
+			throw new IllegalStateException("Failed to create world from image :(");
 		}
 	}
 	
 	private void initializeResources()
 	{
-		registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		Resources.registerSpriteSheet("tiles", "tiles.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		Resources.registerSpriteSheet("bows", "bows.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		Resources.registerSpriteSheet("swords", "swords.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
+		Resources.registerSpriteSheet("enemy", "enemies.png", Reference.TILE_DIMENSIONS, Reference.TILE_DIMENSIONS);
 		
-		registerImage("player", "player.png");
-		registerImage("bow", "bow.png");
-		registerImage("arrow", "arrow.png");
-		registerImage("sword", "sword.png");
-		registerImage("wall", "wall.png");
-		registerImage("enemy", "enemy.png");
-		registerImage("tree", "tree.png");
-		registerImage("gold", "gold.png");
-		registerImage("deposit", "resource-deposit.png");
-		registerImage("generator", "resource-generator.png");
-		registerImage("townhall", "townhall.png");
-	}
-	
-	private void registerImage(String name, String location)
-	{
-		Resources.registerImage(name, Resources.loadImage(location));
-	}
-	
-	private void registerSpriteSheet(String name, String location, int w, int h)
-	{
-		Resources.registerSpriteSheet(name, Resources.loadSpriteSheet(location, w, h));
-	}
-	
-	@SuppressWarnings("unused")
-	private void registerSound(String name, String location)
-	{
-		Resources.registerSound(name, Resources.loadSound(location));
+		Resources.registerImage("player", "player.png");
+		Resources.registerImage("arrow", "arrow.png");
+		Resources.registerImage("wall", "wall.png");
+		Resources.registerImage("enemy", "enemy.png");
+		Resources.registerImage("tree", "tree.png");
+		Resources.registerImage("gold", "gold.png");
+		Resources.registerImage("deposit", "resource-deposit.png");
+		Resources.registerImage("generator", "resource-generator.png");
+		Resources.registerImage("townhall", "townhall.png");
+		Resources.registerImage("health", "health.png");
 	}
 
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		world.update(gc, delta);
+		if(world.getPlayer() != null)
+			world.update(gc, delta);
+		else if(deathScreen == null)
+			deathScreen = new GUI(new DeathScreenGUI(world.getScore()));
 	}
 }
 
 === Entity ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A GameObject that knows the world it's in and has an update method
+ */
+
 package com.corntrip.turnbased.gameobject;
 
 import org.newdawn.slick.GameContainer;
@@ -157,6 +167,12 @@ public abstract class Entity extends GameObject
 }
 
 === GameObject ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 5/31/18
+ * This is our own work except the Slick2D library - ACT & TC
+ * The most general form of an object in the scene
+ */
+
 package com.corntrip.turnbased.gameobject;
 
 import org.newdawn.slick.GameContainer;
@@ -225,6 +241,7 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	@Override
 	public boolean collidingWith(float x, float y, float width, float height)
 	{
+		// Checks a basic box
 		if(x + width >= getX() && x <= getX() + getWidth())
 		{
 			if(y + height >= getY() && y <= getY() + getHeight())
@@ -266,15 +283,8 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 		return rotation;
 	}
 	
-	public void setRotation(float rotation)
-	{
-		setRotation(rotation, getAnchorPointX(), getAnchorPointY());
-	}
+	public void setRotation(float rotation) { this.rotation = rotation; }
 	
-	public void setRotation(float rotation, float anchorX, float anchorY)
-	{
-		this.rotation = rotation;
-	}	
 	public long getObjectId() { return objectId; }
 	
 	public float getAnchorPointX() { return getAnchorPointX(0); }
@@ -284,8 +294,21 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 }
 
 === Enemy ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * An Enemy that has a given target to chase after and displays its name and healthbar above it
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+
+import com.corntrip.turnbased.gui.HealthBarGUI;
+import com.corntrip.turnbased.gui.TextGUI;
 import com.corntrip.turnbased.world.World;
 
 public abstract class Enemy extends LivingEntity
@@ -294,6 +317,13 @@ public abstract class Enemy extends LivingEntity
 	 * The target to go after
 	 */
 	private LivingEntity target;
+	
+	//simply name
+	private String name;
+	
+	//health and it's Gui
+	private HealthBarGUI healthBar;
+	private TextGUI nameGUI;
 	
 	/**
 	 * The Antagonist of the story
@@ -304,26 +334,97 @@ public abstract class Enemy extends LivingEntity
 	 * @param world The world the enemy is in
 	 * @param target The target for the enemy (doesn't have to be the player)
 	 */
-	public Enemy(float startX, float startY, float w, float h, World world, LivingEntity target)
+	public Enemy(float startX, float startY, float w, float h, World world, LivingEntity target, String name)
 	{
 		super(startX, startY, w, h, world, 2);
 		
 		this.target = target;
+		this.name = name;
+		
+		// x & y don't matter since im updating them afterwards so 0, 0 is fine for temp
+		healthBar = new HealthBarGUI(0, 0, w, 6, Color.red, Color.green, getMaxHealth(), getMaxHealth());		
+		nameGUI = new TextGUI(0, 0, name, Color.red);
+		nameGUI.setCentered(true);
+		
+		updateGUIPos();
+	}
+	
+	@Override
+	/**
+	 * Forces them to take damage as passed
+	 */
+	public void takeDamage(int dmg)
+	{
+		super.takeDamage(dmg);
+		healthBar.setHealth(getHealth());
+	}
+	
+	@Override
+	/*
+	 * restores some of the HP lost
+	 */
+	public void heal(int amt)
+	{
+		super.heal(amt);
+		healthBar.setHealth(getHealth());
+	}
+	
+	/**
+	 * updates the GUI's x and y to match the movement
+	 */
+	public void updateGUIPos()
+	{
+		healthBar.setX(getX());
+		healthBar.setY(getY() - 16);
+		
+		nameGUI.setX(getX() + getWidth() / 2);
+		nameGUI.setY(getY() - 20);
+	}
+	
+	/**
+	 * 
+	 * @param gc: game container
+	 * @param gfx: the graphics used
+	 * @param offsetX: simply the offset of x
+	 * @param offsetY: simply the y offset
+	 * @throws SlickException: makes sure it doesn't break, no try/catch
+	 */
+	public void renderGUI(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
+		healthBar.render(gc, gfx, offsetX, offsetY);
+		nameGUI.render(gc, gfx, offsetX, offsetY);
 	}
 	
 	// Getters & Setters //
 	
 	public LivingEntity getTarget() { return target; }
 	public void setTarget(LivingEntity t) { this.target = t; }
+
+	public String getName() { return name; }
+	public void setName(String name)
+	{ 
+		this.name = name;
+		nameGUI.setText(name);
+	}
+
+	public HealthBarGUI getHealthBar() { return healthBar; }
+	public void setHealthBar(HealthBarGUI healthBar) { this.healthBar = healthBar; }
 }
 
 === LivingEntity ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * An entity that is also living, that has health and a max health and can die
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
-public abstract class LivingEntity extends Entity implements Cloneable
+public abstract class LivingEntity extends Entity
 {
 	private int maxHealth;
 	private int health;
@@ -349,7 +450,7 @@ public abstract class LivingEntity extends Entity implements Cloneable
 	 */
 	public void heal(int amt)
 	{
-		health += amt;
+		health = (int) Helper.clamp(amt + getHealth(), 0, getMaxHealth());
 	}
 	
 	/**
@@ -364,7 +465,7 @@ public abstract class LivingEntity extends Entity implements Cloneable
 	}
 	
 	/**
-=	 * Removes the LivingEntity from the world
+=	 * Removes the LivingEntity from the world when it dies
 	 */
 	public void die()
 	{
@@ -374,6 +475,8 @@ public abstract class LivingEntity extends Entity implements Cloneable
 	@Override
 	public abstract LivingEntity clone();
 	
+	// Getters & Setters //
+	
 	public int getMaxHealth() { return maxHealth; }
 	public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }
 	
@@ -382,6 +485,12 @@ public abstract class LivingEntity extends Entity implements Cloneable
 }
 
 === Player ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * The player is a LivingEntity controlled by the user
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import java.util.List;
@@ -395,6 +504,7 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.modifier.equips.Bow;
+import com.corntrip.turnbased.gameobject.modifier.equips.Sword;
 import com.corntrip.turnbased.gameobject.modifier.equips.SwungWeapon;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Projectile;
@@ -418,9 +528,9 @@ public class Player extends LivingEntity
 	private float velX = 0, velY = 0;
 	
 	/**
-	 * Holds the points aquired from scoring resources
+	 * Stores the experience for getting upgrades
 	 */
-	private int pts = 0;
+	private int xp = 0;
 	
 	/**
 	 * Holds the resource the player may or may not be carrying
@@ -447,11 +557,14 @@ public class Player extends LivingEntity
 	 */
 	private HealthBarGUI healthBar;
 	
-	private TextGUI txt;
+	// A bunch of GUIs
+	private TextGUI nameGUI;
+	private TextGUI xpGUI;
+	private TextGUI scoreGUI;
 	
 	private ImageGUI[] upgradeSlots = new ImageGUI[3];
-	
-	private Weapon weapon;
+	private Weapon[] weapons = new Weapon[2];
+	private int curWeapon = 0;
 	
 	/**
 	 * Controllable Entity by the user
@@ -466,24 +579,27 @@ public class Player extends LivingEntity
 		super(startX, startY, w, h, world, 20);
 		
 		healthBar = new HealthBarGUI(getX(), getY() - 8, getWidth(), 6, Color.red, Color.green, getHealth(), getMaxHealth());
-		txt = new TextGUI(getX(), getY() - 20, "Joe Shmoe", Color.red);
-		txt.setCentered(true);
+		nameGUI = new TextGUI(getX(), getY() - 20, "Joe Shmoe", Color.blue);
+		nameGUI.setCentered(true);
 		
 		setHealth(getHealth());
 		healthBar.setHealth(getHealth());
 		
-		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getImage("player"));
-		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getImage("player"));
-		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("player"));
+		xpGUI = new TextGUI(30, 30, "0", Color.blue);
+		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH - 80, 30, "0", Color.blue);
 		
-		weapon = new Bow(this, Resources.getImage("bow"), 1);
-		//weapon = new Sword(getX() + getWidth(), getY(), 32, 32, this, Resources.getImage("sword"), 1);//new Bow(this, Resources.getImage("bow"));
+		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getSpriteImage("swords", 0, 0));
+		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getSpriteImage("bows", 0, 0));
+		upgradeSlots[2] = new ImageGUI(0, 0, Resources.getImage("health"));
+		
+		weapons[1] = new Bow(this, 1);
+		weapons[0] = new Sword(getX() + getWidth(), getY(), 32, 32, this, 1);
 	}
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		weapon.update(delta);
+		getHeldWeapon().update(delta);
 		
 		float subVal = 0.8f;
 		float moveBy = Reference.MAX_FPS * delta / 1000.0f;
@@ -510,13 +626,52 @@ public class Player extends LivingEntity
 		if(in.isKeyDown(Input.KEY_D) || in.isKeyDown(Input.KEY_RIGHT))
 			velX += 2.0f * moveBy;
 		
+		// End movement calcs
 		
 		if(in.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
 		{
-			weapon.attack();
+			getHeldWeapon().attack();
 		}
-		// End movement calcs
-				
+		
+		if(displayUpgradeGUI)
+		{
+			if(in.isKeyDown(Input.KEY_Z))
+			{
+				if(!weapons[0].isMaxTier())
+				{
+					if(xp - 7 >= 0)
+					{
+						weapons[0] = weapons[0].upgrade();
+						xp -= 7;
+					}
+				}
+			}
+			else if(in.isKeyDown(Input.KEY_X))
+			{
+				if(!weapons[1].isMaxTier())
+				{
+					if(xp - 10 >= 0)
+					{
+						weapons[1] = weapons[1].upgrade();
+						xp -= 10;
+					}
+				}
+			}
+			else if(in.isKeyDown(Input.KEY_C))
+			{
+				if(xp - 2 >= 0)
+				{
+					heal(getMaxHealth());
+					xp -= 2;
+				}
+			}
+		}
+		
+		if(in.isKeyDown(Input.KEY_1))
+			curWeapon = 0;
+		else if(in.isKeyDown(Input.KEY_2))
+			curWeapon = 1;
+		
 		if(resourceCarrying == null)
 		{
 			velX = Helper.clamp(velX, -MAX_MOVE_SPEED, MAX_MOVE_SPEED);
@@ -565,7 +720,7 @@ public class Player extends LivingEntity
 							getWorld().removeObject(go);
 						}
 					}
-					else
+					else if(!(go instanceof Enemy))
 					{
 						if(go.collidingWith(newX, newY, getWidth(), getHeight()))
 						{
@@ -610,19 +765,11 @@ public class Player extends LivingEntity
 		setX(Helper.clamp(getX(), 0, getWorld().getWidth() - getWidth()));
 		setY(Helper.clamp(getY(), 0, getWorld().getHeight() - getHeight()));
 		
-		if(weapon instanceof SwungWeapon)
+		if(getHeldWeapon() instanceof SwungWeapon)
 		{
-			SwungWeapon sw = (SwungWeapon)weapon;
+			SwungWeapon sw = (SwungWeapon)getHeldWeapon();
 			
-			// you have no idea
-			// how long
-			// it took me
-			// to figure out
-			// these big maths.
-			// i have pictures.
-			// i will show you said pictures.
-			
-			sw.setX(getX() + Helper.clamp(-2 * (Math.abs(getRotation()) / 90) + 2 * getWidth(), -1, 1));
+			sw.setX(getX() + -2 * (Math.abs(getRotation()) / 90) + 2 * getWidth());
 			sw.setY(getY() + ((getRotation() % 45) / 45.0f) * getHeight());
 		}
 		
@@ -630,8 +777,8 @@ public class Player extends LivingEntity
 		healthBar.setY(getY() - 16);
 		healthBar.setHealth(getHealth());
 		
-		txt.setX(getX() + getWidth() / 2);
-		txt.setY(getY() - 46);
+		nameGUI.setX(getX() + getWidth() / 2);
+		nameGUI.setY(getY() - 46);
 		
 		upgradeSlots[0].setX(getX() - 48);
 		upgradeSlots[0].setY(getY() - 128);
@@ -644,6 +791,9 @@ public class Player extends LivingEntity
 		{
 			displayUpgradeGUI = true;
 		}
+		
+		xpGUI.setText(getXp() + "xp");
+		scoreGUI.setText(getWorld().getScore() + " score");
 	}
 	
 	@Override
@@ -660,7 +810,10 @@ public class Player extends LivingEntity
 		float anchorY = getAnchorPointY(offsetY);
 		
 		healthBar.render(gc, gfx, offsetX, offsetY);
-		txt.render(gc, gfx, offsetX, offsetY);
+		nameGUI.render(gc, gfx, offsetX, offsetY);
+		
+		xpGUI.render(gc, gfx);
+		scoreGUI.render(gc, gfx);
 		
 		if(displayUpgradeGUI)
 		{
@@ -682,13 +835,16 @@ public class Player extends LivingEntity
 		float drawY = getY() - offsetY;
 		texture.draw(drawX, drawY);
 		
-		weapon.renderAt(gc, gfx, drawX + getWidth(), drawY);
+		getHeldWeapon().renderAt(gc, gfx, drawX + getWidth(), drawY);
 	}
 	
 	private void scoreResource(Resource r)
 	{
 		if(r != null)
-			pts += r.getPtsValue();
+		{
+			getWorld().addToScore(r.getPtsValue());
+			getWorld().initateNextWave();
+		}
 	}
 	
 	@Override
@@ -697,11 +853,19 @@ public class Player extends LivingEntity
 		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld());
 	}
 	
-	public int getPoints() { return pts; }
-	public void setPoints(int p) { pts = p; }
+	public Weapon getHeldWeapon() { return weapons[curWeapon]; }
+	
+	public int getXp() { return xp; }
+	public void addXp(int amt) { xp += amt; }
 }
 
 === TestEnemy ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A test enemy that moves to you in a "creative" way
+ */
+
 package com.corntrip.turnbased.gameobject.living;
 
 import org.newdawn.slick.Color;
@@ -710,23 +874,21 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
-import com.corntrip.turnbased.gui.HealthBarGUI;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
 public class TestEnemy extends Enemy
 {
-	private HealthBarGUI hb;
 	private Image img;
+	private int tier;
 	
-	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target)
+	public TestEnemy(float startX, float startY, float w, float h, World world, LivingEntity target, String name, int tier)
 	{
-		super(startX, startY, w, h, world, target);
-		
-		img = Resources.getImage("enemy");
-		
-		hb = new HealthBarGUI(getX(), getY() - 16, getWidth(), 6, Color.red, Color.green, getMaxHealth(), getMaxHealth());
+		super(startX, startY, w, h, world, target, name);
+		this.tier = Helper.clamp(tier, 0, getMaxTier());
+		//implements the spritesheet stuffs
+		img = Resources.getSpriteImage("enemy", tier - 1, 0);
 	}
 	
 	@Override
@@ -738,7 +900,7 @@ public class TestEnemy extends Enemy
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
-		hb.render(gc, gfx, offsetX, offsetY);
+		renderGUI(gc, gfx, offsetX, offsetY);
 		
 		gfx.setColor(Color.red);
 		gfx.rotate(getAnchorPointX(offsetX), getAnchorPointY(offsetY), getRotation());
@@ -769,40 +931,55 @@ public class TestEnemy extends Enemy
 			if(this.collidingWith(target))
 			{
 				getWorld().removeObject(this);
-				target.takeDamage(1);
+				target.takeDamage(tier);
 			}
 		}
 		
-		hb.setHealth(getHealth());
-		hb.setX(getX());
-		hb.setY(getY() - 16);
+		updateGUIPos();
 	}
-
+	
 	@Override
 	public LivingEntity clone()
 	{
-		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget());
+		return new TestEnemy(getX(), getY(), getWidth(), getHeight(), getWorld(), getTarget(), getName(), tier);
 	}
+	
+	public int getMaxTier() { return 5; }
 }
 
 === Equipable ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that can be held
+ */
+
 package com.corntrip.turnbased.gameobject.modifier;
 
 import org.newdawn.slick.Image;
 
 public abstract class Equipable
 {	
+	//lol gets the image
 	public abstract Image getImage();
 }
 //tacking on swords and stuff
 
 === Modified ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * ?
+ */
+
 package com.corntrip.turnbased.gameobject.modifier;
+
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 
 public abstract class Modified
 {
 	LivingEntity assigned = null;
+	
 	//get and sets to what it's assigned
 	public  void setAssinged(LivingEntity a)
 	{
@@ -813,7 +990,7 @@ public abstract class Modified
 		return assigned;
 	}
 	
-	//lol we can have epic trees and super entities like bosses
+	//changes stats to correspond with the name
 	public abstract void modifyStats(LivingEntity a);
 	
 	//changes name
@@ -821,6 +998,13 @@ public abstract class Modified
 }
 
 === HPMod ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * During unit spawn there should be a ArrayList of these bad boys and it should have a random chance to spawn a boss
+ * Which then links it to a new Creation of one of these
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.entityAddition;
 
 import java.util.ArrayList;
@@ -828,12 +1012,10 @@ import java.util.ArrayList;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.modifier.Modified;
 
-/*
+/**
  * During unit spawn there should be a ArrayList of these bad boys and it should have a random chance to spawn a boss
  * Which then links it to a new Creation of one of these
  */
-
-
 public class HPMod extends Modified
 {
 
@@ -866,9 +1048,13 @@ public class HPMod extends Modified
 }
 
 === Bow ===
-package com.corntrip.turnbased.gameobject.modifier.equips;
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Shoots an arrow when fired
+ */
 
-import org.newdawn.slick.Image;
+package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrow;
@@ -879,16 +1065,24 @@ public class Bow extends Weapon
 	private int timeSinceLastShot = 0;
 	private int waitTimesBetweenShots = 2000;
 	
-	public Bow(Entity owner, Image a, int tier)
+	/**
+	 * 
+	 * @param owner: who the weapon belongs to
+	 * @param tier: what stage the weapon is in (how strong)
+	 */
+	public Bow(Entity owner, int tier)
 	{
 		setOwner(owner);
 		setTier(tier);
 		waitTimesBetweenShots = timeSinceLastShot = 2000 / tier;
 		setDamage((float)(tier*4.212));
-		setImage(a);
+		setImage(Resources.getSpriteImage("bows", tier - 1, 0));
 	}
 	
 	@Override
+	/**
+	 * checks to make sure you're within attack time then creates a new arrow at the bow's centre
+	 */
 	public void attack() 
 	{
 		if(timeSinceLastShot < waitTimesBetweenShots)
@@ -902,53 +1096,91 @@ public class Bow extends Weapon
 	}
 	
 	@Override
+	/**
+	 * delta is the game timer, increases as the game goes
+	 */
 	public void update(int delta)
 	{
 		timeSinceLastShot += delta;
 	}
 	
 	@Override
+	/**
+	 * creates the new bow in the old one's place and upgrades it
+	 */
 	public Bow upgrade() 
 	{
-		return new Bow(getOwner(), getImage(), getTier() + 1);
+		return new Bow(getOwner(), getTier() + 1);
 	}
+	
+	@Override
+	/*
+	 * makes sure the the tier is not higher than the max
+	 */
+	public boolean isMaxTier() { return getTier() >= 5; }
 }
 
 === Sword ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Hits in a box around it's width, height, x, and y.
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips;
 
-import java.util.ArrayList;
-
-import org.newdawn.slick.Image;
+import java.util.List;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.living.Player;
+import com.corntrip.turnbased.util.Resources;
 
 public class Sword extends SwungWeapon
 {
-	public Sword(float x, float y, float w, float h, Entity owner, Image a, int tier)
+	/**
+	 * 
+	 * @param x: x start
+	 * @param y: y start
+	 * @param w: width
+	 * @param h: height
+	 * @param owner: the entity who controls it
+	 * @param tier: how upgraded the sword is
+	 */
+	public Sword(float x, float y, float w, float h, Entity owner, int tier)
 	{
 		super(x, y, w, h, 500 / tier);
 		setTier(tier);
 		setDamage((float) (tier*6.862));
 		setOwner(owner);
-		setImage(a);
+		setImage(Resources.getSpriteImage("swords", tier - 1, 0));
 	}
 	
 	@Override
+	/**
+	 * swings the sword and brings a hitbox to the game
+	 * also adds the damage and kills items
+	 */
 	public void attack()
 	{
 		if(getTimeSinceLastSwing() < getWaitTimesBetweenSwings())
 			return;
 		setTimeSinceLastSwing(0);
 		
-		ArrayList<Entity> enemiesHit = generateHitbox(getX(), getY(), getWidth(), getHeight());
+		List<GameObject> thingsHit = generateHitbox(getX(), getY(), getWidth(), getHeight());
 		
-		for(Entity hitEnemy : enemiesHit)
+		for(GameObject hitEnemy : thingsHit)
 		{
 			if(hitEnemy instanceof LivingEntity)
 			{
 				((LivingEntity) hitEnemy).takeDamage((int)(getDamage()+0.5));;
+				
+				if(getOwner() instanceof Player)
+				{
+					Player p = (Player)getOwner();
+					p.addXp(1);
+				}
 			}
 		}
 		
@@ -956,13 +1188,28 @@ public class Sword extends SwungWeapon
 	}
 	
 	@Override
+	/**
+	 * upgrades the sword like the bow
+	 */
 	public Sword upgrade() 
 	{		
-		return new Sword(getX(), getY(), getWidth(), getHeight(), getOwner(), getImage(), getTier() + 1);
+		return new Sword(getX(), getY(), getWidth(), getHeight(), getOwner(), getTier() + 1);
 	}
+	
+	@Override
+	/**
+	 * max tier as seen before
+	 */
+	public boolean isMaxTier() { return getTier() >= 4; }
 }
 
 === SwungWeapon ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A weapon that is swang'd instead of shot
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import org.newdawn.slick.GameContainer;
@@ -970,11 +1217,21 @@ import org.newdawn.slick.Graphics;
 
 public abstract class SwungWeapon extends Weapon
 {
+	//getting the place of the item and it's rotation
 	private float x, y, width, height;
 	private float rotation;
+	//these two are dedicated to creating a limiter on swings
 	private int timeSinceLastSwing;
 	private int waitTimesBetweenSwings;
 	
+	/**
+	 * 
+	 * @param x: where the item's x will start
+	 * @param y: where the item's y will start
+	 * @param w: how wide the object will be
+	 * @param h: how tall the object will be
+	 * @param waitTime: time between swings in milliseconds
+	 */
 	public SwungWeapon(float x, float y, float w, float h, int waitTime)
 	{
 		this.x = x;
@@ -985,6 +1242,9 @@ public abstract class SwungWeapon extends Weapon
 		rotation = 0;
 	}
 	
+	/**
+	 * resets the swing to it's normal position
+	 */
 	@Override
 	public void update(int delta)
 	{
@@ -996,6 +1256,9 @@ public abstract class SwungWeapon extends Weapon
 		timeSinceLastSwing += delta;
 	}
 	
+	/**
+	 * shows the actual image and it's movement when needed
+	 */
 	@Override
 	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
 	{
@@ -1004,6 +1267,7 @@ public abstract class SwungWeapon extends Weapon
 		super.renderAt(gc, gfx, x, y);
 	}
 	
+	//tons of getters and setters
 	public float getX() { return x; }
 	public float getY() { return y; }
 	public float getWidth() { return width; }
@@ -1025,9 +1289,17 @@ public abstract class SwungWeapon extends Weapon
 }
 
 === Weapon ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A weapon that has an attack function
+ * Whenever an enemy is hit, if the owner is a player it's xp goes up
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -1040,21 +1312,23 @@ import com.corntrip.turnbased.gameobject.modifier.Equipable;
 
 public abstract class Weapon extends Equipable
 {
+	//simply the stuffers
 	private Entity owner;
 	private float damage;
 	private Image image;
 	private int tier;
 	
 	//Start x and y are the owner's hit box
-	public ArrayList<Entity> generateHitbox(float startX, float startY, float width, float height)
+	public List<GameObject> generateHitbox(float startX, float startY, float width, float height)
 	{
-		ArrayList<Entity> itemsHit = new ArrayList<>();
+		List<GameObject> itemsHit = new ArrayList<>();
 		
-		for(GameObject a: owner.getWorld().getEntities())
+		for(GameObject a: owner.getWorld().getGameObjects())
 		{
+			//hahah no longer hits owner
+			
 			if(a instanceof LivingEntity)
 			{
-				//hahah no longer hits owner
 				if((!owner.equals(a) && ((LivingEntity)a).collidingWith(startX, startY, width, height)))
 				{
 					itemsHit.add((Entity) a);
@@ -1064,11 +1338,13 @@ public abstract class Weapon extends Equipable
 		return itemsHit;
 	}
 	
+	//draws the items
 	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
 	{
 		getImage().draw(x, y);
 	}
 	
+	//defined in depth later
 	public abstract void attack();
 	
 	public abstract Weapon upgrade();
@@ -1084,9 +1360,17 @@ public abstract class Weapon extends Equipable
 	public void setImage(Image image) { this.image = image; }
 	public void setOwner(Entity owner) { this.owner = owner; }
 	public void setDamage(float damage) { this.damage = damage; }
+
+	public abstract boolean isMaxTier();
 }
 
 === Arrow ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A projectile that is an arrow
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
 
 import org.newdawn.slick.GameContainer;
@@ -1099,26 +1383,38 @@ import com.corntrip.turnbased.world.World;
 
 public class Arrow extends Projectile
 {
+	//building of an arrow based off the projectile
 	public Arrow(float startX, float startY, float w, float h, World world, Weapon wep, Image image)
 	{
 		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation(), image);	
 	}
 
+	/**
+	 * individual flight speed
+	 */
 	@Override
 	public float flightSpeed() 
 	{
-		return 20.0f + getWeapon().getTier();
+		return 25.0f;
 	}
 
+	//actually adding the arrow to the game
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
+		//rotating so it adds correctly and then drawing it
 		gfx.rotate((getX() - offsetX) + getWidth() / 2, (getY() - offsetY) + getHeight() / 2, getRotation());
 		getImage().draw(getX() - offsetX, getY() - offsetY);
 	}
 }
 
 === Projectile ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Travels in a given direction based off the shooter's rotation with slight variation
+ */
+
 package com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil;
 
 import java.util.List;
@@ -1128,7 +1424,9 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
+import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.world.World;
 
@@ -1195,7 +1493,7 @@ public abstract class Projectile extends Entity
 	{
 		/*
 		 * == TODO ==
-		 * This calculation causes the arrow to move in a diamond-like pattern, causing innacuracies when moving towards the target.
+		 * This calculation causes the arrow to move in a diamond-like pattern, causing inaccuracies when moving towards the target.
 		 * This effect is strongest at angles +-45 and +-135
 		 * This effect is weakest at angles +- 0 and +- 180
 		 */
@@ -1239,12 +1537,28 @@ public abstract class Projectile extends Entity
 		setY(getY() + velY * flightSpeed());
 		
 		//checks the enemies hit
-		List<Entity> enemiesHit = wep.generateHitbox(super.getX(), super.getY(), super.getWidth(), super.getHeight());
+		List<GameObject> thingsHit = wep.generateHitbox(super.getX(), super.getY(), super.getWidth(), super.getHeight());
 		
 		//hits the first enemy and destroys the projectile
-		if(enemiesHit.size() > 0)
+		if(thingsHit.size() > 0)
 		{
-			((LivingEntity)enemiesHit.get(0)).takeDamage((int)(wep.getDamage()+0.5));
+			for(GameObject go : thingsHit)
+			{
+				if(!(go instanceof LivingEntity))
+				{
+					endPath();
+					return;
+				}
+			}
+			
+			((LivingEntity)thingsHit.get(0)).takeDamage((int)(wep.getDamage()+0.5));
+			
+			if(getWeapon().getOwner() instanceof Player)
+			{
+				Player p = (Player)getWeapon().getOwner();
+				p.addXp(1);
+			}
+			
 			endPath();
 		}
 		
@@ -1252,6 +1566,7 @@ public abstract class Projectile extends Entity
 		distanceTrav += flightSpeed();
 	}
 
+	//get and sets
 	public Image getImage() { return image; }
 
 	public void setImage(Image image) { this.image = image;}
@@ -1260,6 +1575,12 @@ public abstract class Projectile extends Entity
 }
 
 === Tree ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A simple tree that sits there and is a tree
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving;
 
 import org.newdawn.slick.GameContainer;
@@ -1295,6 +1616,12 @@ public class Tree extends GameObject
 }
 
 === Wall ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A simple wall that sits there and is a wall
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving;
 
 import org.newdawn.slick.GameContainer;
@@ -1328,6 +1655,12 @@ public class Wall extends GameObject
 }
 
 === GoldResource ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A resource that looks like gold
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
 import org.newdawn.slick.GameContainer;
@@ -1340,6 +1673,13 @@ public class GoldResource extends Resource
 {
 	private Image img;
 	
+	/**
+	 * Builds a new gold resource
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: height
+	 */
 	public GoldResource(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
@@ -1348,18 +1688,27 @@ public class GoldResource extends Resource
 	}
 	
 	@Override
+	/**
+	 * returns how many points the player has earned
+	 */
 	public int getPtsValue()
 	{
 		return 1;
 	}
 	
 	@Override
+	/**
+	 * actually places the image into the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		img.draw(getX() - offsetX, getY() - offsetY);
 	}
 	
 	@Override
+	/**
+	 * adds another gold resource if it was destroyed
+	 */
 	public Resource createNew()
 	{
 		return new GoldResource(getX(), getY(), getWidth(), getHeight());
@@ -1367,22 +1716,43 @@ public class GoldResource extends Resource
 }
 
 === Resource ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that is collectible by the player and can be used to gain points
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
 import com.corntrip.turnbased.gameobject.GameObject;
 
 public abstract class Resource extends GameObject
 {
+	/**
+	 * 
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: hieght
+	 */
 	public Resource(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
 	}
+	
+	// Getters & Setters //
 	
 	public abstract int getPtsValue();
 	public abstract Resource createNew();
 }
 
 === ResourceDeposit ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A place where the player can deposit his/her resource
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
 import org.newdawn.slick.GameContainer;
@@ -1397,6 +1767,13 @@ public class ResourceDeposit extends GameObject
 {
 	private Image img;
 	
+	/**
+	 * Builds a new resource deposit
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: hieght
+	 */
 	public ResourceDeposit(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
@@ -1405,6 +1782,9 @@ public class ResourceDeposit extends GameObject
 	}
 
 	@Override
+	/**
+	 * shows the deposit in the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{		
 		img.draw(getX() - offsetX, getY() - offsetY);
@@ -1412,6 +1792,12 @@ public class ResourceDeposit extends GameObject
 }
 
 === ResourceGenerator ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Creates a resources in the scene every time the time ellapsed is greator than the spawn delay
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.resources;
 
 import org.newdawn.slick.GameContainer;
@@ -1420,6 +1806,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.gameobject.Entity;
+import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
@@ -1432,6 +1819,16 @@ public class ResourceGenerator extends Entity
 	
 	private Image img;
 	
+	/**
+	 * 
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: hieght
+	 * @param world: world that the generator exists in
+	 * @param spawnDelayMS: delay in miliseconds
+	 * @param resource: the items that it's spawning
+	 */
 	public ResourceGenerator(float startX, float startY, float w, float h, World world, int spawnDelayMS, Resource resource)
 	{
 		super(startX, startY, w, h, world);
@@ -1448,6 +1845,9 @@ public class ResourceGenerator extends Entity
 	}
 	
 	@Override
+	/**
+	 * brings the object into the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY)
 	{
 		img.draw(getX() - offsetX, getY() - offsetY);
@@ -1456,6 +1856,7 @@ public class ResourceGenerator extends Entity
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
+		//checks to see if it has a resource yet
 		if(resourceLaidDown != null)
 		{
 			if(!getWorld().containsObject(resourceLaidDown))
@@ -1464,23 +1865,51 @@ public class ResourceGenerator extends Entity
 			}
 		}
 		
+		//resets the timer
 		if(resourceLaidDown == null)
 			timeSinceLastSpawn += delta; // Only spawn if no resource is present
 		else
 			timeSinceLastSpawn = 0;
 		
+		//throws a delay so there aren't too many resources
 		if(timeSinceLastSpawn >= spawnDelayMS)
 		{
 			resourceLaidDown = resource.createNew();
 			timeSinceLastSpawn = 0;
-			resourceLaidDown.setX((int)(getX() + (Math.random() * 200) - 50));
-			resourceLaidDown.setY((int)(getY() + (Math.random() * 200) - 50));
+			
+			boolean colliding = false;
+			
+			//places a resource into the world while keeping it out of the generator (randomly)
+			do
+			{
+				colliding = false;
+				resourceLaidDown.setX((int)(getX() + (Math.random() * 200) - 50));
+				resourceLaidDown.setY((int)(getY() + (Math.random() * 200) - 50));
+				
+				for(GameObject go : getWorld().getGameObjects())
+				{
+					if(go.collidingWith(resourceLaidDown))
+					{
+						colliding = true;
+						break;
+					}
+				}
+				
+				//creates a new one when colliding
+			} while(colliding);
+			
 			getWorld().addObject(resourceLaidDown);
 		}
 	}
 }
 
 === Townhall ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Acts as the upgrading center for the player
+ */
+
 package com.corntrip.turnbased.gameobject.nonliving.townhall;
 
 import org.newdawn.slick.GameContainer;
@@ -1495,6 +1924,13 @@ public class Townhall extends GameObject
 {
 	private Image img;
 	
+	/**
+	 * Builds a new townhall into the world
+	 * @param startX: starting x
+	 * @param startY: starting y
+	 * @param w: width
+	 * @param h: hieght
+	 */
 	public Townhall(float startX, float startY, float w, float h)
 	{
 		super(startX, startY, w, h);
@@ -1503,11 +1939,19 @@ public class Townhall extends GameObject
 	}
 
 	@Override
+	/**
+	 * shows the townhall
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		img.draw(getX() - offsetX, getY() - offsetY);
 	}
 	
+	/**
+	 * 
+	 * @param go: game object
+	 * @return True/False if the object is in range
+	 */
 	public boolean withinRange(GameObject go)
 	{
 		float thisAnchorX = getX() + getWidth() / 2;
@@ -1516,13 +1960,73 @@ public class Townhall extends GameObject
 		float theirAnchorX = go.getX() + go.getWidth() / 2;
 		float theirAnchorY = go.getY() - go.getHeight() / 2;
 		
+		//calculation to see if they're in range
 		double distanceAway = Math.sqrt(Math.pow(theirAnchorX - thisAnchorX, 2) + Math.pow(theirAnchorY - thisAnchorY, 2));
 		
 		return distanceAway < (getWidth() + getHeight());
 	}
 }
 
+=== DeathScreenGUI ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Displays a black screen w/ score and "You Died!"
+ */
+
+package com.corntrip.turnbased.gui;
+
+import java.awt.Font;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.TrueTypeFont;
+
+import com.corntrip.turnbased.util.Reference;
+
+public class DeathScreenGUI extends GUIElement
+{
+	private TextGUI scoreGUI; // Says your score
+	private TextGUI youDied; // Says "You Died!"
+	
+	/**
+	 * Displays a black screen w/ score and "You Died!"
+	 * @param score the score to display
+	 */
+	public DeathScreenGUI(int score)
+	{
+		super(0, 0);
+		
+		// Displays the score
+		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH / 2, Reference.WINDOW_HEIGHT / 2 - 50, "Score: " + score, Color.green);
+		scoreGUI.setCentered(true);
+		scoreGUI.setFont(new TrueTypeFont(new Font("Verdana", Font.BOLD, 45), true));
+		
+		// Displays "You Died!"
+		youDied = new TextGUI(Reference.WINDOW_WIDTH / 2, Reference.WINDOW_HEIGHT / 2 - 120, "You Died!", Color.green);
+		youDied.setCentered(true);
+		youDied.setFont(new TrueTypeFont(new Font("Verdana", Font.BOLD, 45), true));
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
+		gfx.setColor(Color.black);
+		gfx.fillRect(0, 0, Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT);
+		scoreGUI.render(gc, gfx, offsetX, offsetY);
+		youDied.render(gc, gfx, offsetX, offsetY);
+	}
+}
+
 === GUI ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Displays a GUI with elements in it
+ */
+
 package com.corntrip.turnbased.gui;
 
 import java.util.ArrayList;
@@ -1536,48 +2040,58 @@ import com.corntrip.turnbased.rendering.IRenderable;
 
 public class GUI implements IRenderable
 {
-	List<GUIElement> elements = new ArrayList<>();
+	/**
+	 * Each element present in the array
+	 */
+	private List<GUIElement> elements = new ArrayList<>();
 	
+	/**
+	 * Is a GUI holder and renders each
+	 * @param e All the elements to initialize the GUI with
+	 */
+	public GUI(GUIElement... e)
+	{
+		for(GUIElement elem : e)
+		{
+			elements.add(elem);
+		}
+	}
+
+	@Override
+	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
+	{
+		for(GUIElement elem : elements)
+		{
+			elem.render(gc, gfx, offsetX, offsetY);
+		}
+	}
+
 	@Override
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
 		render(gc, gfx, 0, 0);
 	}
-	
-	@Override
-	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
-	{
-		for(GUIElement e : elements)
-		{
-			e.render(gc, gfx, offsetX, offsetY);
-		}
-	}
-	
-	public void addElement(GUIElement elem)
-	{
-		elements.add(elem);
-	}
-	
-	public boolean removeElement(GUIElement elem)
-	{
-		return elements.remove(elem);
-	}
-	
-	public void keypress(int key)
-	{
-		/*for(GUIElement e : elements)
-		{
-			e.handleKey(key);
-		}*/
-	}
 }
 
 === GUIBar ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A GUI that is treated as a bar
+ */
+
 package com.corntrip.turnbased.gui;
 
 public abstract class GUIBar extends GUIElement
 {
 	private float width, height;
+	/**
+	 * Generates a bar as a GUI
+	 * @param x Starting x
+	 * @param y Starting y
+	 * @param w Width of the bar
+	 * @param h Height of the bar
+	 */
 	public GUIBar(float x, float y, float w, float h)
 	{
 		super(x, y);
@@ -1595,6 +2109,12 @@ public abstract class GUIBar extends GUIElement
 }
 
 === GUIElement ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that is renderable in the scene as a GUI element
+ */
+
 package com.corntrip.turnbased.gui;
 
 import org.newdawn.slick.GameContainer;
@@ -1607,6 +2127,11 @@ public abstract class GUIElement implements IRenderable
 {
 	private float x, y;
 	
+	/**
+	 * Assigning the starting spot
+	 * @param x; start x
+	 * @param y; start y
+	 */
 	public GUIElement(float x, float y)
 	{
 		this.x = x;
@@ -1614,12 +2139,18 @@ public abstract class GUIElement implements IRenderable
 	}
 	
 	@Override
+	/**
+	 * rendering with offesets
+	 */
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
 		render(gc, gfx, 0, 0);
 	}
 	
 	@Override
+	/**
+	 * rendering that'll be done with other GUI items
+	 */
 	public abstract void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException;
 	
 	//public abstract void handleKey(int key); <-- TODO: Put me somewhere else
@@ -1632,6 +2163,12 @@ public abstract class GUIElement implements IRenderable
 }
 
 === HealthBarGUI ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Displays a healthbar in the scene based off the amount of health and the max health
+ */
+
 package com.corntrip.turnbased.gui;
 
 import org.newdawn.slick.Color;
@@ -1644,6 +2181,17 @@ public class HealthBarGUI extends GUIBar
 	private Color healthBackground, healthColor;
 	private int health, maxHealth;
 	
+	/**
+	 * 
+	 * @param x: start x
+	 * @param y: start y
+	 * @param w: width
+	 * @param h: height
+	 * @param healthBackground: what shows when hp is lost
+	 * @param healthColor: what hp looks like
+	 * @param health: numerical representation of health
+	 * @param maxHealth: maximum health
+	 */
 	public HealthBarGUI(float x, float y, float w, float h, Color healthBackground, Color healthColor, int health, int maxHealth)
 	{		
 		super(x, y, w, h);
@@ -1653,6 +2201,9 @@ public class HealthBarGUI extends GUIBar
 		this.maxHealth = maxHealth;
 	}
 
+	/**
+	 * Sets the health bar above the entity's head when called
+	 */
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
@@ -1679,6 +2230,12 @@ public class HealthBarGUI extends GUIBar
 }
 
 === ImageGUI ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Displays an image in the scene
+ */
+
 package com.corntrip.turnbased.gui;
 
 import org.newdawn.slick.GameContainer;
@@ -1690,6 +2247,12 @@ public class ImageGUI extends GUIElement
 {
 	private Image image;
 	
+	/**
+	 * 
+	 * @param x: start x
+	 * @param y: start y
+	 * @param image: image that is being used
+	 */
 	public ImageGUI(float x, float y, Image image)
 	{
 		super(x, y);
@@ -1697,19 +2260,28 @@ public class ImageGUI extends GUIElement
 	}
 
 	@Override
+	/**
+	 * draws the image into the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		image.draw(getX() - offsetX, getY() - offsetY);
 	}
 
+	// Getters & Setters //
+	
 	public Image getImage() { return image; }
 	public void setImage(Image image) { this.image = image; }
 }
 
 === TextGUI ===
-package com.corntrip.turnbased.gui;
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Displays text in the scene
+ */
 
-import java.awt.Font;
+package com.corntrip.turnbased.gui;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -1717,28 +2289,42 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
 
+import com.corntrip.turnbased.util.Reference;
+
 public class TextGUI extends GUIElement
 {
 	private String text;
 	private Color textColor;
 	private boolean centered = false;
+	private TrueTypeFont font;
 	
 	private int fontWidth = 0;
-	private TrueTypeFont font = new TrueTypeFont(new Font("Verdana", Font.PLAIN, 16), true);
 	
+	/**
+	 * 
+	 * @param x: start x
+	 * @param y: start y
+	 * @param text: what is displayed
+	 * @param textColor: what color the text is
+	 */
 	public TextGUI(float x, float y, String text, Color textColor)
 	{
 		super(x, y);
 		this.text = text;
 		this.textColor = textColor;
 		
+		font = Reference.FONT_DEFAULT;
 		fontWidth = font.getWidth(text);
 	}
 
 	@Override
+	/**
+	 * displays the text into the game
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		gfx.setColor(textColor);
+		//centers the text
 		if(!centered)
 		{
 			font.drawString(getX() - offsetX, getY() - offsetY, text, textColor);
@@ -1749,20 +2335,35 @@ public class TextGUI extends GUIElement
 		}
 	}
 	
+	// Getters & Setters //
+	
 	public void setCentered(boolean c) { centered = c; }
 	public boolean isCentered() { return centered; }
 
 	public String getText() { return text; }	
-	public void setText(String text) { this.text = text; }
+	public void setText(String text) 
+	{
+		this.text = text;
+		fontWidth = font.getWidth(text); 
+	}
 
 	public Color getTextColor() { return textColor; }
 	public void setTextColor(Color textColor) { this.textColor = textColor; }
 
-	public TrueTypeFont getFont() { return font; }
-	public void setFont(TrueTypeFont font) { this.font = font; }
+	public void setFont(TrueTypeFont ttf)
+	{
+		font = ttf;
+		fontWidth = font.getWidth(text);
+	}
 }
 
 === ICollidable ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that is collidable in the scene with other objects
+ */
+
 package com.corntrip.turnbased.physics;
 
 public interface ICollidable
@@ -1794,6 +2395,12 @@ public interface ICollidable
 }
 
 === Camera ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Just stores variables for the offset and some helpful centering functions
+ */
+
 package com.corntrip.turnbased.rendering;
 
 import com.corntrip.turnbased.gameobject.GameObject;
@@ -1845,6 +2452,8 @@ public class Camera
 	 */
 	public void center(GameObject go)
 	{
+		if(go == null)
+			return;
 		xOffset = go.getX() - visibleWidth / 2 + go.getWidth() / 2;
 		yOffset = go.getY() - visibleHeight / 2 + go.getHeight() / 2;
 		
@@ -1868,6 +2477,12 @@ public class Camera
 }
 
 === IRenderable ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Something that can be rendered on a scene
+ */
+
 package com.corntrip.turnbased.rendering;
 
 import org.newdawn.slick.GameContainer;
@@ -1896,6 +2511,12 @@ public interface IRenderable
 }
 
 === Helper ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Adds some helpful functions
+ */
+
 package com.corntrip.turnbased.util;
 
 public class Helper
@@ -1908,6 +2529,22 @@ public class Helper
 	 * @return if the value is less than the minimum, the minimum value passed; if it is greator than the max, then the max is returned.  Otherwise the value passed in is returned.
 	 */
 	public static float clamp(float val, float min, float max)
+	{
+		if(val < min)
+			return min;
+		if(val > max)
+			return max;
+		return val;
+	}
+	
+	/**
+	 * Clamps a value between a minimum and a maximum
+	 * @param val The value to clamp between the minimum and maximum
+	 * @param min The minimum value to constrain the value between
+	 * @param max The maximum value to constrain the value between
+	 * @return if the value is less than the minimum, the minimum value passed; if it is greator than the max, then the max is returned.  Otherwise the value passed in is returned.
+	 */
+	public static int clamp(int val, int min, int max)
 	{
 		if(val < min)
 			return min;
@@ -1949,9 +2586,18 @@ public class Helper
 }
 
 === Reference ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Stores useful information used across classes
+ */
+
 package com.corntrip.turnbased.util;
 
 import java.awt.Color;
+import java.awt.Font;
+
+import org.newdawn.slick.TrueTypeFont;
 
 public class Reference
 {
@@ -1975,22 +2621,28 @@ public class Reference
 	 */
 	public static final int WINDOW_WIDTH = 720, WINDOW_HEIGHT = (int)(WINDOW_WIDTH * 12.0/16);
 	
-	/**
-	 * If a float is +- off a number by this amount they're basically equal
-	 */
-	public static final float ALMOST_EQUAL = 0.004f;
 	
+	//all colors used when reading in the map
 	public static final Color RESOURCE_SPAWN_POINT_KEY = new Color(255, 0, 0);
 	public static final Color TREE_SPAWN_KEY           = new Color(0, 255, 0);
 	public static final Color WALL_SPAWN_KEY           = new Color(0, 0, 255);
 	public static final Color TOWN_HALL_KEY            = new Color(255, 0, 255);
 	public static final Color DEPOSIT_KEY              = new Color(0, 0, 0);
 	public static final Color PLAYER_KEY               = new Color(255, 255, 0);
-	
 	public static final Color TEST_ENEMY               = new Color(255, 0, 128);
+	
+	//adding in the fonts
+	public static final TrueTypeFont FONT_DEFAULT = new TrueTypeFont(new Font("Verdana", Font.PLAIN, 16), true);
+	public static final TrueTypeFont FONT_BOLD    = new TrueTypeFont(new Font("Verdana", Font.BOLD , 16), true);
 }
 
 === Resources ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Handles all the resources of the game
+ */
+
 package com.corntrip.turnbased.util;
 
 import java.awt.image.BufferedImage;
@@ -2154,9 +2806,45 @@ public class Resources
 	{
 		return images.get(name);
 	}
+	
+	/**
+	 * Registers an image by the file and registers it with the given name
+	 * @param name The name to register the image with
+	 * @param location The file of the image
+	 */
+	public static void registerImage(String name, String location)
+	{
+		registerImage(name, Resources.loadImage(location));
+	}
+	
+	/**
+	 * Registers a SpriteSheet by the file and registers it with the given name
+	 * @param name The name to register the image with
+	 * @param location The file of the image
+	 */
+	public static void registerSpriteSheet(String name, String location, int w, int h)
+	{
+		registerSpriteSheet(name, Resources.loadSpriteSheet(location, w, h));
+	}
+	
+	/**
+	 * Registers a Sound by the file and registers it with the given name
+	 * @param name The name to register the image with
+	 * @param location The file of the image
+	 */
+	public static void registerSound(String name, String location)
+	{
+		registerSound(name, Resources.loadSound(location));
+	}
 }
 
 === Tile ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * A background Tile in the scene
+ */
+
 package com.corntrip.turnbased.world;
 
 import org.newdawn.slick.GameContainer;
@@ -2196,11 +2884,16 @@ public class Tile implements IRenderable
 	}
 	
 	@Override
+	/**
+	 * draws the tile into the world
+	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		texture.draw(x - offsetX, y - offsetY);
 	}
 
+	// Getters & Setters //
+	
 	public float getX() { return x; }
 	public void setX(float x) { this.x = x; }
 
@@ -2215,6 +2908,12 @@ public class Tile implements IRenderable
 }
 
 === World ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Stores everything in a given scene and updates & renders them
+ */
+
 package com.corntrip.turnbased.world;
 
 import java.util.ArrayList;
@@ -2232,6 +2931,7 @@ import com.corntrip.turnbased.gameobject.living.TestEnemy;
 import com.corntrip.turnbased.gameobject.nonliving.townhall.Townhall;
 import com.corntrip.turnbased.rendering.Camera;
 import com.corntrip.turnbased.rendering.IRenderable;
+import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 
@@ -2263,11 +2963,6 @@ public class World implements IRenderable
 	private Camera cam;
 	
 	/**
-	 * Time in ms since the last spawn
-	 */
-	private int timeSinceLastSpawn = 0;
-	
-	/**
 	 * Keeps track of which wave of enemies it is on
 	 */
 	private int wave = 1;
@@ -2288,6 +2983,11 @@ public class World implements IRenderable
 	private List<GameObject> objectsToBeRemoved = new ArrayList<>();
 	
 	/**
+	 * Keeps track of the score
+	 */
+	private int score;
+	
+	/**
 	 * A world holds every object in a scene and handles rendering and updating them all
 	 * @param width The total width of the world
 	 * @param height The total height of the world
@@ -2302,7 +3002,7 @@ public class World implements IRenderable
 		
 		tiles = new Tile[tilesAmtY][tilesAmtX];
 		
-		// Fills the tiles array with new tiles (TODO: Replace with an image-loaded scene)
+		// Fills the tiles
 		for(int ty = 0; ty < tilesAmtY; ty++)
 		{
 			for(int tx = 0; tx < tilesAmtX; tx++)
@@ -2328,6 +3028,7 @@ public class World implements IRenderable
 		float camXOff = cam.getXOffset();
 		float camYOff = cam.getYOffset();
 		
+		//renders the intial tiles, aka the grass
 		for(int y = (int) (camYOff / Reference.TILE_DIMENSIONS); y < (camYOff + cam.getScreenHeight()) / Reference.TILE_DIMENSIONS && y < HEIGHT / Reference.TILE_DIMENSIONS; y++)
 		{
 			for(int x = (int) (camXOff / Reference.TILE_DIMENSIONS); x < (camXOff + cam.getScreenWidth()) / Reference.TILE_DIMENSIONS && x < WIDTH / Reference.TILE_DIMENSIONS; x++)
@@ -2336,9 +3037,10 @@ public class World implements IRenderable
 			}
 		}
 		
+		//draws anything not in the inital camera (I think)
 		for(GameObject o : gameObjects)
 		{
-			if(!o.equals(getPlayer()))
+			if(getPlayer() != null && !o.equals(getPlayer()))
 			{
 				if(o.getX() + o.getWidth() > cam.getXOffset() && o.getX() < cam.getXOffset() + cam.getScreenWidth())
 				{
@@ -2362,25 +3064,23 @@ public class World implements IRenderable
 		render(gc, gfx, 0, 0);
 	}
 	
+	/*
+	 * updates all the entities and centers the camera as well as removing dead items
+	 */
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
+		//updates game objects
 		for(int i = 0;  i < entities.size(); i++)
 		{
 			Entity e = entities.get(i);
 			e.update(gc, delta);
 		}
 		
+		//centers camera
 		if(player != null)
 			cam.slippyCenter(player);
 		
-		timeSinceLastSpawn += delta;
-		if(timeSinceLastSpawn > 1000)
-		{
-			//spawnEnemies();
-			timeSinceLastSpawn = 0;
-			wave++;
-		}
-		
+		//removes objects
 		while(objectsToBeRemoved.size() > 0)
 		{
 			GameObject go = objectsToBeRemoved.remove(0);
@@ -2388,13 +3088,16 @@ public class World implements IRenderable
 		}
 	}
 	
+	/**
+	 * Spawns the enemies into the world and out of the camera
+	 */
 	public void spawnEnemies()
 	{
 		int enemyW = 32;
 		int enemyH = 32;
 		
-		int numOfEnemies = (int)Math.pow(6, wave * 0.1);
-
+		int numOfEnemies = (int)Math.pow(6, wave * 0.5);
+		
 		for(int i = 0; i < numOfEnemies; i++)
 		{
 			float x, y;
@@ -2414,10 +3117,13 @@ public class World implements IRenderable
 						continue searchLoop;
 					}
 				}
-			} while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
-				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); // Makes sure it won't spawn in the player's viewpoint
+			} 
+			// Makes sure it won't spawn in the player's viewpoint
+			while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
+				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); 
 			
-			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer());
+			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "Evil Ghost", Helper.clamp((int)Math.ceil(wave * Math.random()), 1, 5));
+			
 			addObject(e);
 		}
 	}
@@ -2465,6 +3171,15 @@ public class World implements IRenderable
 	}
 	
 	/**
+	 * Removes an object from the world after the world is done updating
+	 * @param obj The object's index to remove
+	 */
+	public void removeObject(int i)
+	{
+		objectsToBeRemoved.add(gameObjects.get(i));
+	}
+	
+	/**
 	 * Removes an object from the world regardless of if things are updating or not
 	 * @param obj The object to remove
 	 */
@@ -2473,8 +3188,18 @@ public class World implements IRenderable
 		gameObjects.remove(obj);
 		if(obj instanceof Entity)
 			entities.remove(obj);
+		
+		if(getPlayer() != null && getPlayer().equals(obj))
+			setPlayer(null);
+		else if(getTownhall() != null && getTownhall().equals(obj))
+			setTownhall(null);
 	}
 	
+	/**
+	 * Sees if the world's objects has the item
+	 * @param obj: object being checked
+	 * @return
+	 */
 	public boolean containsObject(GameObject obj)
 	{
 		for(GameObject o : gameObjects)
@@ -2482,6 +3207,21 @@ public class World implements IRenderable
 				return true;
 		return false;
 	}
+	
+	/*
+	 * starts the next wave of enemies
+	 */
+	public void initateNextWave()
+	{
+		if(Reference.DEBUG)
+			System.out.println("spawning");
+		spawnEnemies();
+		wave++;
+	}
+	
+	// Getters & Setters //
+	
+	public int getWave() { return wave; }
 	
 	public List<GameObject> getGameObjects() { return gameObjects; }
 	public List<Entity> getEntities() { return entities; }
@@ -2492,9 +3232,19 @@ public class World implements IRenderable
 
 	public float getWidth() { return WIDTH; }
 	public float getHeight() { return HEIGHT; }
+
+	public int getScore() { return score; }
+	public void setScore(int score) { this.score = score; }
+	public void addToScore(int amt) { this.score += amt; }
 }
 
 === WorldLoader ===
+/*
+ * Anthony Tornetta & Troy Cope | P5 | 3/31/18
+ * This is our own work: ACT & TC
+ * Creates a new World object based off an image
+ */
+
 package com.corntrip.turnbased.world;
 
 import java.awt.Color;
@@ -2504,7 +3254,6 @@ import java.util.List;
 
 import com.corntrip.turnbased.gameobject.living.Enemy;
 import com.corntrip.turnbased.gameobject.living.Player;
-import com.corntrip.turnbased.gameobject.living.TestEnemy;
 import com.corntrip.turnbased.gameobject.nonliving.Tree;
 import com.corntrip.turnbased.gameobject.nonliving.Wall;
 import com.corntrip.turnbased.gameobject.nonliving.resources.GoldResource;
@@ -2518,21 +3267,26 @@ public class WorldLoader
 {
 	public static World generateWorldFromImage(BufferedImage img)
 	{
+		//intialization of a world
 		World world = new World(img.getWidth() * Reference.TILE_DIMENSIONS, img.getHeight() * Reference.TILE_DIMENSIONS);
 		
 		final int w = Reference.TILE_DIMENSIONS, h = Reference.TILE_DIMENSIONS;
 		
 		List<Enemy> enemies = new ArrayList<>();
 		
+		//scanning of the map's image and comparing of each individual color
 		for(int y = 0; y < img.getHeight(); y++)
 		{
 			for(int x = 0; x < img.getWidth(); x++)
 			{
 				Color c = new Color(img.getRGB(x, y));
 				
+				//all squares and in terms of tiles
 				final float actualX = x * w;
 				final float actualY = y * h;
 				
+				//big if statementes to generate all the items from the paint image
+				//basically compares color code to the drawn map
 				if(c.equals(Reference.RESOURCE_SPAWN_POINT_KEY))
 				{
 					world.addObject(new ResourceGenerator(actualX, actualY, w * 2, h * 2, world, 10000, 
@@ -2559,15 +3313,10 @@ public class WorldLoader
 				{
 					world.addObject(new ResourceDeposit(actualX, actualY, w, h));
 				}
-				else if(c.equals(Reference.TEST_ENEMY))
-				{
-					Enemy e = new TestEnemy(actualY, actualY, w, h, world, null);
-					world.addObject(e);
-					enemies.add(e);
-				}
 			}
 		}
 		
+		//sets all the enemies to the player
 		for(Enemy e : enemies)
 		{
 			e.setTarget(world.getPlayer());

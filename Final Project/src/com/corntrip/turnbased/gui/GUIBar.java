@@ -11,10 +11,10 @@ public abstract class GUIBar extends GUIElement
 	private float width, height;
 	/**
 	 * Generates a bar as a GUI
-	 * @param x: starting x
-	 * @param y: starting y
-	 * @param w: width
-	 * @param h: height
+	 * @param x Starting x
+	 * @param y Starting y
+	 * @param w Width of the bar
+	 * @param h Height of the bar
 	 */
 	public GUIBar(float x, float y, float w, float h)
 	{

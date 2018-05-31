@@ -92,14 +92,14 @@ public class Player extends LivingEntity
 		super(startX, startY, w, h, world, 20);
 		
 		healthBar = new HealthBarGUI(getX(), getY() - 8, getWidth(), 6, Color.red, Color.green, getHealth(), getMaxHealth());
-		nameGUI = new TextGUI(getX(), getY() - 20, "Joe Shmoe", Color.red);
+		nameGUI = new TextGUI(getX(), getY() - 20, "Joe Shmoe", Color.blue);
 		nameGUI.setCentered(true);
 		
 		setHealth(getHealth());
 		healthBar.setHealth(getHealth());
 		
-		xpGUI = new TextGUI(30, 30, "0", Color.green);
-		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH - 80, 30, "0", Color.green);
+		xpGUI = new TextGUI(30, 30, "0", Color.blue);
+		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH - 80, 30, "0", Color.blue);
 		
 		upgradeSlots[0] = new ImageGUI(0, 0, Resources.getSpriteImage("swords", 0, 0));
 		upgradeSlots[1] = new ImageGUI(0, 0, Resources.getSpriteImage("bows", 0, 0));
