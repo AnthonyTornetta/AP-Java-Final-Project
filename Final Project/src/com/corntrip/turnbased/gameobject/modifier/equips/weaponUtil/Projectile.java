@@ -145,7 +145,7 @@ public abstract class Projectile extends Entity
 			if(getWeapon().getOwner() instanceof Player)
 			{
 				Player p = (Player)getWeapon().getOwner();
-				p.addXp(getWeapon().getTier() * 10);
+				p.addXp(1);
 			}
 			
 			endPath();

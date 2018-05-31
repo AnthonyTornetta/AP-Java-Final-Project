@@ -56,7 +56,7 @@ public class Sword extends SwungWeapon
 				if(getOwner() instanceof Player)
 				{
 					Player p = (Player)getOwner();
-					p.addXp(getTier() * 5);
+					p.addXp(1);
 				}
 			}
 		}

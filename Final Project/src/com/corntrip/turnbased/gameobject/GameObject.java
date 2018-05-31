@@ -72,6 +72,7 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 	@Override
 	public boolean collidingWith(float x, float y, float width, float height)
 	{
+		// Checks a basic box
 		if(x + width >= getX() && x <= getX() + getWidth())
 		{
 			if(y + height >= getY() && y <= getY() + getHeight())
@@ -113,15 +114,8 @@ public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 		return rotation;
 	}
 	
-	public void setRotation(float rotation)
-	{
-		setRotation(rotation, getAnchorPointX(), getAnchorPointY());
-	}
+	public void setRotation(float rotation) { this.rotation = rotation; }
 	
-	public void setRotation(float rotation, float anchorX, float anchorY)
-	{
-		this.rotation = rotation;
-	}	
 	public long getObjectId() { return objectId; }
 	
 	public float getAnchorPointX() { return getAnchorPointX(0); }

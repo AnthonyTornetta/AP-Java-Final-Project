@@ -55,6 +55,8 @@ public class Camera
 	 */
 	public void center(GameObject go)
 	{
+		if(go == null)
+			return;
 		xOffset = go.getX() - visibleWidth / 2 + go.getWidth() / 2;
 		yOffset = go.getY() - visibleHeight / 2 + go.getHeight() / 2;
 		

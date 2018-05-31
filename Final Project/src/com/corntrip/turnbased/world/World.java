@@ -73,6 +73,11 @@ public class World implements IRenderable
 	private List<GameObject> objectsToBeRemoved = new ArrayList<>();
 	
 	/**
+	 * Keeps track of the score
+	 */
+	private int score;
+	
+	/**
 	 * A world holds every object in a scene and handles rendering and updating them all
 	 * @param width The total width of the world
 	 * @param height The total height of the world
@@ -87,7 +92,7 @@ public class World implements IRenderable
 		
 		tiles = new Tile[tilesAmtY][tilesAmtX];
 		
-		// Fills the tiles array with new tiles (TODO: Replace with an image-loaded scene)
+		// Fills the tiles
 		for(int ty = 0; ty < tilesAmtY; ty++)
 		{
 			for(int tx = 0; tx < tilesAmtX; tx++)
@@ -125,7 +130,7 @@ public class World implements IRenderable
 		//draws anything not in the inital camera (I think)
 		for(GameObject o : gameObjects)
 		{
-			if(!o.equals(getPlayer()))
+			if(getPlayer() != null && !o.equals(getPlayer()))
 			{
 				if(o.getX() + o.getWidth() > cam.getXOffset() && o.getX() < cam.getXOffset() + cam.getScreenWidth())
 				{
@@ -207,9 +212,7 @@ public class World implements IRenderable
 			while(x + enemyW >= cam.getXOffset() && x <= cam.getXOffset() + cam.getScreenWidth() 
 				 && y + enemyH >= cam.getYOffset() && y <= cam.getYOffset() + cam.getScreenHeight()); 
 			
-			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "Evil Ghost", Helper.clamp((int)Math.ceil(wave / 3 * Math.random()), 1, 5));
-			
-			System.out.println(e);
+			Enemy e = new TestEnemy(x, y, enemyW, enemyH, this, getPlayer(), "Evil Ghost", Helper.clamp((int)Math.ceil(wave * Math.random()), 1, 5));
 			
 			addObject(e);
 		}
@@ -258,6 +261,15 @@ public class World implements IRenderable
 	}
 	
 	/**
+	 * Removes an object from the world after the world is done updating
+	 * @param obj The object's index to remove
+	 */
+	public void removeObject(int i)
+	{
+		objectsToBeRemoved.add(gameObjects.get(i));
+	}
+	
+	/**
 	 * Removes an object from the world regardless of if things are updating or not
 	 * @param obj The object to remove
 	 */
@@ -266,6 +278,11 @@ public class World implements IRenderable
 		gameObjects.remove(obj);
 		if(obj instanceof Entity)
 			entities.remove(obj);
+		
+		if(getPlayer() != null && getPlayer().equals(obj))
+			setPlayer(null);
+		else if(getTownhall() != null && getTownhall().equals(obj))
+			setTownhall(null);
 	}
 	
 	/**
@@ -305,4 +322,8 @@ public class World implements IRenderable
 
 	public float getWidth() { return WIDTH; }
 	public float getHeight() { return HEIGHT; }
+
+	public int getScore() { return score; }
+	public void setScore(int score) { this.score = score; }
+	public void addToScore(int amt) { this.score += amt; }
 }

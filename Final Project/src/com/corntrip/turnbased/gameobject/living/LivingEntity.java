@@ -51,7 +51,7 @@ public abstract class LivingEntity extends Entity
 	}
 	
 	/**
-=	 * Removes the LivingEntity from the world
+=	 * Removes the LivingEntity from the world when it dies
 	 */
 	public void die()
 	{
@@ -60,6 +60,8 @@ public abstract class LivingEntity extends Entity
 	
 	@Override
 	public abstract LivingEntity clone();
+	
+	// Getters & Setters //
 	
 	public int getMaxHealth() { return maxHealth; }
 	public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }

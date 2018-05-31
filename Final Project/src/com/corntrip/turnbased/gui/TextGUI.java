@@ -10,6 +10,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.TrueTypeFont;
 
 import com.corntrip.turnbased.util.Reference;
 
@@ -18,6 +19,7 @@ public class TextGUI extends GUIElement
 	private String text;
 	private Color textColor;
 	private boolean centered = false;
+	private TrueTypeFont font;
 	
 	private int fontWidth = 0;
 	
@@ -34,7 +36,8 @@ public class TextGUI extends GUIElement
 		this.text = text;
 		this.textColor = textColor;
 		
-		fontWidth = Reference.FONT_DEFAULT.getWidth(text);
+		font = Reference.FONT_DEFAULT;
+		fontWidth = font.getWidth(text);
 	}
 
 	@Override
@@ -47,11 +50,11 @@ public class TextGUI extends GUIElement
 		//centers the text
 		if(!centered)
 		{
-			Reference.FONT_DEFAULT.drawString(getX() - offsetX, getY() - offsetY, text, textColor);
+			font.drawString(getX() - offsetX, getY() - offsetY, text, textColor);
 		}
 		else
 		{
-			Reference.FONT_DEFAULT.drawString(getX() - fontWidth / 2 - offsetX, getY() - offsetY, text, textColor);
+			font.drawString(getX() - fontWidth / 2 - offsetX, getY() - offsetY, text, textColor);
 		}
 	}
 	
@@ -61,8 +64,18 @@ public class TextGUI extends GUIElement
 	public boolean isCentered() { return centered; }
 
 	public String getText() { return text; }	
-	public void setText(String text) { this.text = text; }
+	public void setText(String text) 
+	{
+		this.text = text;
+		fontWidth = font.getWidth(text); 
+	}
 
 	public Color getTextColor() { return textColor; }
 	public void setTextColor(Color textColor) { this.textColor = textColor; }
+
+	public void setFont(TrueTypeFont ttf)
+	{
+		font = ttf;
+		fontWidth = font.getWidth(text);
+	}
 }

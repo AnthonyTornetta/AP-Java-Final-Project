@@ -17,6 +17,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.gui.DeathScreenGUI;
+import com.corntrip.turnbased.gui.GUI;
 import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
@@ -24,17 +26,24 @@ import com.corntrip.turnbased.world.WorldLoader;
 
 public class CornTrip extends BasicGame
 {
-	// (-|r| + 90) / 90 = f(r)?
-	
+	/**
+	 * Holds everything in the scene
+	 */
 	private World world;
+	
+	/**
+	 * Shows up when you die
+	 */
+	private GUI deathScreen;
 	
 	public CornTrip()
 	{
-		super("CornTrip");
+		super("CornTrip"); // Window title
 	}
 	
 	public static void main(String[] args) throws SlickException
 	{
+		// Creates the window n jazz
         AppGameContainer app = new AppGameContainer(new CornTrip());
         app.setDisplayMode(Reference.WINDOW_WIDTH, Reference.WINDOW_HEIGHT, false);
         app.start();
@@ -44,12 +53,17 @@ public class CornTrip extends BasicGame
 	public void render(GameContainer gc, Graphics gfx) throws SlickException
 	{
 		gfx.clear();
-		world.render(gc, gfx);
+		
+		if(world.getPlayer() != null)
+			world.render(gc, gfx);
+		else if(deathScreen != null)
+			deathScreen.render(gc, gfx);
 	}
 	
 	@Override
 	public void init(GameContainer gc) throws SlickException
 	{
+		// Setup the window
 		gc.setMaximumLogicUpdateInterval(Reference.MAX_FPS);
 		gc.setTargetFrameRate(Reference.MAX_FPS);
 		gc.setAlwaysRender(true);
@@ -65,7 +79,7 @@ public class CornTrip extends BasicGame
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			throw new IllegalStateException("Failed to Create World.");
+			throw new IllegalStateException("Failed to create world from image :(");
 		}
 	}
 	
@@ -91,6 +105,9 @@ public class CornTrip extends BasicGame
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
 	{
-		world.update(gc, delta);
+		if(world.getPlayer() != null)
+			world.update(gc, delta);
+		else if(deathScreen == null)
+			deathScreen = new GUI(new DeathScreenGUI(world.getScore()));
 	}
 }

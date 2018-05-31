@@ -41,11 +41,6 @@ public class Player extends LivingEntity
 	private float velX = 0, velY = 0;
 	
 	/**
-	 * Holds the points aquired from scoring resources
-	 */
-	private int pts = 0;
-	
-	/**
 	 * Stores the experience for getting upgrades
 	 */
 	private int xp = 0;
@@ -75,6 +70,7 @@ public class Player extends LivingEntity
 	 */
 	private HealthBarGUI healthBar;
 	
+	// A bunch of GUIs
 	private TextGUI nameGUI;
 	private TextGUI xpGUI;
 	private TextGUI scoreGUI;
@@ -176,7 +172,11 @@ public class Player extends LivingEntity
 			}
 			else if(in.isKeyDown(Input.KEY_C))
 			{
-				heal(getMaxHealth());
+				if(xp - 2 >= 0)
+				{
+					heal(getMaxHealth());
+					xp -= 2;
+				}
 			}
 		}
 		
@@ -233,7 +233,7 @@ public class Player extends LivingEntity
 							getWorld().removeObject(go);
 						}
 					}
-					else
+					else if(!(go instanceof Enemy))
 					{
 						if(go.collidingWith(newX, newY, getWidth(), getHeight()))
 						{
@@ -306,7 +306,7 @@ public class Player extends LivingEntity
 		}
 		
 		xpGUI.setText(getXp() + "xp");
-		scoreGUI.setText(getScore() + " score");
+		scoreGUI.setText(getWorld().getScore() + " score");
 	}
 	
 	@Override
@@ -355,16 +355,9 @@ public class Player extends LivingEntity
 	{
 		if(r != null)
 		{
-			pts += r.getPtsValue();
+			getWorld().addToScore(r.getPtsValue());
 			getWorld().initateNextWave();
 		}
-	}
-	
-	@Override
-	public void die()
-	{
-		super.die();
-		getWorld().removeObject(this);
 	}
 	
 	@Override
@@ -372,9 +365,6 @@ public class Player extends LivingEntity
 	{
 		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld());
 	}
-	
-	public int getScore() { return pts; }
-	public void setPoints(int p) { pts = p; }
 	
 	public Weapon getHeldWeapon() { return weapons[curWeapon]; }
 	

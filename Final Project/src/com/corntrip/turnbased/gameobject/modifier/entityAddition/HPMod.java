@@ -1,7 +1,8 @@
 /*
  * Anthony Tornetta & Troy Cope | P5 | 3/31/18
  * This is our own work: ACT & TC
- * ?
+ * During unit spawn there should be a ArrayList of these bad boys and it should have a random chance to spawn a boss
+ * Which then links it to a new Creation of one of these
  */
 
 package com.corntrip.turnbased.gameobject.modifier.entityAddition;
@@ -11,12 +12,10 @@ import java.util.ArrayList;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.modifier.Modified;
 
-/*
+/**
  * During unit spawn there should be a ArrayList of these bad boys and it should have a random chance to spawn a boss
  * Which then links it to a new Creation of one of these
  */
-
-
 public class HPMod extends Modified
 {
 
