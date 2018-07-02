@@ -32,7 +32,7 @@ public class DeathScreenGUI extends GUIElement
 		// Displays the score
 		scoreGUI = new TextGUI(Reference.WINDOW_WIDTH / 2, Reference.WINDOW_HEIGHT / 2 - 50, "Score: " + score, Color.green);
 		scoreGUI.setCentered(true);
-		scoreGUI.setFont(new TrueTypeFont(new Font("Verdana", Font.BOLD, 45), true));
+		scoreGUI.setFont(Reference.FONT_DEFAULT);
 		
 		// Displays "You Died!"
 		youDied = new TextGUI(Reference.WINDOW_WIDTH / 2, Reference.WINDOW_HEIGHT / 2 - 120, "You Died!", Color.green);

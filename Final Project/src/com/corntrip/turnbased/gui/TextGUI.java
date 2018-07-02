@@ -24,36 +24,47 @@ public class TextGUI extends GUIElement
 	private int fontWidth = 0;
 	
 	/**
-	 * 
-	 * @param x: start x
-	 * @param y: start y
-	 * @param text: what is displayed
-	 * @param textColor: what color the text is
+	 * Displays text at a given point in the window
+	 * @param x Start x
+	 * @param y Start y
+	 * @param text What is displayed
+	 * @param textColor What color the text is
+	 * @param font The font to use
 	 */
-	public TextGUI(float x, float y, String text, Color textColor)
+	public TextGUI(float x, float y, String text, Color textColor, TrueTypeFont font)
 	{
 		super(x, y);
 		this.text = text;
 		this.textColor = textColor;
 		
-		font = Reference.FONT_DEFAULT;
+		this.font = font;
 		fontWidth = font.getWidth(text);
+	}
+	
+	/**
+	 * Displays text at a given point in the window
+	 * @param x Start x
+	 * @param y Start y
+	 * @param text What is displayed
+	 * @param textColor What color the text is
+	 */
+	public TextGUI(float x, float y, String text, Color textColor)
+	{
+		this(x, y, text, textColor, Reference.FONT_DEFAULT);
 	}
 
 	@Override
-	/**
-	 * displays the text into the game
-	 */
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{
 		gfx.setColor(textColor);
-		//centers the text
+		
 		if(!centered)
 		{
 			font.drawString(getX() - offsetX, getY() - offsetY, text, textColor);
 		}
 		else
 		{
+			// Centers the text using fancy maths
 			font.drawString(getX() - fontWidth / 2 - offsetX, getY() - offsetY, text, textColor);
 		}
 	}

@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.newdawn.slick.GameContainer;
+
 import com.corntrip.turnbased.gameobject.living.Enemy;
 import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.gameobject.nonliving.Tree;
@@ -24,7 +26,7 @@ import com.corntrip.turnbased.util.Resources;
 
 public class WorldLoader
 {
-	public static World generateWorldFromImage(BufferedImage img)
+	public static World generateWorldFromImage(BufferedImage img, GameContainer gc)
 	{
 		//intialization of a world
 		World world = new World(img.getWidth() * Reference.TILE_DIMENSIONS, img.getHeight() * Reference.TILE_DIMENSIONS);
@@ -66,7 +68,7 @@ public class WorldLoader
 				}
 				else if(c.equals(Reference.PLAYER_KEY))
 				{
-					world.setPlayer(new Player(actualX, actualY, w, h, world));
+					world.setPlayer(new Player(actualX, actualY, w, h, world, gc.getInput()));
 				}
 				else if(c.equals(Reference.DEPOSIT_KEY))
 				{

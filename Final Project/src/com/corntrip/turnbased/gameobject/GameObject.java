@@ -13,6 +13,11 @@ import org.newdawn.slick.SlickException;
 import com.corntrip.turnbased.physics.ICollidable;
 import com.corntrip.turnbased.rendering.IRenderable;
 
+/**
+ * <p>An object in the game scene that is collidable with other {@link ICollidable} objects.</p>
+ * <p>This is also {@link IRenderable} so it can be rendered in the game scene</p>
+ * <p>Each subclass will contain a clone method from the {@link Cloneable} interface to create a new instance of that object in the scene.</p>
+ */
 public abstract class GameObject implements ICollidable, IRenderable, Cloneable
 {
 	/**

@@ -19,20 +19,35 @@ import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.world.World;
 
+/**
+ * An {@link Entity} that travels in a fixed direction
+ */
 public abstract class Projectile extends Entity
 {
-	//host item that uses the projectile
+	/**
+	 * host item that uses the projectile
+	 */
 	private Weapon wep;
-	//velocities, used to calc next x and/or y and rotation
+	
+	/**
+	 * velocities, used to calc next x and/or y and rotation
+	 */
 	private float velX, velY;
-	//total distance traveled
+	
+	/**
+	 * Total distance traveled
+	 */
 	private float distanceTrav;
+	
+	/**
+	 * Image to draw
+	 */
 	private Image image;
 	
 	private static final float INNACURACY = 25f; // more = less :P
 	
 	/**
-	 * 
+	 * An {@link Entity} that travels in a fixed direction
 	 * @param startX: starting coord for Entity
 	 * @param startY: same as x but y
 	 * @param w: width

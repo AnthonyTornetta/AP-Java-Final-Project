@@ -14,10 +14,13 @@ import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.living.Player;
 import com.corntrip.turnbased.util.Resources;
 
+/**
+ * A {@link SwungWeapon} that is swung by the player to attack like a sword
+ */
 public class Sword extends SwungWeapon
 {
 	/**
-	 * 
+	 * A {@link SwungWeapon} that is swung by the player to attack like a sword
 	 * @param x: x start
 	 * @param y: y start
 	 * @param w: width

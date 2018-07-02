@@ -11,6 +11,9 @@ import org.newdawn.slick.SlickException;
 
 import com.corntrip.turnbased.world.World;
 
+/**
+ * A {@link GameObject} that updates and has access to the world
+ */
 public abstract class Entity extends GameObject
 {
 	/**

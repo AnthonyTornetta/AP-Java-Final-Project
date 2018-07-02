@@ -13,8 +13,10 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.KeyListener;
 import org.newdawn.slick.SlickException;
 
+import com.corntrip.turnbased.commands.CommandManager;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.modifier.equips.Bow;
 import com.corntrip.turnbased.gameobject.modifier.equips.Sword;
@@ -33,7 +35,7 @@ import com.corntrip.turnbased.util.Reference;
 import com.corntrip.turnbased.util.Resources;
 import com.corntrip.turnbased.world.World;
 
-public class Player extends LivingEntity
+public class Player extends LivingEntity implements KeyListener
 {
 	/**
 	 * Used for calculating movement
@@ -44,6 +46,16 @@ public class Player extends LivingEntity
 	 * Stores the experience for getting upgrades
 	 */
 	private int xp = 0;
+	
+	/**
+	 * Holds if they are typing a command by pressing the '/' key
+	 */
+	boolean typingCommand = false;
+	
+	/**
+	 * Holds the raw command of what the player has typed
+	 */
+	private TextGUI rawCmd = new TextGUI(10, 50 + 160, "", Color.white);
 	
 	/**
 	 * Holds the resource the player may or may not be carrying
@@ -70,6 +82,27 @@ public class Player extends LivingEntity
 	 */
 	private HealthBarGUI healthBar;
 	
+	/**
+	 * Stores messages sent and recieved
+	 */
+	private TextGUI[] chatLog   = new TextGUI[10];
+	private int[]     chatFades = new int[chatLog.length];
+	
+	/**
+	 * What the chatLogFade resets to whenever a new message is added
+	 */
+	private final int CHATLOG_FADE_RESET = 5000;
+	
+	/**
+	 * 1337 h@x0r m0d3
+	 */
+	private boolean invulnerable = false;
+	
+	/**
+	 * For keys n stuff
+	 */
+	private Input input;
+	
 	// A bunch of GUIs
 	private TextGUI nameGUI;
 	private TextGUI xpGUI;
@@ -87,7 +120,7 @@ public class Player extends LivingEntity
 	 * @param h The height of the player
 	 * @param world The world the player is in
 	 */
-	public Player(float startX, float startY, float w, float h, World world)
+	public Player(float startX, float startY, float w, float h, World world, Input in)
 	{
 		super(startX, startY, w, h, world, 20);
 		
@@ -107,83 +140,89 @@ public class Player extends LivingEntity
 		
 		weapons[1] = new Bow(this, 1);
 		weapons[0] = new Sword(getX() + getWidth(), getY(), 32, 32, this, 1);
+		
+		input = in;
+		
+		input.addKeyListener(this);
 	}
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
-	{
+	{		
 		getHeldWeapon().update(delta);
 		
+		// Basically what the friction is
 		float subVal = 0.8f;
+		
+		// How much to move the player by based off any frames gained/missed
 		float moveBy = Reference.MAX_FPS * delta / 1000.0f;
 		
+		// Factor in friction
 		velX -= Math.signum(velX) * subVal * moveBy;
 		velY -= Math.signum(velY) * subVal * moveBy;
 		
-		// If the velocities are somewhere near 0, just set them to 0 so it doesn't slide forever
+		// If the velocities are somewhere near 0, just set them to 0 so it doesn't slide forever or jitter back and forth
 		if(velX <= subVal && velX >= -subVal)
 			velX = 0;
 		if(velY <= subVal && velY >= -subVal)
 			velY = 0;
 		
-		// Fun movement calcs in here
-		
-		Input in = gc.getInput();
-		if(in.isKeyDown(Input.KEY_W) || in.isKeyDown(Input.KEY_UP))
-			velY += -2.0f * moveBy;
-		if(in.isKeyDown(Input.KEY_S) || in.isKeyDown(Input.KEY_DOWN))
-			velY += 2.0f * moveBy;
-		
-		if(in.isKeyDown(Input.KEY_A) || in.isKeyDown(Input.KEY_LEFT))
-			velX += -2.0f * moveBy;
-		if(in.isKeyDown(Input.KEY_D) || in.isKeyDown(Input.KEY_RIGHT))
-			velX += 2.0f * moveBy;
-		
-		// End movement calcs
-		
-		if(in.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
+		if(!typingCommand)
 		{
-			getHeldWeapon().attack();
-		}
-		
-		if(displayUpgradeGUI)
-		{
-			if(in.isKeyDown(Input.KEY_Z))
+			if(input.isKeyDown(Input.KEY_W) || input.isKeyDown(Input.KEY_UP))
+				velY += -2.0f * moveBy;
+			if(input.isKeyDown(Input.KEY_S) || input.isKeyDown(Input.KEY_DOWN))
+				velY += 2.0f * moveBy;
+			
+			if(input.isKeyDown(Input.KEY_A) || input.isKeyDown(Input.KEY_LEFT))
+				velX += -2.0f * moveBy;
+			if(input.isKeyDown(Input.KEY_D) || input.isKeyDown(Input.KEY_RIGHT))
+				velX += 2.0f * moveBy;
+			
+			if(input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
 			{
-				if(!weapons[0].isMaxTier())
+				getHeldWeapon().attack();
+			}
+			
+			if(displayUpgradeGUI)
+			{
+				if(input.isKeyDown(Input.KEY_Z))
 				{
-					if(xp - 7 >= 0)
+					if(!weapons[0].isMaxTier())
 					{
-						weapons[0] = weapons[0].upgrade();
-						xp -= 7;
+						if(xp - 7 >= 0)
+						{
+							weapons[0] = weapons[0].upgrade();
+							xp -= 7;
+						}
+					}
+				}
+				else if(input.isKeyDown(Input.KEY_X))
+				{
+					if(!weapons[1].isMaxTier())
+					{
+						if(xp - 10 >= 0)
+						{
+							weapons[1] = weapons[1].upgrade();
+							xp -= 10;
+						}
+					}
+				}
+				else if(input.isKeyDown(Input.KEY_C))
+				{
+					if(xp - 2 >= 0)
+					{
+						heal(getMaxHealth());
+						xp -= 2;
 					}
 				}
 			}
-			else if(in.isKeyDown(Input.KEY_X))
-			{
-				if(!weapons[1].isMaxTier())
-				{
-					if(xp - 10 >= 0)
-					{
-						weapons[1] = weapons[1].upgrade();
-						xp -= 10;
-					}
-				}
-			}
-			else if(in.isKeyDown(Input.KEY_C))
-			{
-				if(xp - 2 >= 0)
-				{
-					heal(getMaxHealth());
-					xp -= 2;
-				}
-			}
+			
+			if(input.isKeyDown(Input.KEY_1))
+				curWeapon = 0;
+			else if(input.isKeyDown(Input.KEY_2))
+				curWeapon = 1;
 		}
-		
-		if(in.isKeyDown(Input.KEY_1))
-			curWeapon = 0;
-		else if(in.isKeyDown(Input.KEY_2))
-			curWeapon = 1;
 		
 		if(resourceCarrying == null)
 		{
@@ -275,17 +314,21 @@ public class Player extends LivingEntity
 		setX(newX);
 		setY(newY);
 		
+		// Make sure you're within the bounds of the world
 		setX(Helper.clamp(getX(), 0, getWorld().getWidth() - getWidth()));
 		setY(Helper.clamp(getY(), 0, getWorld().getHeight() - getHeight()));
 		
+		// If it's a swung weapon it needs to know where it's being held
 		if(getHeldWeapon() instanceof SwungWeapon)
 		{
 			SwungWeapon sw = (SwungWeapon)getHeldWeapon();
 			
+			//TODO: fix this buggy mess.
 			sw.setX(getX() + -2 * (Math.abs(getRotation()) / 90) + 2 * getWidth());
 			sw.setY(getY() + ((getRotation() % 45) / 45.0f) * getHeight());
 		}
 		
+		// Update the gui positions
 		healthBar.setX(getX());
 		healthBar.setY(getY() - 16);
 		healthBar.setHealth(getHealth());
@@ -305,10 +348,24 @@ public class Player extends LivingEntity
 			displayUpgradeGUI = true;
 		}
 		
+		// Make the chat blocks disapear after a given time
+		for(int i = chatFades.length - 1; i >= 0; i--)
+		{
+			if(chatLog[i] != null)
+			{
+				chatFades[i] -= delta;
+				if(chatFades[i] <= 0)
+				{
+					removeLastMessage(); // it will always be the last one
+				}
+			}
+		}
+		
 		xpGUI.setText(getXp() + "xp");
 		scoreGUI.setText(getWorld().getScore() + " score");
 	}
 	
+
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{		
@@ -325,6 +382,7 @@ public class Player extends LivingEntity
 		healthBar.render(gc, gfx, offsetX, offsetY);
 		nameGUI.render(gc, gfx, offsetX, offsetY);
 		
+		// The offset isn't passed to make sure they "stick" to the screen regardless of the camera's position in the world
 		xpGUI.render(gc, gfx);
 		scoreGUI.render(gc, gfx);
 		
@@ -336,11 +394,24 @@ public class Player extends LivingEntity
 			}
 		}
 		
+		for(TextGUI gui : chatLog)
+		{
+			if(gui != null)
+				gui.render(gc, gfx);
+			else // if it's null, there's no text there or past that, so no point in iterating further
+				break;
+		}
+		
+		if(!rawCmd.getText().isEmpty())
+			rawCmd.render(gc, gfx);
+		
 		setRotation(Helper.getAngle(anchorX, anchorY, mouseX, mouseY));
 		
-		gfx.setColor(Color.green);
 		if(Reference.DEBUG)
+		{
+			gfx.setColor(Color.green);
 			gfx.drawLine(anchorX, anchorY, input.getMouseX(), input.getMouseY());
+		}
 		
 		gfx.rotate(anchorX, anchorY, getRotation());
 		
@@ -351,6 +422,10 @@ public class Player extends LivingEntity
 		getHeldWeapon().renderAt(gc, gfx, drawX + getWidth(), drawY);
 	}
 	
+	/**
+	 * Adds the resource's point value to the score, and initiates the next wave
+	 * @param r The resource to score
+	 */
 	private void scoreResource(Resource r)
 	{
 		if(r != null)
@@ -360,14 +435,142 @@ public class Player extends LivingEntity
 		}
 	}
 	
+	/**
+	 * Adds a message to the player's chat box
+	 * @param msg The message to add
+	 */
+	public void sendMessage(String msg)
+	{
+		addMessage(msg);
+		// maybe do a message sound here?
+	}
+	
+	/**
+	 * Adds a message to the list of messages that will be displayed to the player and kicks out any messages past the 9th to make room
+	 * @param msg The message to add
+	 */
+	public void addMessage(String msg)
+	{
+		for(int i = chatLog.length - 1; i > 0; i--)
+		{
+			if(chatLog[i - 1] != null)
+			{
+				TextGUI old = chatLog[i - 1];
+				chatLog[i] = new TextGUI(old.getX(), old.getY() + 16, old.getText(), Color.white);
+				chatFades[i] = chatFades[i - 1];
+			}
+		}
+		
+		chatLog[0] = new TextGUI(10, 50, msg, Color.white);
+		chatFades[0] = CHATLOG_FADE_RESET;
+	}
+	
+	/**
+	 * Removes the last message in the list that isn't null
+	 */
+	private void removeLastMessage()
+	{
+		for(int i = chatLog.length - 1; i >= 0; i--)
+		{
+			if(chatLog[i] != null)
+			{
+				chatLog[i] = null;
+				chatFades[i] = 0; // Not that it matters if I do this since it won't use this value unless the slot isn't null, and this value is overwritten when chatLog[i] is defined :p. It just feels proper I guess.
+				break;
+			}
+		}
+	}
+	
+	@Override
+	public void takeDamage(int amt)
+	{
+		if(!invulnerable)
+			super.takeDamage(amt);
+	}
+	
+	// Key Input
+	@Override
+	public void keyPressed(int keyCode, char charRepresentation)
+	{
+		/*
+		 * Commands start by the player entering a '/'
+		 * Then all input is funneled into the rawCmd variable
+		 * The command input ends when the enter key is pressed
+		 */
+		
+		if(!typingCommand && keyCode == Input.KEY_ENTER)
+		{
+			typingCommand = true;
+		}
+		else if(typingCommand && keyCode == Input.KEY_ENTER)
+		{
+			int spaceIndex = rawCmd.getText().indexOf(" ");
+			
+			if(spaceIndex == -1)
+			{
+				CommandManager.sendCommand(rawCmd.getText(), new String[] {}, this);
+			}
+			else
+			{
+				String cmd = rawCmd.getText().substring(0, spaceIndex);
+				String[] args = rawCmd.getText().substring(spaceIndex + 1).split(" ");
+				
+				CommandManager.sendCommand(cmd, args, this);
+			}
+			
+			rawCmd.setText("");
+			typingCommand = false;
+		}
+		else if(typingCommand)
+		{
+			if(keyCode == Input.KEY_BACK)
+			{
+				if(rawCmd.getText().length() > 0)
+				{
+					rawCmd.setText(rawCmd.getText().substring(0, rawCmd.getText().length() - 1));
+				}
+			}
+			else if(keyCode != Input.KEY_LSHIFT && keyCode != Input.KEY_RSHIFT && keyCode != Input.KEY_CAPITAL && keyCode != Input.KEY_NUMLOCK) // These dont matter as slick2d handles them for us
+				rawCmd.setText(rawCmd.getText() + charRepresentation);
+		}
+	}
+	
+	@Override
+	public void keyReleased(int keyCode, char charRepresentation)
+	{}
+	
+	@Override
+	public boolean isAcceptingInput() {	return true; }
+
+	@Override
+	public void setInput(Input in) { input = in; }
+	
+	@Override
+	public void inputEnded()
+	{}
+
+	@Override
+	public void inputStarted()
+	{}
+	
+	// For creating copies of this	
 	@Override
 	public LivingEntity clone()
 	{
-		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld());
+		return new Player(getX(), getY(), getWidth(), getHeight(), getWorld(), input);
 	}
+	
+	// Getters & Setters //
 	
 	public Weapon getHeldWeapon() { return weapons[curWeapon]; }
 	
 	public int getXp() { return xp; }
 	public void addXp(int amt) { xp += amt; }
+	public void setXp(int xp) { this.xp = xp; }
+	
+	public void setScore(int score) { getWorld().setScore(score); }	
+	public int getScore() { return getWorld().getScore(); }
+	
+	public void setInvulnerable(boolean inv) { invulnerable = inv; }
+	public boolean isInvulnerable() { return invulnerable; }	
 }

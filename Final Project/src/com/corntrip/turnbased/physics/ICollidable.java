@@ -6,6 +6,9 @@
 
 package com.corntrip.turnbased.physics;
 
+/**
+ * Any object that can collide with others in the scene and has x, y coordinates and a width and height should implement this interface to denote this
+ */
 public interface ICollidable
 {
 	/**

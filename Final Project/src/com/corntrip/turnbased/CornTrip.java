@@ -74,7 +74,7 @@ public class CornTrip extends BasicGame
 		
 		try
 		{
-			world = WorldLoader.generateWorldFromImage(ImageIO.read(new File("res/maps/map.png")));
+			world = WorldLoader.generateWorldFromImage(ImageIO.read(new File("res/maps/map.png")), gc);
 		}
 		catch (IOException e)
 		{

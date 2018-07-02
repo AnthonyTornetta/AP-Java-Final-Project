@@ -8,9 +8,14 @@ package com.corntrip.turnbased.gameobject.modifier;
 
 import org.newdawn.slick.Image;
 
-public abstract class Equipable
+import com.corntrip.turnbased.gameobject.Entity;
+
+/**
+ * Anything that can be held by an {@link Entity}.
+ */
+public interface Equipable
 {	
-	//lol gets the image
-	public abstract Image getImage();
+	// Getters & Setters //
+	public Image getImage();
+	public Entity getOwner();
 }
-//tacking on swords and stuff

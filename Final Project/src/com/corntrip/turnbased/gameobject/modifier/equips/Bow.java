@@ -10,6 +10,11 @@ import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.modifier.equips.weaponUtil.Arrow;
 import com.corntrip.turnbased.util.Resources;
 
+/**
+ * A {@link Weapon} that fires an {@link Arrow} in the direction it is being held
+ * @author Cornchip
+ *
+ */
 public class Bow extends Weapon
 {
 	private int timeSinceLastShot = 0;

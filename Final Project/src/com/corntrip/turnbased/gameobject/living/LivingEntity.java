@@ -10,6 +10,9 @@ import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.util.Helper;
 import com.corntrip.turnbased.world.World;
 
+/**
+ * An {@link Entity} that has health and can take damage n stuff
+ */
 public abstract class LivingEntity extends Entity
 {
 	private int maxHealth;

@@ -10,6 +10,9 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+/**
+ * Anything that can be rendered in the world should implement this interface
+ */
 public interface IRenderable
 {
 	/**

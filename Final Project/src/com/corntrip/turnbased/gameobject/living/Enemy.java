@@ -15,6 +15,9 @@ import com.corntrip.turnbased.gui.HealthBarGUI;
 import com.corntrip.turnbased.gui.TextGUI;
 import com.corntrip.turnbased.world.World;
 
+/**
+ * A {@link LivingEntity} that goes after the target and will do damage to them
+ */
 public abstract class Enemy extends LivingEntity
 {
 	/**
@@ -106,11 +109,13 @@ public abstract class Enemy extends LivingEntity
 
 	public String getName() { return name; }
 	public void setName(String name)
-	{ 
+	{
 		this.name = name;
 		nameGUI.setText(name);
 	}
 
 	public HealthBarGUI getHealthBar() { return healthBar; }
 	public void setHealthBar(HealthBarGUI healthBar) { this.healthBar = healthBar; }
+	
+	public abstract int getMaxTier();
 }

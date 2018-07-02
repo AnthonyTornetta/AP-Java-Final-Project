@@ -1,6 +1,6 @@
 /*
  * Anthony Tornetta & Troy Cope | P5 | 3/31/18
- * This is our own work: ACT & TC
+ * This is our own work ACT & TC
  * A weapon that is swang'd instead of shot
  */
 
@@ -9,22 +9,26 @@ package com.corntrip.turnbased.gameobject.modifier.equips;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 
+/**
+ * A {@link Weapon} that is swung by the player to attack
+ */
 public abstract class SwungWeapon extends Weapon
 {
-	//getting the place of the item and it's rotation
+	// Getting the place of the item and it's rotation
 	private float x, y, width, height;
 	private float rotation;
-	//these two are dedicated to creating a limiter on swings
+	
+	// These two are dedicated to creating a limiter on swings
 	private int timeSinceLastSwing;
 	private int waitTimesBetweenSwings;
 	
 	/**
-	 * 
-	 * @param x: where the item's x will start
-	 * @param y: where the item's y will start
-	 * @param w: how wide the object will be
-	 * @param h: how tall the object will be
-	 * @param waitTime: time between swings in milliseconds
+	 * A {@link Weapon} that is swung by the player to attack
+	 * @param x Where the item's x will start
+	 * @param y Where the item's y will start
+	 * @param w How wide the object will be
+	 * @param h How tall the object will be
+	 * @param waitTime Time between swings in milliseconds
 	 */
 	public SwungWeapon(float x, float y, float w, float h, int waitTime)
 	{
@@ -37,12 +41,12 @@ public abstract class SwungWeapon extends Weapon
 	}
 	
 	/**
-	 * resets the swing to it's normal position
+	 * Resets the swing to it's normal position
 	 */
 	@Override
 	public void update(int delta)
 	{
-		if(rotation > 0)
+		if(rotation - 5 > 0)
 			rotation -= 5;
 		else
 			rotation = 0;
@@ -51,7 +55,7 @@ public abstract class SwungWeapon extends Weapon
 	}
 	
 	/**
-	 * shows the actual image and it's movement when needed
+	 * Shows the actual image and it's movement when needed
 	 */
 	@Override
 	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
@@ -61,7 +65,7 @@ public abstract class SwungWeapon extends Weapon
 		super.renderAt(gc, gfx, x, y);
 	}
 	
-	//tons of getters and setters
+	// Tons of Getters & Setters //
 	public float getX() { return x; }
 	public float getY() { return y; }
 	public float getWidth() { return width; }

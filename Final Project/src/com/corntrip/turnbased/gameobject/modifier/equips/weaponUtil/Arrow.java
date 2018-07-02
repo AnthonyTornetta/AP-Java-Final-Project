@@ -14,24 +14,35 @@ import org.newdawn.slick.SlickException;
 import com.corntrip.turnbased.gameobject.modifier.equips.Weapon;
 import com.corntrip.turnbased.world.World;
 
+/**
+ * A {@link Projectile} that on contact with a LivingEntity will deal damage to it.
+ */
 public class Arrow extends Projectile
 {
-	//building of an arrow based off the projectile
+	/**
+	 * A {@link Projectile} that on contact with a LivingEntity will deal damage to it.
+	 * @param startX Starting x coord for Projectile
+	 * @param startY Starting y coord for Projectile
+	 * @param w Width of Projectile
+	 * @param h Height of Projectile
+	 * @param world World the Projectile is in
+	 * @param wep Owner of the Projectile (host)
+	 * @param image The texture of the arrow
+	 */
 	public Arrow(float startX, float startY, float w, float h, World world, Weapon wep, Image image)
 	{
 		super(startX, startY, w, h, world, wep, wep.getOwner().getRotation(), image);	
 	}
 
 	/**
-	 * individual flight speed
+	 * Individual flight speed
 	 */
 	@Override
 	public float flightSpeed() 
 	{
 		return 25.0f;
 	}
-
-	//actually adding the arrow to the game
+	
 	@Override
 	public void render(GameContainer gc, Graphics gfx, float offsetX, float offsetY) throws SlickException
 	{

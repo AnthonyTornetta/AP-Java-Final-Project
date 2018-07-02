@@ -19,7 +19,10 @@ import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.modifier.Equipable;
 
-public abstract class Weapon extends Equipable
+/**
+ * Something that the holder uses to attack other LivingEntites. This is an equipable thing and thus implements {@link Equipable}.
+ */
+public abstract class Weapon implements Equipable
 {
 	//simply the stuffers
 	private Entity owner;
@@ -34,7 +37,7 @@ public abstract class Weapon extends Equipable
 		
 		for(GameObject a: owner.getWorld().getGameObjects())
 		{
-			//hahah no longer hits owner
+			// Hits every LivingEntity within it's range excluding the owner
 			
 			if(a instanceof LivingEntity)
 			{
@@ -47,16 +50,27 @@ public abstract class Weapon extends Equipable
 		return itemsHit;
 	}
 	
-	//draws the items
+	// Draws the items
 	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
 	{
 		getImage().draw(x, y);
 	}
 	
-	//defined in depth later
+	/**
+	 * Called to activate the weapon's abilities (e.g. a bow to shoot, a sword to swing, etc.)
+	 */
 	public abstract void attack();
 	
+	/**
+	 * Returns the upgraded version of this weapon
+	 * @return The upgraded version of this weapon
+	 */
 	public abstract Weapon upgrade();
+	
+	/**
+	 * Updates the weapon
+	 * @param delta Time (in ms) passed since the last call
+	 */
 	public abstract void update(int delta);
 	
 	// Getters & Setters //
@@ -64,6 +78,7 @@ public abstract class Weapon extends Equipable
 	public void setTier(int t) { tier = t; }
 	public int getTier() { return tier; }
 	public float getDamage() { return damage; }
+	@Override
 	public Entity getOwner() { return owner; }
 	public Image getImage() { return image; }
 	public void setImage(Image image) { this.image = image; }
