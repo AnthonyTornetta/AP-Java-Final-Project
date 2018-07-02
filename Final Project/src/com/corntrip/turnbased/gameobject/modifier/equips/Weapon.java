@@ -24,13 +24,12 @@ import com.corntrip.turnbased.gameobject.modifier.Equipable;
  */
 public abstract class Weapon implements Equipable
 {
-	//simply the stuffers
 	private Entity owner;
 	private float damage;
 	private Image image;
 	private int tier;
 	
-	//Start x and y are the owner's hit box
+	// Start x and y are the owner's hit box
 	public List<GameObject> generateHitbox(float startX, float startY, float width, float height)
 	{
 		List<GameObject> itemsHit = new ArrayList<>();

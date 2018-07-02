@@ -148,7 +148,7 @@ public class Player extends LivingEntity implements KeyListener
 	
 	@Override
 	public void update(GameContainer gc, int delta) throws SlickException
-	{		
+	{
 		getHeldWeapon().update(delta);
 		
 		// Basically what the friction is
@@ -323,9 +323,15 @@ public class Player extends LivingEntity implements KeyListener
 		{
 			SwungWeapon sw = (SwungWeapon)getHeldWeapon();
 			
-			//TODO: fix this buggy mess.
-			sw.setX(getX() + -2 * (Math.abs(getRotation()) / 90) + 2 * getWidth());
-			sw.setY(getY() + ((getRotation() % 45) / 45.0f) * getHeight());
+			float xCalc = (90 - Math.abs(getRotation())) / 90.0f;
+			sw.setX(getX() + getWidth() * xCalc);
+			
+			float r = getRotation();
+			if(Math.abs(r) > 90)
+				r = r - 2 * (r - Math.signum(r) * 90); // big maths
+			
+			float yCalc = r / 90;
+			sw.setY(getY() + getHeight() * yCalc);
 		}
 		
 		// Update the gui positions
@@ -411,6 +417,15 @@ public class Player extends LivingEntity implements KeyListener
 		{
 			gfx.setColor(Color.green);
 			gfx.drawLine(anchorX, anchorY, input.getMouseX(), input.getMouseY());
+		}
+		
+		if(Reference.DEBUG)
+		{
+			if(getHeldWeapon() instanceof SwungWeapon)
+			{
+				SwungWeapon sw = (SwungWeapon)getHeldWeapon();
+				gfx.drawRect(sw.getX() - offsetX, sw.getY() - offsetY, getWidth(), getHeight());
+			}
 		}
 		
 		gfx.rotate(anchorX, anchorY, getRotation());
