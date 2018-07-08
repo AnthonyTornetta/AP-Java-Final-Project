@@ -16,7 +16,7 @@ public class Reference
 	/**
 	 * Indicates whether or not the game is currently being debugged
 	 */
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	
 	/**
 	 * The maximum FPS the window should reach

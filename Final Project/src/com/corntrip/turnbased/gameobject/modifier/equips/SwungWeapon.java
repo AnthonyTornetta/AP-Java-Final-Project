@@ -60,7 +60,7 @@ public abstract class SwungWeapon extends Weapon
 	@Override
 	public void renderAt(GameContainer gc, Graphics gfx, float x, float y)
 	{
-		gfx.rotate(x + getImage().getWidth() / 2, y + getImage().getHeight(), rotation);
+		gfx.rotate(x, y + getImage().getHeight(), rotation);
 		
 		super.renderAt(gc, gfx, x, y);
 	}

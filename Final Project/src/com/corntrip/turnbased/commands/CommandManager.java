@@ -120,7 +120,7 @@ public class CommandManager
 		}
 		else
 		{
-			sender.sendMessage("There should be " + len + " argument" + (len != 0 ? "s" : ""));
+			sender.sendMessage("There should be " + len + " argument" + (len != 1 ? "s" : ""));
 			return false;
 		}
 	}

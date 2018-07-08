@@ -80,5 +80,5 @@ public class Sword extends SwungWeapon
 	/**
 	 * max tier as seen before
 	 */
-	public boolean isMaxTier() { return getTier() >= 4; }
+	public boolean isMaxTier() { return getTier() >= 5; }
 }

@@ -186,7 +186,7 @@ public class Player extends LivingEntity implements KeyListener
 			
 			if(displayUpgradeGUI)
 			{
-				if(input.isKeyDown(Input.KEY_Z))
+				if(input.isKeyPressed(Input.KEY_Z))
 				{
 					if(!weapons[0].isMaxTier())
 					{
@@ -197,7 +197,7 @@ public class Player extends LivingEntity implements KeyListener
 						}
 					}
 				}
-				else if(input.isKeyDown(Input.KEY_X))
+				else if(input.isKeyPressed(Input.KEY_X))
 				{
 					if(!weapons[1].isMaxTier())
 					{
@@ -208,7 +208,7 @@ public class Player extends LivingEntity implements KeyListener
 						}
 					}
 				}
-				else if(input.isKeyDown(Input.KEY_C))
+				else if(input.isKeyPressed(Input.KEY_C))
 				{
 					if(xp - 2 >= 0)
 					{
@@ -423,6 +423,7 @@ public class Player extends LivingEntity implements KeyListener
 		{
 			if(getHeldWeapon() instanceof SwungWeapon)
 			{
+				gfx.setColor(Color.blue);
 				SwungWeapon sw = (SwungWeapon)getHeldWeapon();
 				gfx.drawRect(sw.getX() - offsetX, sw.getY() - offsetY, getWidth(), getHeight());
 			}
