@@ -8,22 +8,21 @@
 package com.corntrip.turnbased.gameobject.modifier.entityAddition;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
 import com.corntrip.turnbased.gameobject.modifier.Modified;
 
 /**
- * During unit spawn there should be a ArrayList of these bad boys and it should have a random chance to spawn a boss
+ * During unit spawn there should be a List of these bad boys and it should have a random chance to spawn a boss
  * Which then links it to a new Creation of one of these
  */
 public class HPMod extends Modified
 {
-
-	private ArrayList<String> modNames;
+	private List<String> modNames = new ArrayList<String>();
 	
-	HPMod()
+	public HPMod()
 	{
-		modNames = new ArrayList<String>();
 		modNames.add("Giant");
 		modNames.add("Huge");
 		modNames.add("Gigantic");
@@ -31,18 +30,16 @@ public class HPMod extends Modified
 		modNames.add("Big");
 	}
 	
+	@Override
 	public void modifyStats(LivingEntity a)
 	{
-		a.setHealth(a.getHealth() + 10);
+		a.setMaxHealth(a.getMaxHealth() + 10);
+		a.setHealth(a.getMaxHealth());
 	}
-
-	/* 
-	 * n: simply the name before
-	 * a: list of possible modifiers
-	 */
+	
+	@Override
 	public String modifiedName(String n) 
 	{
 		return modNames.get((int)(Math.random()*modNames.size())) + " " + n;
 	}
-
 }

@@ -43,9 +43,7 @@ public abstract class Projectile extends Entity
 	 * Image to draw
 	 */
 	private Image image;
-	
-	private static final float INNACURACY = 25f; // more = less :P
-	
+		
 	/**
 	 * An {@link Entity} that travels in a fixed direction
 	 * @param startX: starting coord for Entity
@@ -95,35 +93,8 @@ public abstract class Projectile extends Entity
 	 */
 	public void setProjectileDirection()
 	{
-		/*
-		 * == TODO ==
-		 * This calculation causes the arrow to move in a diamond-like pattern, causing inaccuracies when moving towards the target.
-		 * This effect is strongest at angles +-45 and +-135
-		 * This effect is weakest at angles +- 0 and +- 180
-		 */
-		if(getRotation() >= 0 && getRotation() < 90)
-		{
-			velY = getRotation() / 90;
-			velX = 1 - velY;
-		}
-		else if(getRotation() >= 90 && getRotation() <= 180)
-		{
-			velY = Math.abs(getRotation() / 90 - 2);
-			velX = -1 + velY;
-		}
-		else if(getRotation() > -180 && getRotation() < -90)
-		{
-			velY = ((getRotation() + 180) / -90);
-			velX = -1 - velY;
-		}
-		else
-		{
-			velY = getRotation() / 90;
-			velX = 1 + velY;
-		}
-		
-		velY += (Math.random() / INNACURACY - 0.5 / INNACURACY);
-		velX += (Math.random() / INNACURACY - 0.5 / INNACURACY);
+		velX = (float) Math.cos(Math.toRadians(getRotation()));
+		velY = (float) Math.sin(Math.toRadians(getRotation()));
 	}
 	
 	@Override

@@ -13,7 +13,7 @@ import com.corntrip.turnbased.gameobject.Entity;
 /**
  * Anything that can be held by an {@link Entity}.
  */
-public interface Equipable
+public interface IEquipable
 {	
 	// Getters & Setters //
 	public Image getImage();

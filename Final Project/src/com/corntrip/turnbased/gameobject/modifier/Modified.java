@@ -25,6 +25,10 @@ public abstract class Modified
 	//changes stats to correspond with the name
 	public abstract void modifyStats(LivingEntity a);
 	
-	//changes name
+	/**
+	 * Modifies the name i guess??
+	 * @param n simply the name before
+	 * @return idk pls comment this troy
+	 */
 	public abstract String modifiedName(String n);
 }

@@ -17,12 +17,12 @@ import org.newdawn.slick.Image;
 import com.corntrip.turnbased.gameobject.Entity;
 import com.corntrip.turnbased.gameobject.GameObject;
 import com.corntrip.turnbased.gameobject.living.LivingEntity;
-import com.corntrip.turnbased.gameobject.modifier.Equipable;
+import com.corntrip.turnbased.gameobject.modifier.IEquipable;
 
 /**
- * Something that the holder uses to attack other LivingEntites. This is an equipable thing and thus implements {@link Equipable}.
+ * Something that the holder uses to attack other LivingEntites. This is an equipable thing and thus implements {@link IEquipable}.
  */
-public abstract class Weapon implements Equipable
+public abstract class Weapon implements IEquipable
 {
 	private Entity owner;
 	private float damage;
